@@ -1,16 +1,20 @@
 #include "Game.h"
-
-Game* Game::instance = nullptr;
-Game* Game::GetInstance()
-{
-	if (instance == nullptr)
-		instance = new Game();
-	return instance;
-}
+#include "Debug.hpp"
 
 void Game::Start()
 {
-    window.create(sf::VideoMode({800, 600}), "Pac-man", sf::Style::Close);
+    window.create(sf::VideoMode({ 800, 600 }), "Volfied", sf::Style::Close);
+
+	//Scene* scene = new Scene();
+	//scene->name = "Test Scene";
+	//Player* player = new Player();
+	//scene->AddObject(player);
+	//scene->SaveToJson();
+
+	SceneManager::GetInstance()->LoadScene("Test Scene");
+
+	//RNG::seed = std::chrono::system_clock::now().time_since_epoch().count();
+
     Time* time = Time::GetInstance();
     time->SetFps(60);
     time = nullptr;
@@ -40,23 +44,9 @@ void Game::Start()
 
 void Game::Run()
 {
-#ifdef _DEBUG
-    sf::Font dfont;
-    sf::Text fpsText;
-    // Load the Arial font from the assets folder
-    if (!dfont.loadFromFile("assets/fonts/Arial.ttf")) {
-        // Handle error if the font fails to load
-        std::cerr << "Error loading Arial font from assets/fonts/Arial.ttf" << std::endl;
-        return;
-    }
-
-    // Initialize the text object for displaying FPS
-    fpsText.setFont(dfont);
-    fpsText.setCharacterSize(14);           // Font size
-    fpsText.setFillColor(sf::Color::White); // Text color
-    fpsText.setPosition(10, 10);            // Position on screen (top-left corner)
-#endif
+	Scene* activeScene = SceneManager::GetInstance()->activeScene;
     Time* time = Time::GetInstance();
+
     while (window.isOpen() && running)
     {
         sf::Event event;
@@ -73,11 +63,20 @@ void Game::Run()
         auto start = std::chrono::high_resolution_clock::now();
         window.clear();
 
-        // Update objects
+		// Poll input
+		Input::GetInstance()->Update();
+		
+        // Cycle the RNG
+        RNG::GetRand();
 
+        // Update objects
+		activeScene->Update();
 
         // Draw objects
-        
+        activeScene->Draw(window);
+
+        // Debug draw
+        Debug::Draw();
 
         // spin until minimum delta time has passed
 #ifdef _DEBUG
@@ -88,10 +87,11 @@ void Game::Run()
         auto end = std::chrono::high_resolution_clock::now();
         auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - spinstart);
         float spintime = duration.count() / 1000000.0f;
-        fpsText.setString("FPS: " + std::to_string(1.0f / time->GetDeltaTime()) + "\nDelta Time: " + std::to_string(time->GetDeltaTime())
-            + "\nSpin Time: " + std::to_string(spintime) + "\nTime spent spinning: " +
-            std::to_string(spintime / time->GetDeltaTime() * 100.0f) + "%" + "\nFrame Count: " + std::to_string(time->GetFrameCount()));
-        window.draw(fpsText);
+        std::string debugString = "FPS: " + std::to_string(1.0f / time->GetDeltaTime()) + "\nDelta Time: " + std::to_string(time->GetDeltaTime())
+            + "\nSpin Time: " + std::to_string(spintime) + "\nTime spent spinning: " + std::to_string(spintime / time->GetDeltaTime() * 100.0f) +
+            "%\nFrame Count: " + std::to_string(time->GetFrameCount()) + "\nRNG: " + std::to_string(RNG::seed);
+        Debug::DrawText(debugString, Vector2(10, 10));
+        Debug::Draw();
 #endif
         window.display();
     }

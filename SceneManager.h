@@ -2,19 +2,36 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <filesystem>
 #include "json.hpp"
 #include "Scene.h"
 
 class SceneManager
 {
 public:
-	static Scene* activeScene;
+	~SceneManager() {};
+	static SceneManager* instance;
+	static SceneManager* GetInstance();
 
-	static void LoadScene(std::string name) {
+	Scene* activeScene;
+
+	void LoadScene(std::string name) {
 		//load a json file with the scene data from assets/scenes
-		std::string path = "assets/scenes/" + name + ".json";
+		std::filesystem::path cwd = std::filesystem::current_path();
+		std::string path = cwd.string() + "/assets/scenes/" + name + ".json";
 		std::ifstream file(path);
-		nlohmann::json json = nlohmann::json::parse(file);
+		if (!file.is_open()) {
+			std::cerr << "Could not open file: " << path << std::endl;
+			return;
+		}
+
+		nlohmann::json json;
+		file >> json;
+		file.close();
+
 		activeScene = Scene::CreateSceneFromJson(json);
 	}
+
+private:
+	SceneManager() { activeScene = nullptr; };
 };

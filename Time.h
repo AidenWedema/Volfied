@@ -1,6 +1,7 @@
 #pragma once
 #include <iostream>
 #include <chrono>
+#include "Input.h"
 
 class Time
 {
@@ -17,6 +18,7 @@ public:
 		auto spinstart = std::chrono::high_resolution_clock::now();
 		do
 		{
+			if (Input::GetInstance()->GetKey("Speedup")) break;
 			auto end = std::chrono::high_resolution_clock::now();
 			auto duration = std::chrono::duration_cast<std::chrono::microseconds>(end - startTime);
 			deltaTime = duration.count() / 1000000.0f; // convert to seconds

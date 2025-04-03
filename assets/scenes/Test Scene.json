@@ -1,0 +1,30 @@
+{
+    "name": "Test Scene",
+    "objects": [
+        {
+            "name": "Playfield",
+            "position": [
+                400,
+                300
+            ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "position": [
+                0,
+                0
+            ],
+            "type": "Player"
+        },
+        {
+            "name": "Enemy",
+            "position": [
+                400,
+                300
+            ],
+            "type": "Enemy"
+        }
+    ],
+    "type": "Scene"
+}

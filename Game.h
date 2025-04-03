@@ -5,18 +5,25 @@
 #include <iostream>
 #include <chrono>
 #include "Time.h"
+#include "SceneManager.h"
+#include "Input.h"
+#include "Player.h"
+#include "RNG.h"
 
 class Game
 {
 public:
 	~Game() {};
 
-	static Game* instance;
-	static Game* GetInstance();
+	inline static Game* instance = nullptr;
+	inline static Game* GetInstance()
+	{
+		if (instance == nullptr)
+			instance = new Game();
+		return instance;
+	}
 
 	enum GameState { CLOSE, MENU, GAME, END, WIN };
-
-	sf::RenderWindow window;
 
 	void Start();
 	void Run();
@@ -24,9 +31,12 @@ public:
 	void SetGameState(GameState state) { gameState = state; }
 	GameState GetGameState() const { return gameState; }
 
-private:
-	Game() {};
+	sf::RenderWindow* GetWindow() { return &window; }
 
+private:
+	Game() : running(true) {};
+
+	sf::RenderWindow window;
 	GameState gameState = MENU;
 	bool running;
 };
