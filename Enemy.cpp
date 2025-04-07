@@ -25,26 +25,34 @@ void Enemy::Update()
 
 	angle += rotationSpeed;
 	angle = angle % 360;
+	if (angle < 0) angle += 360;
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
-	// Keep the player in bounds
-	sf::Vector2u windowSize = Game::GetInstance()->GetWindow()->getSize();
-	sf::Vector2f size = sprite.getLocalBounds().getSize();
+	// Keep the enemy in bounds
+	Vector2 fieldSize = Playfield::GetInstance()->GetSize();
 	if (position.x <= 0) {
-		position.x = 0;
-		angle += 180;
+		Vector2 point = Vector2(0, position.y);
+		Vector2 a = Vector2::FromDegrees(angle);
+		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Left()));
+		position = point;
 	}
 	if (position.y <= 0) {
-		position.y = 0;
-		angle += 180;
+		Vector2 point = Vector2(position.x, 0);
+		Vector2 a = Vector2::FromDegrees(angle);
+		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Up()));
+		position = point;
 	}
-	if (position.x >= windowSize.x - size.x) {
-		position.x = windowSize.x - size.x;
-		angle += 180;
+	if (position.x >= fieldSize.x) {
+		Vector2 point = Vector2(fieldSize.x, position.y);
+		Vector2 a = Vector2::FromDegrees(angle);
+		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Right()));
+		position = point;
 	}
-	if (position.y >= windowSize.y - size.y) {
-		position.y = windowSize.y - size.y;
-		angle += 180;
+	if (position.y >= fieldSize.y) {
+		Vector2 point = Vector2(position.x, fieldSize.y);
+		Vector2 a = Vector2::FromDegrees(angle);
+		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Down()));
+		position = point;
 	}
 	if (IsTouchingPath()) {
 		angle += 180;

@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 #include "Object.h"
-#include "Input.h"
+#include "Input.hpp"
 #include "Playfield.h"
 
 class Player : public Object
@@ -27,12 +27,14 @@ public:
 		return {
 			{"type", "Player"},
 			{"name", name},
+			{"tag", tag},
 			{"position", {position.x, position.y}}
 		};
     }
 
     void FromJson(const nlohmann::json& json) override {
 		name = json["name"];
+		tag = json["tag"];
 		position = Vector2(json["position"][0], json["position"][1]);
     }
 

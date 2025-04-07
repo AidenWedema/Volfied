@@ -4,11 +4,11 @@
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <chrono>
-#include "Time.h"
-#include "SceneManager.h"
-#include "Input.h"
+#include "Time.hpp"
+#include "SceneManager.hpp"
+#include "Input.hpp"
 #include "Player.h"
-#include "RNG.h"
+#include "RNG.hpp"
 
 class Game
 {

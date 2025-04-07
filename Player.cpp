@@ -77,6 +77,16 @@ void Player::Update()
 		if (!path.empty()) Playfield::GetInstance()->AddWall(path);
         path.clear();
     }
+	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
+		Vector2 enemyPos = enemy->position;
+		if (Vector2::Distance(position, enemyPos) < size.x * 2) {
+			position = path[0];
+			direction = Vector2();
+			path.clear();
+			Debug::Log("DED!");
+			break;
+		}
+	}
 }
 
 void Player::Draw(sf::RenderTarget& target)
@@ -99,8 +109,6 @@ bool Player::DoesPathOverlap()
 
 	Vector2 lastPoint = path[path.size() - 1];
 	Vector2 currentPoint = position;
-
-	Debug::DrawLine(lastPoint, currentPoint, sf::Color::Green);
 
 	// Determine if the new segment is horizontal or vertical
 	bool isHorizontal = (lastPoint.y == currentPoint.y);

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <filesystem>
 #include "Object.h"
-#include "ObjectFactory.h"
+#include "ObjectFactory.hpp"
 
 class Scene
 {
@@ -41,7 +41,11 @@ public:
             obj->Start();
             objects.push_back(obj);
         }
-		newObjects.clear();
+		if (newObjects.size() > 0) {
+			newObjects.clear();
+			// Sort objects by their tag
+			std::sort(objects.begin(), objects.end(), [](Object* a, Object* b) { return a->tag < b->tag; });
+		}
 
 		for (Object* obj : objects)
 			obj->Update();
@@ -79,6 +83,42 @@ public:
 
     void AddObject(Object* object) {
         newObjects.push_back(object);
+    }
+
+	void RemoveObject(Object* object) {
+		auto it = std::find(objects.begin(), objects.end(), object);
+		if (it != objects.end()) {
+			objects.erase(it);
+			delete object;
+		}
+	}
+
+	Object* GetObjectByName(std::string name) {
+		for (Object* obj : objects) {
+			if (obj->name == name) {
+				return obj;
+			}
+		}
+	}
+
+	std::vector<Object*> GetObjectsByName(std::string name) {
+		std::vector<Object*> foundObjects;
+		for (Object* obj : objects) {
+			if (obj->name == name) {
+				foundObjects.push_back(obj);
+			}
+		}
+		return foundObjects;
+	}
+
+    std::vector<Object*> GetObjectsWithTag(int tag) {
+        std::vector<Object*> foundObjects;
+		for (Object* obj : objects) {
+			if (obj->tag == tag) {
+				foundObjects.push_back(obj);
+			}
+		}
+        return foundObjects;
     }
 
 private:

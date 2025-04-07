@@ -1,14 +1,14 @@
 #pragma once
 #include <iostream>
 #include <chrono>
-#include "Input.h"
+#include "Input.hpp"
 
 class Time
 {
 public:
 	~Time() {};
-	static Time* instance;
-	static Time* GetInstance() {
+	inline static Time* instance = nullptr;
+	inline static Time* GetInstance() {
 		if (instance == nullptr)
 			instance = new Time();
 		return instance;

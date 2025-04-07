@@ -133,15 +133,12 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="Input.cpp" />
     <ClCompile Include="Object.cpp" />
-    <ClCompile Include="ObjectFactory.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Playfield.cpp" />
-    <ClCompile Include="RNG.cpp" />
     <ClCompile Include="Scene.cpp" />
-    <ClCompile Include="SceneManager.cpp" />
-    <ClCompile Include="Time.cpp" />
+    <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="Snake.cpp" />
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -149,15 +146,17 @@
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="include\json.hpp" />
-    <ClInclude Include="Input.h" />
+    <ClInclude Include="Input.hpp" />
     <ClInclude Include="Object.h" />
-    <ClInclude Include="ObjectFactory.h" />
+    <ClInclude Include="ObjectFactory.hpp" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Playfield.h" />
-    <ClInclude Include="RNG.h" />
+    <ClInclude Include="RNG.hpp" />
     <ClInclude Include="Scene.h" />
-    <ClInclude Include="SceneManager.h" />
-    <ClInclude Include="Time.h" />
+    <ClInclude Include="SceneManager.hpp" />
+    <ClInclude Include="Ship.h" />
+    <ClInclude Include="Snake.h" />
+    <ClInclude Include="Time.hpp" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

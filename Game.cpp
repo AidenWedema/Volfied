@@ -44,7 +44,7 @@ void Game::Start()
 
 void Game::Run()
 {
-	Scene* activeScene = SceneManager::GetInstance()->activeScene;
+	Scene* activeScene = SceneManager::GetInstance()->GetActiveScene();
     Time* time = Time::GetInstance();
 
     while (window.isOpen() && running)

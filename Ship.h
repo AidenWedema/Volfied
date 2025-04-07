@@ -1,44 +1,35 @@
 #pragma once
-#include <algorithm>
-#include <random>
 #include "Object.h"
-#include "Input.hpp"
-#include "Time.h"
+#include "Playfield.h"
 #include "RNG.hpp"
 
-class Enemy : public Object
+class Ship : public Object
 {
 public:
-	Enemy() : Object("Enemy") { Awake(); };
-	Enemy(Vector2 position) : Object("Enemy", position) { Awake(); };
-	~Enemy() {};
+	Ship() : Object("Ship") { Awake(); };
+	Ship(Vector2 position) : Object("Ship", position) { Awake(); };
+	~Ship() {};
 
 	void Awake() override;
 	void Start() override;
 	void Update() override;
-	void Draw(sf::RenderTarget& target) override;
 
 	nlohmann::json ToJson() const override {
 		return {
-			{"type", "Enemy"},
+			{"type", "Ship"},
 			{"name", name},
 			{"tag", tag},
 			{"position", {position.x, position.y}}
 		};
 	}
-
 	void FromJson(const nlohmann::json& json) override {
 		name = json["name"];
 		tag = json["tag"];
 		position = Vector2(json["position"][0], json["position"][1]);
 	}
 
-	bool IsTouchingPath();
-
 private:
-	int speed = 3;
-	int angle = 0;
-	int rotationSpeed = 3;
-	float turnAroundTimer = 0;
+	int speed = 1;
+	float direction;
 };
 

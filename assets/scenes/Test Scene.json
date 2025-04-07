@@ -3,6 +3,7 @@
     "objects": [
         {
             "name": "Playfield",
+            "tag": 0,
             "position": [
                 400,
                 300
@@ -11,6 +12,7 @@
         },
         {
             "name": "Player",
+            "tag": 0,
             "position": [
                 0,
                 0
@@ -19,11 +21,31 @@
         },
         {
             "name": "Enemy",
+            "tag": 1,
             "position": [
                 400,
                 300
             ],
             "type": "Enemy"
+        },
+        {
+            "name": "Snake",
+            "tag": 1,
+            "length": 10,
+            "position": [
+                600,
+                400
+            ],
+            "type": "Snake"
+        },
+        {
+            "name": "Ship",
+            "tag": 1,
+            "position": [
+                200,
+                400
+            ],
+            "type": "Ship"
         }
     ],
     "type": "Scene"
