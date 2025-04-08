@@ -1,20 +1,22 @@
 #pragma once
 #include <string>
 #include <SFML/Graphics.hpp>
+#include <fstream>
 #include "json.hpp"
 #include "Vector2.hpp"
 
 class Object
 {
 public:
-	inline Object() {};
-	inline Object(std::string name) : name(name) {};
-	inline Object(Vector2 position) : position(position) {};
-	inline Object(std::string name, Vector2 position) : name(name), position(position) {};
+	inline Object() : tag(-1), shouldDie(false) {};
+	inline Object(std::string name) : name(name), tag(-1), shouldDie(false) {};
+	inline Object(Vector2 position) : position(position), tag(-1), shouldDie(false) {};
+	inline Object(std::string name, Vector2 position) : name(name), position(position), tag(-1), shouldDie(false) {};
 	inline virtual ~Object() {};
 
 	std::string name;
 	int tag;
+	bool shouldDie;
 	Vector2 position;
 
 	sf::Texture texture;
@@ -58,4 +60,11 @@ public:
 		tag = json["tag"];
 		position = Vector2(json["position"][0], json["position"][1]);
 	}
+
+	inline virtual bool IsTouching(const Object& other) const {
+		return sprite.getGlobalBounds().intersects(other.sprite.getGlobalBounds()) || sprite.getGlobalBounds().contains(other.position.x, other.position.y);
+	}
+
+	static void Destroy(Object* obj);
+	Object* Instantiate(std::string path);
 };

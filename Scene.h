@@ -47,6 +47,17 @@ public:
 			std::sort(objects.begin(), objects.end(), [](Object* a, Object* b) { return a->tag < b->tag; });
 		}
 
+		// Remove objects that should die
+		for (auto it = objects.begin(); it != objects.end();) {
+			if ((*it)->shouldDie) {
+				delete* it;
+				it = objects.erase(it);
+			}
+			else {
+				++it;
+			}
+		}
+
 		for (Object* obj : objects)
 			obj->Update();
 	}

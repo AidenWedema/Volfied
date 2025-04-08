@@ -17,6 +17,7 @@ void Player::Awake()
 
 void Player::Start()
 {
+	path.push_back(position);
 }
 
 void Player::Update()
@@ -37,52 +38,40 @@ void Player::Update()
 	}
 
 	// Add the current position to the path if the direction has changed
-	if (lastDirection != direction) {
+	if (lastDirection != direction && direction != Vector2()) {
 		path.push_back(position);
 	}
 
 	position = position + direction * speed;
-
-	if (DoesPathOverlap())
+	path[path.size() - 1] = position;
+	if (path.size() > 1)
 	{
-		position = path[0];
-		direction = Vector2();
-		path.clear();
-	}
-
-	// Keep the player in bounds
-	bool reachedEdge = false;
-	Vector2 fieldSize = Playfield::GetInstance()->GetSize();
-	sf::Vector2f s = sprite.getGlobalBounds().getSize();
-	Vector2 size = Vector2(s.x * 0.5f, s.y * 0.5f);
-	if (position.x <= size.x) {
-		position.x = 0 + size.x;
-		reachedEdge = true;
-	}
-	if (position.y <= size.y) {
-		position.y = 0 + size.y;
-		reachedEdge = true;
-	}
-	if (position.x >= fieldSize.x - size.x) {
-		position.x = fieldSize.x - size.x;
-		reachedEdge = true;
-	}
-	if (position.y >= fieldSize.y - size.y) {
-		position.y = fieldSize.y - size.y;
-		reachedEdge = true;
-	}
-    if (reachedEdge) {
-		lastDirection = Vector2();
-		path.push_back(position);
-		if (!path.empty()) Playfield::GetInstance()->AddWall(path);
-        path.clear();
-    }
-	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
-		Vector2 enemyPos = enemy->position;
-		if (Vector2::Distance(position, enemyPos) < size.x * 2) {
+		Vector2 lastPoint = path[path.size() - 2];
+		if (Vector2::LineIntersects(lastPoint, position, path))
+		{
 			position = path[0];
 			direction = Vector2();
 			path.clear();
+			path.push_back(position);
+		}
+	}
+
+	// Keep the player in bounds
+    if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
+		lastDirection = Vector2();
+		if (path.size() > 1) {
+			Playfield::GetInstance()->AddWall(path);
+			path.clear();
+			path.push_back(position);
+		}
+    }
+	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
+		if (enemy->IsTouching(*this) && !path.empty() && Time::GetInstance()->GetFrameCount() > 1) {
+			position = path[0];
+			direction = Vector2();
+			path.clear();
+			path.push_back(position);
+			path.push_back(position);
 			Debug::Log("DED!");
 			break;
 		}
@@ -101,48 +90,4 @@ void Player::Draw(sf::RenderTarget& target)
 	}
 	line[path.size()] = sf::Vertex(sf::Vector2f(position.x, position.y), sf::Color::White);
 	target.draw(line);
-}
-
-bool Player::DoesPathOverlap()
-{
-	if (path.size() < 2) return false;
-
-	Vector2 lastPoint = path[path.size() - 1];
-	Vector2 currentPoint = position;
-
-	// Determine if the new segment is horizontal or vertical
-	bool isHorizontal = (lastPoint.y == currentPoint.y);
-	bool isVertical = (lastPoint.x == currentPoint.x);
-
-	// Check against all previous segments (excluding the last one)
-	for (size_t i = 0; i < path.size() - 1; i++)
-	{
-		Vector2 a = path[i];
-		Vector2 b = path[i + 1];
-
-		if (a.y == b.y && isHorizontal) continue; // Ignore parallel vertical lines
-		if (a.x == b.x && isVertical) continue;   // Ignore parallel horizontal lines
-
-		if (isHorizontal)
-		{
-			int minY = std::min(a.y, b.y);
-			int maxY = std::max(a.y, b.y);
-			// (lastPoint, currentPoint) is horizontal so we check for a vertical segment
-			if (minY > lastPoint.y || lastPoint.y > maxY) continue;
-			if (std::min(lastPoint.x, currentPoint.x) < a.x && std::max(lastPoint.x, currentPoint.x) > a.x) {
-				return true;
-			}
-		}
-		else if (isVertical)
-		{
-			int minX = std::min(a.x, b.x);
-			int maxX = std::max(a.x, b.x);
-			// (a, b) is horizontal, (lastPoint, currentPoint) is vertical
-			if (minX > currentPoint.x || currentPoint.x > maxX) continue;
-			if (std::min(lastPoint.y, currentPoint.y) < a.y && std::max(lastPoint.y, currentPoint.y) > a.y) {
-				return true;
-			}
-		}
-	}
-	return false;
 }

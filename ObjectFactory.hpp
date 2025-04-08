@@ -6,6 +6,7 @@
 #include "Enemy.h"
 #include "Snake.h"
 #include "Ship.h"
+#include "LineFollower.h"
 
 class ObjectFactory {
 public:
@@ -41,6 +42,11 @@ public:
 			Ship* ship = new Ship();
 			ship->FromJson(json);
 			return ship;
+		}
+		else if (type == "LineFollower") {
+			LineFollower* lineFollower = new LineFollower();
+			lineFollower->FromJson(json);
+			return lineFollower;
 		}
 		
         return nullptr;

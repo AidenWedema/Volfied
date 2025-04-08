@@ -11,6 +11,7 @@ class SnakeSegment
 public:
     SnakeSegment(Object* parent, int index, Vector2 position, std::vector<Vector2>* path, sf::Sprite* sprite) :
         parent(parent), index(index), position(position), path(path), sprite(sprite) {
+		sprite->setOrigin(sprite->getLocalBounds().width / 2, sprite->getLocalBounds().height / 2);
     };
     ~SnakeSegment() {};
 
@@ -60,6 +61,8 @@ public:
 	   length = json["length"];
        position = Vector2(json["position"][0], json["position"][1]);
     }
+
+    bool IsTouching(const Object& other) const override;
 
 private:
     int speed = 4;

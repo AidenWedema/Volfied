@@ -43,29 +43,28 @@ void Snake::Update()
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
 	// Keep the enemy in bounds
-	Vector2 fieldSize = Playfield::GetInstance()->GetSize();
-	if (position.x <= 0) {
-		Vector2 point = Vector2(0, position.y);
+	Vector2 pos = position;
+	if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Left()));
+		Vector2 normal = Vector2::Normalize(pos - position);
+		angle = Vector2::Degrees(Vector2::Reflect(a, normal));
+	}
+	Player* player = Player::GetActivePlayer();
+	std::vector<Vector2>* p = player->GetPath();
+	Vector2 lastPoint = position - Vector2::Rotate(Vector2::Up() * speed, angle);
+	Vector2 point = Vector2();
+	int index;
+	if (Vector2::LineIntersects(lastPoint, position, *p, point, index)) {
+		Vector2 a = Vector2::FromDegrees(angle);
+		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
+		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
 	}
-	if (position.y <= 0) {
-		Vector2 point = Vector2(position.x, 0);
+	p = Playfield::GetInstance()->GetWall();
+	if (Vector2::LineIntersects(lastPoint, position, *p, point, index)) {
 		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Up()));
-		position = point;
-	}
-	if (position.x >= fieldSize.x) {
-		Vector2 point = Vector2(fieldSize.x, position.y);
-		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Right()));
-		position = point;
-	}
-	if (position.y >= fieldSize.y) {
-		Vector2 point = Vector2(position.x, fieldSize.y);
-		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Down()));
+		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
+		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
 	}
 	path.push_back(position);
@@ -85,4 +84,15 @@ void Snake::Draw(sf::RenderTarget& target)
 	for (auto& segment : segments) {
 		segment.Draw(target);
 	}
+}
+
+bool Snake::IsTouching(const Object& other) const {
+	if (Object::IsTouching(other))
+		return true;
+	for (auto& segment : segments) {
+		segment.sprite->setPosition(segment.position.x, segment.position.y);
+		if (segment.sprite->getGlobalBounds().intersects(other.sprite.getGlobalBounds()) || segment.sprite->getGlobalBounds().contains(other.position.x, other.position.y))
+			return true;
+	}
+	return false;
 }

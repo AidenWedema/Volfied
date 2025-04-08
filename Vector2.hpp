@@ -99,6 +99,9 @@ public:
 		return Vector2(x / len, y / len);
 	}
 	
+	/// <summary>
+	/// Returns the normalized vector.
+	/// </summary>
 	static Vector2 Normalize(const Vector2& v) {
 		float len = std::sqrt(v.x * v.x + v.y * v.y);
 		if (len == 0) return Vector2(0, 0);
@@ -172,10 +175,10 @@ public:
 		Vector2 direction = Direction(from, to);
 		Vector2 pos = from + direction * speed;
 		// Check if the new position is closer to the target
-		if (Distance(from, to) < Distance(pos, to)) {
+		if (Distance(from, to) < Distance(from, pos)) {
 			return to; // Return the target position if overshooting
 		}
-		return from + direction * speed;
+		return pos;
 	}
 
 	/// <summary>
@@ -186,7 +189,14 @@ public:
 	}
 
 	/// <summary>
-	/// reflects the vector v against the normal vector.
+	/// The cross product of two vectors.
+	/// </summary>
+	static float Cross(const Vector2& v1, const Vector2& v2) {
+		return v1.x * v2.y - v1.y * v2.x;
+	}
+
+	/// <summary>
+	/// Reflects the vector point against the normal vector at orgin.
 	/// </summary>
 	static Vector2 Reflect(const Vector2& point, const Vector2& origin, const Vector2& normal) {
 		Vector2 dir = point - origin;
@@ -195,6 +205,9 @@ public:
 		return origin + reflectedDir;
 	}
 
+	/// <summary>
+	/// Reflects the vector point against the normal vector.
+	/// </summary>
 	static Vector2 Reflect(const Vector2& point, const Vector2& normal) {
 		Vector2 n = Normalize(normal);
 		return point - n * (2.0f * Dot(point, n));
@@ -215,6 +228,87 @@ public:
 	static Vector2 FromDegrees(const float& angle) {
 		float radians = angle * (M_PI / 180.0f);
 		return Vector2(std::sin(radians), -std::cos(radians));
+	}
+
+	/// <summary>
+	/// Check if the line between p1 and p2 intersects with the line from p3 to p4. Puts the intersecting point in the point reference
+	/// </summary>
+	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const Vector2& p3, const Vector2& p4, Vector2& point) {
+		const float den = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
+
+		if (den == 0)
+			return false;
+
+		const float t = ((p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x)) / den;
+		const float u = -((p1.x - p2.x) * (p1.y - p3.y) - (p1.y - p2.y) * (p1.x - p3.x)) / den;
+
+		if (t > 0 && t < 1 && u > 0 && u < 1)
+		{
+			point.x = p1.x + t * (p2.x - p1.x);
+			point.y = p1.y + t * (p2.y - p1.y);
+			return true;
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Check if the line between p1 and p2 intersects with the line from p3 to p4.
+	/// </summary>
+	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const Vector2& p3, const Vector2& p4) {
+		Vector2 _;
+		return LineIntersects(p1, p2, p3, p4, _);
+	}
+
+	/// <summary>
+	/// Check if the line between p1 and p2 intersects the lineList. Puts the first intersecting point in the point reference 
+	/// </summary>
+	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, Vector2& point) {
+		if (lineList.size() < 2) return false;		
+		for (size_t i = 0; i < lineList.size() - 1; i++) {
+			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1], point))
+				return true;
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Check if the line between p1 and p2 intersects the lineList. Puts the index of the point in lineList where the line intersects in pointIndex
+	/// </summary>
+	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, int& pointIndex) {
+		if (lineList.size() < 2) return false;
+		for (size_t i = 0; i < lineList.size() - 1; i++) {
+			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1])) {
+				pointIndex = i;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Check if the line between p1 and p2 intersects the lineList. Puts the first intersecting point in the point reference and the index of the point in lineList where the line intersects in pointIndex
+	/// </summary>
+	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, Vector2& point, int& pointIndex) {
+		if (lineList.size() < 2) return false;
+		for (size_t i = 0; i < lineList.size() - 1; i++) {
+			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1], point)) {
+				pointIndex = i;
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/// <summary>
+	/// Check if the line between p1 and p2 intersects the lineList.
+	/// </summary>
+	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList) {
+		if (lineList.size() < 2) return false;
+		for (size_t i = 0; i < lineList.size() - 1; i++) {
+			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1]))
+				return true;
+		}
+		return false;
 	}
 
 	std::string toString() {

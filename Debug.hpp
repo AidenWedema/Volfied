@@ -46,7 +46,7 @@ public:
    /// <summary>
    /// Draws a line between two points with the specified color.
    /// </summary>
-   inline static void DrawLine(const Vector2& p1, const Vector2& p2, sf::Color color) {
+   inline static void DrawLine(const Vector2& p1, const Vector2& p2, sf::Color color = sf::Color::White) {
        sf::VertexArray* line = new sf::VertexArray(sf::Lines, 2);
        (*line)[0] = sf::Vertex(sf::Vector2f(p1.x, p1.y), color);
        (*line)[1] = sf::Vertex(sf::Vector2f(p2.x, p2.y), color);
@@ -56,7 +56,7 @@ public:
    /// <summary>
    /// Draws a continuous line from all points in the vector with the specified color.
    /// </summary>
-   inline static void DrawLineList(std::vector<Vector2>* line, sf::Color color) {
+   inline static void DrawLineList(std::vector<Vector2>* line, sf::Color color = sf::Color::White) {
        sf::VertexArray* lineArray = new sf::VertexArray(sf::LineStrip, line->size());
        for (int i = 0; i < line->size(); i++) {
            (*lineArray)[i] = sf::Vertex(sf::Vector2f((*line)[i].x, (*line)[i].y), color);

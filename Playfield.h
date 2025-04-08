@@ -22,14 +22,17 @@ public:
 		return {
 			{"type", "Playfield"},
 			{"name", name},
-			{"position", {position.x, position.y}}
+			{"position", {position.x, position.y}},
+			{"size", {size.x, size.y}}
 		};
 	}
 	void FromJson(const nlohmann::json& json) override {
 		name = json["name"];
 		position = Vector2(json["position"][0], json["position"][1]);
+		size = Vector2(json["size"][0], json["size"][1]);
 	}
 
+	bool IsInBounds(Vector2& point, const sf::FloatRect& rect, bool correct);
 	Vector2 GetNearestPointOnEdge(const Vector2& point);
 
 	void SetSize(const Vector2& newSize) { size = newSize; }
@@ -40,7 +43,7 @@ public:
 			wall.push_back(point);
 		}
 	}
-	std::vector<Vector2> GetWall() const { return wall; }
+	std::vector<Vector2>* GetWall() { return &wall; }
 
 private:
 	Playfield() : Object("Playfield") { Awake(); };

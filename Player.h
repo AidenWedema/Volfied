@@ -38,8 +38,6 @@ public:
 		position = Vector2(json["position"][0], json["position"][1]);
     }
 
-	bool DoesPathOverlap();
-
 	std::vector<Vector2>* GetPath() { return &path; }
 
 private:

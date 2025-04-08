@@ -21,29 +21,11 @@ void Ship::Update()
 	position = position + Vector2::FromDegrees(direction) * speed;
 
 	// Keep the enemy in bounds
+	Vector2 pos = position;
+	if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
+		Vector2 a = Vector2::FromDegrees(direction);
+		Vector2 normal = Vector2::Normalize(pos - position);
+		direction = Vector2::Degrees(Vector2::Reflect(a, normal));
+	}
 	Vector2 fieldSize = Playfield::GetInstance()->GetSize();
-	if (position.x <= 0) {
-		Vector2 point = Vector2(0, position.y);
-		Vector2 a = Vector2::FromDegrees(direction);
-		direction = Vector2::Degrees(Vector2::Reflect(a, Vector2::Left()));
-		position = point;
-	}
-	if (position.y <= 0) {
-		Vector2 point = Vector2(position.x, 0);
-		Vector2 a = Vector2::FromDegrees(direction);
-		direction = Vector2::Degrees(Vector2::Reflect(a, Vector2::Up()));
-		position = point;
-	}
-	if (position.x >= fieldSize.x) {
-		Vector2 point = Vector2(fieldSize.x, position.y);
-		Vector2 a = Vector2::FromDegrees(direction);
-		direction = Vector2::Degrees(Vector2::Reflect(a, Vector2::Right()));
-		position = point;
-	}
-	if (position.y >= fieldSize.y) {
-		Vector2 point = Vector2(position.x, fieldSize.y);
-		Vector2 a = Vector2::FromDegrees(direction);
-		direction = Vector2::Degrees(Vector2::Reflect(a, Vector2::Down()));
-		position = point;
-	}
 }

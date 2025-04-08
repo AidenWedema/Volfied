@@ -8,14 +8,18 @@
                 400,
                 300
             ],
+            "size": [
+                500,
+                400
+            ],
             "type": "Playfield"
         },
         {
             "name": "Player",
             "tag": 0,
             "position": [
-                0,
-                0
+                400,
+                500
             ],
             "type": "Player"
         },

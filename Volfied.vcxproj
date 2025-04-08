@@ -133,6 +133,7 @@
   <ItemGroup>
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="LineFollower.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Playfield.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="Input.hpp" />
+    <ClInclude Include="LineFollower.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.hpp" />
     <ClInclude Include="Player.h" />

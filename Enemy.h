@@ -33,7 +33,7 @@ public:
 		position = Vector2(json["position"][0], json["position"][1]);
 	}
 
-	bool IsTouchingPath();
+	void SpawnLineFollower(Vector2 start, int index, std::vector<Vector2>* path);
 
 private:
 	int speed = 3;

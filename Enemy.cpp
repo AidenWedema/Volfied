@@ -1,5 +1,6 @@
 #include "Enemy.h"
 #include "Game.h"
+#include "Debug.hpp"
 
 void Enemy::Awake()
 {
@@ -29,33 +30,30 @@ void Enemy::Update()
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
 	// Keep the enemy in bounds
-	Vector2 fieldSize = Playfield::GetInstance()->GetSize();
-	if (position.x <= 0) {
-		Vector2 point = Vector2(0, position.y);
+	Vector2 pos = position;
+	if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Left()));
-		position = point;
+		Vector2 normal = Vector2::Normalize(pos - position);
+		angle = Vector2::Degrees(Vector2::Reflect(a, normal));
 	}
-	if (position.y <= 0) {
-		Vector2 point = Vector2(position.x, 0);
+	Player* player = Player::GetActivePlayer();
+	std::vector<Vector2>* p = player->GetPath();
+	Vector2 lastPoint = position - Vector2::Rotate(Vector2::Up() * speed, angle);
+	Vector2 point = Vector2();
+	int index;
+	if (Vector2::LineIntersects(lastPoint, position, *p, point, index)) {
 		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Up()));
+		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
+		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
+		SpawnLineFollower(point, index, player->GetPath());
 	}
-	if (position.x >= fieldSize.x) {
-		Vector2 point = Vector2(fieldSize.x, position.y);
+	p = Playfield::GetInstance()->GetWall();
+	if (Vector2::LineIntersects(lastPoint, position, *p, point, index)) {
 		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Right()));
+		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
+		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
-	}
-	if (position.y >= fieldSize.y) {
-		Vector2 point = Vector2(position.x, fieldSize.y);
-		Vector2 a = Vector2::FromDegrees(angle);
-		angle = Vector2::Degrees(Vector2::Reflect(a, Vector2::Down()));
-		position = point;
-	}
-	if (IsTouchingPath()) {
-		angle += 180;
 	}
 }
 
@@ -66,40 +64,14 @@ void Enemy::Draw(sf::RenderTarget& target)
 	target.draw(sprite);
 }
 
-bool Enemy::IsTouchingPath()
+void Enemy::SpawnLineFollower(Vector2 start, int index, std::vector<Vector2>* path)
 {
-	Player* player = Player::GetActivePlayer();
-	std::vector<Vector2> path = *player->GetPath();
-	path.push_back(player->position);
-
-	for (auto& point : Playfield::GetInstance()->GetWall())
-	{
-		path.push_back(point);
+	LineFollower* lf = dynamic_cast<LineFollower*>(Object::Instantiate("prefabs/LineFollower"));
+	if (lf == nullptr) {
+		Debug::Log("Error instantiating LineFollower");
+		return;
 	}
-
-	if (path.size() < 2) return false;
-
-	Vector2 lastPoint = position + Vector2::Rotate(Vector2::Up() * speed * 5, angle);
-	Vector2 currentPoint = position;
-
-	// Check against all previous segments (excluding the last one)
-	for (size_t i = 0; i < path.size() - 1; i++)
-	{
-		Vector2 a = path[i];
-		Vector2 b = path[i + 1];
-
-		float minX = std::min(a.x, b.x);
-		float minY = std::min(a.y, b.y);
-		float maxX = std::max(a.x, b.x);
-		float maxY = std::max(a.y, b.y);
-		Vector2 minPoint = Vector2(std::min(lastPoint.x, currentPoint.x), std::min(lastPoint.y, currentPoint.y));
-		Vector2 maxPoint = Vector2(std::max(lastPoint.x, currentPoint.x), std::max(lastPoint.y, currentPoint.y));
-		if ((minY > currentPoint.y || currentPoint.y > maxY || minY > lastPoint.y || lastPoint.y > maxY) && a.x == b.x) continue;
-		if ((minX > currentPoint.x || currentPoint.x > maxX || minX > lastPoint.x || lastPoint.x > maxX) && a.y == b.y) continue;
-		if ((minPoint.x <= a.x && maxPoint.x >= a.x) || (minPoint.y <= a.y && maxPoint.y >= a.y))
-		{
-			return true;
-		}
-	}
-	return false;
+	lf->position = start;
+	lf->index = index;
+	lf->path = path;
 }
