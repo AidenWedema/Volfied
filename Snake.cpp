@@ -43,29 +43,29 @@ void Snake::Update()
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
 	// Keep the enemy in bounds
-	Vector2 pos = position;
-	if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
-		Vector2 a = Vector2::FromDegrees(angle);
-		Vector2 normal = Vector2::Normalize(pos - position);
-		angle = Vector2::Degrees(Vector2::Reflect(a, normal));
-	}
 	Player* player = Player::GetActivePlayer();
 	std::vector<Vector2>* p = player->GetPath();
-	Vector2 lastPoint = position - Vector2::Rotate(Vector2::Up() * speed, angle);
+	Vector2 nextPoint = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 	Vector2 point = Vector2();
 	int index;
-	if (Vector2::LineIntersects(lastPoint, position, *p, point, index)) {
+	if (Vector2::LineIntersects(nextPoint, position, *p, point, index, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
 		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
 		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
 	}
 	p = Playfield::GetInstance()->GetWall();
-	if (Vector2::LineIntersects(lastPoint, position, *p, point, index)) {
+	if (Vector2::LineIntersects(nextPoint, position, *p, point, index, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
 		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
 		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
+	}
+	Vector2 pos = position;
+	if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
+		Vector2 a = Vector2::FromDegrees(angle);
+		Vector2 normal = Vector2::Normalize(pos - position);
+		angle = Vector2::Degrees(Vector2::Reflect(a, normal));
 	}
 	path.push_back(position);
 	if (path.size() > length * segmentOffset + 1) {

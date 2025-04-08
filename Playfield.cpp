@@ -38,19 +38,19 @@ bool Playfield::IsInBounds(Vector2& point, const sf::FloatRect& rect, bool corre
 {
 	bool OOB = false;
 	Vector2 extents = GetExtents();
-	if (point.x <= position.x - extents.x) {
+	if (point.x < position.x - extents.x) {
 		if (correct) point.x = position.x - extents.x;
 		OOB = true;
 	}
-	if (point.y <= position.y - extents.y) {
+	if (point.y < position.y - extents.y) {
 		if (correct) point.y = position.y - extents.y;
 		OOB = true;
 	}
-	if (point.x >= position.x + extents.x) {
+	if (point.x > position.x + extents.x) {
 		if (correct) point.x = position.x + extents.x;
 		OOB = true;
 	}
-	if (point.y >= position.y + extents.y) {
+	if (point.y > position.y + extents.y) {
 		if (correct) point.y = position.y + extents.y;
 		OOB = true;
 	}

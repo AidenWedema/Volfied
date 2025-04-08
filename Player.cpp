@@ -53,6 +53,7 @@ void Player::Update()
 			direction = Vector2();
 			path.clear();
 			path.push_back(position);
+			path.push_back(position);
 		}
 	}
 
@@ -60,8 +61,11 @@ void Player::Update()
     if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
 		lastDirection = Vector2();
 		if (path.size() > 1) {
+			path[path.size() - 1] = position;
+			direction = Vector2();
 			Playfield::GetInstance()->AddWall(path);
 			path.clear();
+			path.push_back(position);
 			path.push_back(position);
 		}
     }
