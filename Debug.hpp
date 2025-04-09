@@ -32,7 +32,7 @@ public:
    /// Draws all debug drawings to the screen and displays the window.
    /// Use of this function is highly discuraged.
    /// </summary>
-   inline static void DrawImidiate() {
+   inline static void DrawImmidiate() {
        for (const auto& drawing : drawings) {
            Game::GetInstance()->GetWindow()->draw(*drawing);
        }

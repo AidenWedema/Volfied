@@ -17,10 +17,10 @@ public:
 	float x;
 	float y;
 
-	static Vector2 Left() { return Vector2(-1, 0); }
-	static Vector2 Right() { return Vector2(1, 0); }
-	static Vector2 Down() { return Vector2(0, 1); }
-	static Vector2 Up() { return Vector2(0, -1); }
+	inline static Vector2 Left() { return Vector2(-1, 0); }
+	inline static Vector2 Right() { return Vector2(1, 0); }
+	inline static Vector2 Down() { return Vector2(0, 1); }
+	inline static Vector2 Up() { return Vector2(0, -1); }
 
 	Vector2 operator+(const Vector2& other) const {
 		return Vector2(this->x + other.x, this->y + other.y);
@@ -65,14 +65,14 @@ public:
 	/// <summary>
 	/// Returns the distance between the x and y components of two vectors.
 	/// </summary>
-	Vector2 AxisDistance(const Vector2& other) const {
+	inline Vector2 AxisDistance(const Vector2& other) const {
 		return Vector2(x - other.x, y - other.y);
 	}
 
 	/// <summary>
 	/// Returns the distance between the x and y components of two vectors.
 	/// </summary>
-	static Vector2 AxisDistance(const Vector2& v1, const Vector2& v2) {
+	inline static Vector2 AxisDistance(const Vector2& v1, const Vector2& v2) {
 		return Vector2(v1.x - v2.x, v1.y - v2.y);
 	}
 
@@ -86,14 +86,14 @@ public:
 	/// <summary>
 	/// Returns the distance between two vectors.
 	/// </summary>
-	static float Distance(const Vector2& v1, const Vector2& v2) {
+	inline static float Distance(const Vector2& v1, const Vector2& v2) {
 		return (float)std::sqrt((v1.x - v2.x) * (v1.x - v2.x) + (v1.y - v2.y) * (v1.y - v2.y));
 	}
 
 	/// <summary>
 	/// Returns the normalized vector.
 	/// </summary>
-	Vector2 Normalize() {
+	inline Vector2 Normalize() {
 		float len = std::sqrt(x * x + y * y);
 		if (len == 0) return Vector2(0, 0);
 		return Vector2(x / len, y / len);
@@ -102,7 +102,7 @@ public:
 	/// <summary>
 	/// Returns the normalized vector.
 	/// </summary>
-	static Vector2 Normalize(const Vector2& v) {
+	inline static Vector2 Normalize(const Vector2& v) {
 		float len = std::sqrt(v.x * v.x + v.y * v.y);
 		if (len == 0) return Vector2(0, 0);
 		return Vector2(v.x / len, v.y / len);
@@ -111,7 +111,7 @@ public:
 	/// <summary>
 	/// Returns the vector rotated by the specified degrees in the clockwise direction.
 	/// </summary>
-	Vector2 Rotate(float degrees) {
+	inline Vector2 Rotate(float degrees) {
 		// Convert degrees to radians
 		float radians = (float)(degrees * (M_PI / 180.0f));
 		// Apply rotation formulas
@@ -123,7 +123,7 @@ public:
 	/// <summary>
 	/// Returns the vector rotated by the specified degrees in the clockwise direction.
 	/// </summary>
-	static Vector2 Rotate(const Vector2& v, float degrees) {
+	inline static Vector2 Rotate(const Vector2& v, float degrees) {
 		// Convert degrees to radians
 		float radians = (float)(degrees * (M_PI / 180.0f));
 		// Apply rotation formulas
@@ -135,7 +135,7 @@ public:
 	/// <summary>
 	/// Rotates the vector around the center by the specified degrees in the clockwise direction.
 	/// </summary>
-	Vector2 RotateAround(const Vector2& center, float degrees) const
+	inline Vector2 RotateAround(const Vector2& center, float degrees) const
 	{
 		// Convert degrees to radians
 		float radians = (float)(degrees * (M_PI / 180.0f));
@@ -155,7 +155,7 @@ public:
 	/// <summary>
 	/// Returns the direction from from to to.
 	/// </summary>
-	static Vector2 Direction(const Vector2& from, const Vector2& to) {
+	inline static Vector2 Direction(const Vector2& from, const Vector2& to) {
 		Vector2 direction = to - from;
 		return direction.Normalize();
 	}
@@ -163,7 +163,7 @@ public:
 	/// <summary>
 	/// Returns the vector as an angle in degrees.
 	/// </summary>
-	static float Degrees(const Vector2& v) {
+	inline static float Degrees(const Vector2& v) {
 		Vector2 n = Normalize(v);
 		return 90 + atan2(n.y, n.x) * 180 / M_PI;
 	}
@@ -171,7 +171,7 @@ public:
 	/// <summary>
 	/// Moves from towards to at the specified speed.
 	/// </summary>
-	static Vector2 MoveTowards(const Vector2& from, const Vector2& to, float speed) {
+	inline static Vector2 MoveTowards(const Vector2& from, const Vector2& to, float speed) {
 		Vector2 direction = Direction(from, to);
 		Vector2 pos = from + direction * speed;
 		// Check if the new position is closer to the target
@@ -184,21 +184,21 @@ public:
 	/// <summary>
 	/// The dot product of two vectors.
 	/// </summary>
-	static float Dot(const Vector2& v1, const Vector2& v2) {
+	inline static float Dot(const Vector2& v1, const Vector2& v2) {
 		return v1.x * v2.x + v1.y * v2.y;
 	}
 
 	/// <summary>
 	/// The cross product of two vectors.
 	/// </summary>
-	static float Cross(const Vector2& v1, const Vector2& v2) {
+	inline static float Cross(const Vector2& v1, const Vector2& v2) {
 		return v1.x * v2.y - v1.y * v2.x;
 	}
 
 	/// <summary>
 	/// Reflects the vector point against the normal vector at orgin.
 	/// </summary>
-	static Vector2 Reflect(const Vector2& point, const Vector2& origin, const Vector2& normal) {
+	inline static Vector2 Reflect(const Vector2& point, const Vector2& origin, const Vector2& normal) {
 		Vector2 dir = point - origin;
 		Vector2 n = Normalize(normal);
 		Vector2 reflectedDir = dir - n * (2 * Dot(dir, n));
@@ -208,7 +208,7 @@ public:
 	/// <summary>
 	/// Reflects the vector point against the normal vector.
 	/// </summary>
-	static Vector2 Reflect(const Vector2& point, const Vector2& normal) {
+	inline static Vector2 Reflect(const Vector2& point, const Vector2& normal) {
 		Vector2 n = Normalize(normal);
 		return point - n * (2.0f * Dot(point, n));
 	}
@@ -216,7 +216,7 @@ public:
 	/// <summary>
 	/// Returns the angle between two vectors in degrees.
 	/// </summary>
-	static float Angle(const Vector2& v1, const Vector2& v2) {
+	inline static float Angle(const Vector2& v1, const Vector2& v2) {
 		float dot = Dot(v1, v2);
 		float magnitudeProduct = std::sqrt(Dot(v1, v1) * Dot(v2, v2));
 		return std::acos(dot / magnitudeProduct) * (180.0f / M_PI);
@@ -225,119 +225,9 @@ public:
 	/// <summary>
 	/// Returns a vector from an angle in degrees.
 	/// </summary>
-	static Vector2 FromDegrees(const float& angle) {
+	inline static Vector2 FromDegrees(const float& angle) {
 		float radians = angle * (M_PI / 180.0f);
 		return Vector2(std::sin(radians), -std::cos(radians));
-	}
-
-	/// <summary>
-	/// Check if the line between p1 and p2 intersects with the line from p3 to p4. Puts the intersecting point in the point reference
-	/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the line.
-	/// </summary>
-	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const Vector2& p3, const Vector2& p4, Vector2& point, bool strict = false) {
-		const float den = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
-
-		if (den == 0)
-			return false;
-
-		const float t = ((p1.x - p3.x) * (p3.y - p4.y) - (p1.y - p3.y) * (p3.x - p4.x)) / den;
-		const float u = -((p1.x - p2.x) * (p1.y - p3.y) - (p1.y - p2.y) * (p1.x - p3.x)) / den;
-
-		if (t > 0 && t < 1 && u > 0 && u < 1)
-		{
-			point.x = p1.x + t * (p2.x - p1.x);
-			point.y = p1.y + t * (p2.y - p1.y);
-			return true;
-		}
-		if (strict) {
-			if (IsPointOnLine(p1, p3, p4)) {
-				point = p1;
-				return true;
-			}
-			if (IsPointOnLine(p2, p3, p4)) {
-				point = p2;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/// <summary>
-	/// Check if the line between p1 and p2 intersects with the line from p3 to p4.
-	/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the line.
-	/// </summary>
-	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const Vector2& p3, const Vector2& p4, bool strict = false) {
-		Vector2 _;
-		return LineIntersects(p1, p2, p3, p4, _, strict);
-	}
-
-	/// <summary>
-	/// Check if the line between p1 and p2 intersects the lineList. Puts the first intersecting point in the point reference 
-	/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the lineList.
-	/// </summary>
-	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, Vector2& point, bool strict = false) {
-		if (lineList.size() < 2) return false;		
-		for (size_t i = 0; i < lineList.size() - 1; i++) {
-			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1], point, strict))
-				return true;
-		}
-		return false;
-	}
-
-	/// <summary>
-	/// Check if the line between p1 and p2 intersects the lineList. Puts the index of the point in lineList where the line intersects in pointIndex
-	/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the lineList.
-	/// </summary>
-	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, int& pointIndex, bool strict = false) {
-		if (lineList.size() < 2) return false;
-		for (size_t i = 0; i < lineList.size() - 1; i++) {
-			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1], strict)) {
-				pointIndex = i;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/// <summary>
-	/// Check if the line between p1 and p2 intersects the lineList. Puts the first intersecting point in the point reference and the index of the point in lineList where the line intersects in pointIndex
-	/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the lineList.
-	/// </summary>
-	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, Vector2& point, int& pointIndex, bool strict = false) {
-		if (lineList.size() < 2) return false;
-		for (size_t i = 0; i < lineList.size() - 1; i++) {
-			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1], point, strict)) {
-				pointIndex = i;
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/// <summary>
-	/// Check if the line between p1 and p2 intersects the lineList.
-	/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the lineList.
-	/// </summary>
-	static bool LineIntersects(const Vector2& p1, const Vector2& p2, const std::vector<Vector2>& lineList, bool strict = false) {
-		if (lineList.size() < 2) return false;
-		for (size_t i = 0; i < lineList.size() - 1; i++) {
-			if (LineIntersects(p1, p2, lineList[i], lineList[i + 1], strict))
-				return true;
-		}
-		return false;
-	}
-
-	/// <summary>
-	/// Check if point is on the line between p1 and p2.
-	/// </summary>
-	static bool IsPointOnLine(const Vector2& point, const Vector2& p1, const Vector2& p2) {
-		float cross = (point.y - p1.y) * (p2.x - p1.x) - (point.x - p1.x) * (p2.y - p1.y);
-		if (std::abs(cross) > 0.00001f) return false;
-		float dot = (point.x - p1.x) * (p2.x - p1.x) + (point.y - p1.y) * (p2.y - p1.y);
-		if (dot < 0) return false;
-		float len_sq = Dot(p2, p2);
-		if (dot > len_sq) return false;
-		return true;
 	}
 
 	std::string toString() {

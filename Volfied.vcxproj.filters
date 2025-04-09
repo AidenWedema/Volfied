@@ -98,5 +98,11 @@
     <ClInclude Include="LineFollower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Rect.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Line.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

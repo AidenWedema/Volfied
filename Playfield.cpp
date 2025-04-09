@@ -61,3 +61,19 @@ Vector2 Playfield::GetNearestPointOnEdge(const Vector2& point)
 {
 	return Vector2();
 }
+
+void Playfield::FloodFill(Vector2 start)
+{
+	std::vector<shape::Rect> filled;				// Contains the areas that have been filled, 
+	std::queue<Vector2> queue;
+	queue.push(start);
+	while (!queue.empty())
+	{
+		Vector2 current = queue.front();
+		queue.pop();
+		// Check if the current point is out of bounds
+		// if not in bounds (current)
+		// // mark current as filled
+		// // add N, E, S and W positions of current to the queue
+	}
+}

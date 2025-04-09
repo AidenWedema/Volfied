@@ -1,5 +1,7 @@
 #pragma once
+#include <queue>
 #include "Object.h"
+#include "Rect.hpp"
 
 class Playfield : public Object
 {
@@ -49,4 +51,5 @@ private:
 	Playfield() : Object("Playfield") { Awake(); };
 	Vector2 size;
 	std::vector<Vector2> wall;
+	void FloodFill(Vector2 start);
 };
