@@ -5,6 +5,7 @@
 #include "Input.hpp"
 #include "Time.h"
 #include "RNG.hpp"
+#include "Line.hpp"
 
 class Enemy : public Object
 {

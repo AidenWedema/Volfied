@@ -15,6 +15,18 @@ namespace shape
 		Vector2 end;
 
 		/// <summary>
+		/// Creates a line list from a vector of points.
+		/// </summary>
+		inline static std::vector<Line> CreateLineList(const std::vector<Vector2>& points) {
+			std::vector<Line> lines;
+			if (points.size() < 2) return lines;
+			for (size_t i = 0; i < points.size() - 1; i++) {
+				lines.push_back(Line(points[i], points[i + 1]));
+			}
+			return lines;
+		}
+
+		/// <summary>
 		/// Check if the line between p1 and p2 intersects with the line from p3 to p4. Puts the intersecting point in the point reference
 		/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the line.
 		/// </summary>

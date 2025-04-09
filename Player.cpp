@@ -47,7 +47,7 @@ void Player::Update()
 	if (path.size() > 1)
 	{
 		Vector2 lastPoint = path[path.size() - 2];
-		if (Vector2::LineIntersects(lastPoint, position, path))
+		if (Line::Intersects(Line(lastPoint, position), Line::CreateLineList(path)))
 		{
 			position = path[0];
 			direction = Vector2();

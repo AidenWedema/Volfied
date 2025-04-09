@@ -7,10 +7,6 @@ namespace shape {
 	public:
 		inline Rect() : topLeft(0, 0), bottomRight(0, 0) {}
 		inline Rect(Vector2 topLeft, Vector2 bottomRight) : topLeft(topLeft), bottomRight(bottomRight) {}
-		inline Rect(Vector2 center, Vector2 size) {
-			topLeft = center - size * 0.5f;
-			bottomRight = center + size * 0.5f;
-		}
 
 		Vector2 topLeft;
 		Vector2 bottomRight;

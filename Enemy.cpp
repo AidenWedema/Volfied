@@ -35,7 +35,7 @@ void Enemy::Update()
 	Vector2 nextPoint = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 	Vector2 point = Vector2();
 	int index;
-	if (Vector2::LineIntersects(nextPoint, position, *p, point, index, true)) {
+	if (Line::Intersects(Line(nextPoint, position), Line::CreateLineList(*p), point, index, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
 		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
 		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
@@ -43,7 +43,7 @@ void Enemy::Update()
 		SpawnLineFollower(point, index, player->GetPath());
 	}
 	p = Playfield::GetInstance()->GetWall();
-	if (Vector2::LineIntersects(nextPoint, position, *p, point, index, true)) {
+	if (Line::Intersects(Line(nextPoint, position), Line::CreateLineList(*p), point, index, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
 		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
 		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;

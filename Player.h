@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Input.hpp"
 #include "Playfield.h"
+#include "Line.hpp"
 
 class Player : public Object
 {

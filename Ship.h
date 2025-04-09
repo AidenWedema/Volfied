@@ -2,6 +2,9 @@
 #include "Object.h"
 #include "Playfield.h"
 #include "RNG.hpp"
+#include "Line.hpp"
+
+using shape::Line;
 
 class Ship : public Object
 {

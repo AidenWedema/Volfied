@@ -25,7 +25,7 @@ void Ship::Update()
 	Vector2 nextPoint = position + Vector2::FromDegrees(direction) * speed;
 	Vector2 point = Vector2();
 	int index;
-	if (Vector2::LineIntersects(nextPoint, position, *p, point, index, true)) {
+	if (Line::Intersects(Line(nextPoint, position), Line::CreateLineList(*p), point, index, true)) {
 		Vector2 a = Vector2::FromDegrees(direction);
 		Vector2 normal = Vector2::Normalize(p->at(index + 1) - p->at(index));
 		direction = Vector2::Degrees(Vector2::Reflect(a, normal)) + 180;

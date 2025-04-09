@@ -5,6 +5,9 @@
 #include "Input.hpp"
 #include "Time.h"
 #include "RNG.hpp"
+#include "Line.hpp"
+
+using shape::Line;
 
 class SnakeSegment
 {
