@@ -55,6 +55,20 @@ namespace shape {
 			return closestPoint;
 		}
 
+		/// <summary>
+		/// Returns the closest point on the perimeter of the rectangle to the given point.
+		/// </summary>
+		inline Vector2 ClosestPerimeterPoint(const Vector2& point) {
+			Vector2 closestPoint = ClosestPoint(point);
+			if (Contains(point)) {
+				if (point.x < min.x) closestPoint.x = min.x;
+				if (point.y > min.y) closestPoint.y = min.y;
+				if (point.x > max.x) closestPoint.x = max.x;
+				if (point.y < max.y) closestPoint.y = max.y;
+			}
+			return closestPoint;
+		}
+
 		inline float SurfaceArea() {
 			Vector2 dis = Vector2::AxisDistance(min, max);
 			return dis.x * dis.y;

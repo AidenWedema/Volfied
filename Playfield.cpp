@@ -9,6 +9,9 @@ void Playfield::Awake()
 
 void Playfield::Start()
 {
+	mask = new SpriteMask("assets/sprites/ik.png", false);
+	mask->setPosition(position);
+
 	size = size * 0.5f;
 	std::vector<Vector2> wallPoints = {
 		Vector2(position.x + size.x, position.y + size.y),
@@ -27,13 +30,15 @@ void Playfield::Update()
 
 void Playfield::Draw(sf::RenderTarget& target)
 {
-	for (auto& area : wallArea) {
-		Debug::DrawRect(area, sf::Color(0, 255, 0, 50));
-		//Debug::DrawRect(area, sf::Color(RNG::GetRange(0, 255), RNG::GetRange(0, 255), RNG::GetRange(0, 255), 255));
-	}
+	//for (auto& area : wallArea) {
+	//	Debug::DrawRect(area, sf::Color(0, 255, 0, 50));
+	//	//Debug::DrawRect(area, sf::Color(RNG::GetRange(0, 255), RNG::GetRange(0, 255), RNG::GetRange(0, 255), 255));
+	//}
 	for (auto& area : wallArea) {
 		Debug::DrawWireRect(area);
 	}
+
+	mask->draw(target);
 
 	sf::VertexArray line(sf::LineStrip, wall.size());
 	for (int i = 0; i < wall.size(); i++)
@@ -63,24 +68,46 @@ bool Playfield::IsInBounds(Vector2& point, bool correct = false)
 		if (correct) point.y = position.y + extents.y;
 		OOB = true;
 	}
+	if (!OOB) {
+		for (auto& area : wallArea) {
+			if (area.Contains(point)) {
+				OOB = true;
+				break;
+			}
+		}
+	}
 	return !OOB;
-}
-
-Vector2 Playfield::GetNearestPointOnEdge(const Vector2& point)
-{
-	return Vector2();
 }
 
 void Playfield::AreaFill(std::vector<Vector2> points)
 {
-	if (points.size() <= 2) return;
+	if (points.size() < 2) return;
+	Vector2 extents = GetExtents();
+	if (points.size() == 2) {
+		Vector2 direction = Vector2::Direction(points[0], points[1]);
+		Vector2 rightDirection = Vector2(-direction.y, direction.x); // Add 90 degrees
+		Vector2 sidePoint;
+		if (direction.x == 0 && direction.y != 0)
+			sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, points[1].y);
+		else if (direction.y == 0 && direction.x != 0)
+			sidePoint = Vector2(points[1].x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+		else return;
+		std::vector<Vector2> p = {
+			points[0],
+			points[1],
+			sidePoint
+		};
+		wallArea.push_back(Rect(p));
+		mask->setRects(wallArea);
+		return;
+	}
 	if (points.size() == 3) {
 		Rect newArea = Rect(points);
 		wallArea.push_back(newArea);
+		mask->setRects(wallArea);
 		return;
 	}
 
-	Vector2 extents = GetExtents();
 	std::vector<Line> edge = {
 		Line(Vector2(position.x - extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y - extents.y)),
 		Line(Vector2(position.x + extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y + extents.y)),
@@ -127,9 +154,9 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 				if (!Line::Intersects(line, leftAreas, sidePoint))
 					if (!Line::Intersects(line, edge, sidePoint))
 						if (direction.x == 0 && direction.y != 0)
-							sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-						else if (direction.y == 0 && direction.x != 0)
 							sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+						else if (direction.y == 0 && direction.x != 0)
+							sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
 						else continue;
 			}
 		}
@@ -160,9 +187,9 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	}
 	// Fill in the final area
 	std::vector<Vector2> outPoints = {
-		p1,
 		p2,
-		endPoint,
+		p3,
+		endPoint
 	};
 	std::vector<Vector2> inPoints = {
 		p1,
@@ -188,10 +215,11 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	for (auto& area : leftAreas) {
 		leftAreaTotal += area.SurfaceArea();
 	}
-	if (leftAreaTotal < rightAreaTotal) {
+	if (leftAreaTotal > rightAreaTotal) {
 		wallArea.insert(wallArea.end(), rightAreas.begin(), rightAreas.end());
 	}
 	else {
 		wallArea.insert(wallArea.end(), leftAreas.begin(), leftAreas.end());
 	}
+	mask->setRects(wallArea);
 }

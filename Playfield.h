@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include "Object.h"
 #include "Rect.hpp"
+#include "SpriteMask.h"
 
 using shape::Rect;
 
@@ -38,7 +39,6 @@ public:
 	}
 
 	bool IsInBounds(Vector2& point, bool correct);
-	Vector2 GetNearestPointOnEdge(const Vector2& point);
 	void AreaFill(std::vector<Vector2> points);
 
 	void SetSize(const Vector2& newSize) { size = newSize; }
@@ -56,4 +56,5 @@ private:
 	Vector2 size;
 	std::vector<Vector2> wall;
 	std::vector<Rect> wallArea;
+	SpriteMask* mask;
 };

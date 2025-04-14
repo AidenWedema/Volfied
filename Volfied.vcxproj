@@ -140,6 +140,7 @@
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Snake.cpp" />
+    <ClCompile Include="SpriteMask.cpp" />
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +161,7 @@
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Snake.h" />
+    <ClInclude Include="SpriteMask.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>

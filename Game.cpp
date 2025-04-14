@@ -11,7 +11,7 @@ void Game::Start()
 	//scene->AddObject(player);
 	//scene->SaveToJson();
 
-	SceneManager::GetInstance()->LoadScene("Empty Scene");
+	SceneManager::GetInstance()->LoadScene("Test Scene");
 
 	//RNG::seed = std::chrono::system_clock::now().time_since_epoch().count();
 
