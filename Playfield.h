@@ -1,7 +1,10 @@
 #pragma once
 #include <queue>
+#include <unordered_set>
 #include "Object.h"
 #include "Rect.hpp"
+
+using shape::Rect;
 
 class Playfield : public Object
 {
@@ -34,8 +37,9 @@ public:
 		size = Vector2(json["size"][0], json["size"][1]);
 	}
 
-	bool IsInBounds(Vector2& point, const sf::FloatRect& rect, bool correct);
+	bool IsInBounds(Vector2& point, bool correct);
 	Vector2 GetNearestPointOnEdge(const Vector2& point);
+	void AreaFill(std::vector<Vector2> points);
 
 	void SetSize(const Vector2& newSize) { size = newSize; }
 	Vector2 GetSize() const { return size; }
@@ -51,5 +55,5 @@ private:
 	Playfield() : Object("Playfield") { Awake(); };
 	Vector2 size;
 	std::vector<Vector2> wall;
-	void FloodFill(Vector2 start);
+	std::vector<Rect> wallArea;
 };

@@ -66,14 +66,18 @@ public:
 	/// Returns the distance between the x and y components of two vectors.
 	/// </summary>
 	inline Vector2 AxisDistance(const Vector2& other) const {
-		return Vector2(x - other.x, y - other.y);
+		Vector2 min = Vector2(std::min(x, other.x), std::min(y, other.y));
+		Vector2 max = Vector2(std::max(x, other.x), std::max(y, other.y));
+		return max - min;
 	}
 
 	/// <summary>
 	/// Returns the distance between the x and y components of two vectors.
 	/// </summary>
 	inline static Vector2 AxisDistance(const Vector2& v1, const Vector2& v2) {
-		return Vector2(v1.x - v2.x, v1.y - v2.y);
+		Vector2 min = Vector2(std::min(v1.x, v2.x), std::min(v1.y, v2.y));
+		Vector2 max = Vector2(std::max(v1.x, v2.x), std::max(v1.y, v2.y));
+		return max - min;
 	}
 
 	/// <summary>

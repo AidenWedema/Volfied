@@ -4,6 +4,9 @@
 #include <SFML/Graphics.hpp>
 #include "Game.h"
 #include "Vector2.hpp"
+#include "Line.hpp"
+
+using namespace shape;
 
 class Debug
 {
@@ -33,6 +36,7 @@ public:
    /// Use of this function is highly discuraged.
    /// </summary>
    inline static void DrawImmidiate() {
+       Game::GetInstance()->GetWindow()->clear();
        for (const auto& drawing : drawings) {
            Game::GetInstance()->GetWindow()->draw(*drawing);
        }
@@ -51,6 +55,16 @@ public:
        (*line)[0] = sf::Vertex(sf::Vector2f(p1.x, p1.y), color);
        (*line)[1] = sf::Vertex(sf::Vector2f(p2.x, p2.y), color);
        drawings.push_back(line);
+   }  
+   
+   /// <summary>
+   /// Draws a line between two points with the specified color.
+   /// </summary>
+   inline static void DrawLine(const Line& l, sf::Color color = sf::Color::White) {
+       sf::VertexArray* line = new sf::VertexArray(sf::Lines, 2);
+       (*line)[0] = sf::Vertex(sf::Vector2f(l.start.x, l.start.y), color);
+       (*line)[1] = sf::Vertex(sf::Vector2f(l.end.x, l.end.y), color);
+       drawings.push_back(line);
    }
 
    /// <summary>
@@ -60,6 +74,18 @@ public:
        sf::VertexArray* lineArray = new sf::VertexArray(sf::LineStrip, line->size());
        for (int i = 0; i < line->size(); i++) {
            (*lineArray)[i] = sf::Vertex(sf::Vector2f((*line)[i].x, (*line)[i].y), color);
+       }
+       drawings.push_back(lineArray);
+   }
+
+   /// <summary>
+   /// Draws all lines in line with the specified color.
+   /// </summary>
+   inline static void DrawLineList(std::vector<Line>* line, sf::Color color = sf::Color::White) {
+       sf::VertexArray* lineArray = new sf::VertexArray(sf::Lines, line->size() * 2);
+       for (int i = 0; i < line->size(); i += 2) {
+           (*lineArray)[i] = sf::Vertex(sf::Vector2f((*line)[i].start.x, (*line)[i].start.y), color);
+		   (*lineArray)[i + 1] = sf::Vertex(sf::Vector2f((*line)[i].end.x, (*line)[i].end.y), color);
        }
        drawings.push_back(lineArray);
    }
@@ -84,6 +110,31 @@ public:
 	   textObj->setFillColor(color);
 	   textObj->setCharacterSize(fontSize);
        drawings.push_back(textObj);
+   }
+
+   /// <summary>
+   /// Draws a rectangle with the specified color.
+   /// </summary>
+   inline static void DrawRect(Rect rect, sf::Color color = sf::Color::White) {
+	   sf::VertexArray* line = new sf::VertexArray(sf::Quads, 4);
+	   (*line)[0] = sf::Vertex(sf::Vector2f(rect.min.x, rect.min.y), color);
+	   (*line)[1] = sf::Vertex(sf::Vector2f(rect.max.x, rect.min.y), color);
+	   (*line)[2] = sf::Vertex(sf::Vector2f(rect.max.x, rect.max.y), color);
+	   (*line)[3] = sf::Vertex(sf::Vector2f(rect.min.x, rect.max.y), color);
+	   drawings.push_back(line);
+   }
+
+   /// <summary>
+   /// Draws a rectangle outline with the specified color.
+   /// </summary>
+   inline static void DrawWireRect(Rect rect, sf::Color color = sf::Color::White) {
+	   sf::VertexArray* line = new sf::VertexArray(sf::LineStrip, 5);
+	   (*line)[0] = sf::Vertex(sf::Vector2f(rect.min.x, rect.min.y), color);
+	   (*line)[1] = sf::Vertex(sf::Vector2f(rect.max.x, rect.min.y), color);
+	   (*line)[2] = sf::Vertex(sf::Vector2f(rect.max.x, rect.max.y), color);
+	   (*line)[3] = sf::Vertex(sf::Vector2f(rect.min.x, rect.max.y), color);
+	   (*line)[4] = sf::Vertex(sf::Vector2f(rect.min.x, rect.min.y), color);
+	   drawings.push_back(line);
    }
 
 private:

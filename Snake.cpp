@@ -62,7 +62,7 @@ void Snake::Update()
 		position = point;
 	}
 	Vector2 pos = position;
-	if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
+	if (!Playfield::GetInstance()->IsInBounds(position, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
 		Vector2 normal = Vector2::Normalize(pos - position);
 		angle = Vector2::Degrees(Vector2::Reflect(a, normal));

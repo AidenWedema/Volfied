@@ -5,17 +5,24 @@ namespace shape {
 	class Rect
 	{
 	public:
-		inline Rect() : topLeft(0, 0), bottomRight(0, 0) {}
-		inline Rect(Vector2 topLeft, Vector2 bottomRight) : topLeft(topLeft), bottomRight(bottomRight) {}
+		inline Rect() : min(0, 0), max(0, 0) {}
+		inline Rect(Vector2 min, Vector2 max) : min(min), max(max) {}
+		inline Rect(std::vector<Vector2> points) {
+			if (points.size() < 2) return;
+			min = points[0];
+			max = points[0];
+			for (size_t i = 1; i < points.size(); i++)
+				Eat(points[i]);
+		}
 
-		Vector2 topLeft;
-		Vector2 bottomRight;
+		Vector2 min;
+		Vector2 max;
 
 		/// <summary>
 		/// Does the point lie within the rectangle?
 		/// </summary>
-		inline bool Contains(Vector2 point) {
-			if (point.x >= topLeft.x && point.x <= bottomRight.x && point.y >= topLeft.y && point.y <= bottomRight.y) {
+		inline bool Contains(const Vector2& point) {
+			if (point.x >= min.x && point.x <= max.x && point.y >= min.y && point.y <= max.y) {
 				return true;
 			}
 			return false;
@@ -25,37 +32,63 @@ namespace shape {
 		/// Does the rectangle intersect with another rectangle?
 		/// </summary>
 		inline bool Intersects(const Rect& other) {
-			return !(topLeft.x > other.bottomRight.x || bottomRight.x < other.topLeft.x || topLeft.y < other.bottomRight.y || bottomRight.y > other.topLeft.y);
+			return !(min.x > other.max.x || max.x < other.min.x || min.y < other.max.y || max.y > other.min.y);
 		}
 
 		/// <summary>
 		/// Expands the rectangle to include the point.
 		/// </summary>
-		inline void Eat(Vector2 point) {
-			if (point.x < topLeft.x) topLeft.x = point.x;
-			if (point.y > topLeft.y) topLeft.y = point.y;
-			if (point.x > bottomRight.x) bottomRight.x = point.x;
-			if (point.y < bottomRight.y) bottomRight.y = point.y;
+		inline void Eat(const Vector2& point) {
+			if (point.x < min.x) min.x = point.x;
+			if (point.y > min.y) min.y = point.y;
+			if (point.x > max.x) max.x = point.x;
+			if (point.y < max.y) max.y = point.y;
+		}
+
+		/// <summary>
+		/// Returns the closest point on the rectangle to the given point. If the point is inside the rectangle, it returns the point itself.
+		/// </summary>
+		inline Vector2 ClosestPoint(const Vector2& point) {
+			Vector2 closestPoint;
+			closestPoint.x = std::max(min.x, std::min(point.x, max.x));
+			closestPoint.y = std::max(min.y, std::min(point.y, max.y));
+			return closestPoint;
+		}
+
+		inline float SurfaceArea() {
+			Vector2 dis = Vector2::AxisDistance(min, max);
+			return dis.x * dis.y;
+		}
+
+		inline float Perimeter() {
+			Vector2 dis = Vector2::AxisDistance(min, max);
+			return dis.x * 2 + dis.y * 2;
 		}
 
 		inline Vector2 GetCenter() {
-			return Vector2((topLeft.x + bottomRight.x) * 0.5f, (topLeft.y + bottomRight.y) * 0.5f);
+			return Vector2((min.x + max.x) * 0.5f, (min.y + max.y) * 0.5f);
 		}
 
 		inline Vector2 GetSize() {
-			return Vector2(bottomRight.x - topLeft.x, bottomRight.y - topLeft.y);
+			return Vector2(max.x - min.x, max.y - min.y);
 		}
 
 		inline Vector2 GetExtents() {
 			return GetSize() * 0.5f;
 		}
 
-		inline Vector2 GetTopRight() {
-			return Vector2(bottomRight.x, topLeft.y);
+		/// <summary>
+		/// Shorthand for writing Vector2(rect.max.x, rect.min.y)
+		/// </summary>
+		inline Vector2 GetOtherMin() {
+			return Vector2(max.x, min.y);
 		}
 
-		inline Vector2 GetBottomLeft() {
-			return Vector2(topLeft.x, bottomRight.y);
+		/// <summary>
+		/// Shorthand for writing Vector2(rect.min.x, rect.max.y)
+		/// </summary>
+		inline Vector2 GetOtherMax() {
+			return Vector2(min.x, max.y);
 		}
 	};
 }

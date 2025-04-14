@@ -11,7 +11,7 @@ void Game::Start()
 	//scene->AddObject(player);
 	//scene->SaveToJson();
 
-	SceneManager::GetInstance()->LoadScene("Test Scene");
+	SceneManager::GetInstance()->LoadScene("Empty Scene");
 
 	//RNG::seed = std::chrono::system_clock::now().time_since_epoch().count();
 
@@ -65,6 +65,20 @@ void Game::Run()
 
 		// Poll input
 		Input::GetInstance()->Update();
+
+        // Check for Reset input
+        if (Input::GetInstance()->GetKey("Reset")) // Replace "Reset" with the actual key binding
+        {
+			if (Playfield::instance != nullptr)
+			{
+                delete Playfield::instance;
+                Playfield::instance = nullptr;
+			}
+            std::string currentSceneName = activeScene->name;
+            SceneManager::GetInstance()->LoadScene(currentSceneName);
+            activeScene = SceneManager::GetInstance()->GetActiveScene(); // Update the active scene reference
+            continue; // Skip the rest of the loop to avoid using the old scene
+        }
 		
         // Cycle the RNG
         RNG::GetRand();

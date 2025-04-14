@@ -43,6 +43,7 @@ private:
 		keyMap["Start"] = { sf::Keyboard::Enter };
 		keyMap["Select"] = { sf::Keyboard::LControl };
 		keyMap["Speedup"] = { sf::Keyboard::Tab };
+		keyMap["Reset"] = { sf::Keyboard::BackSpace };
 
 		for (auto& input : keyMap)
 			inputs[input.first] = false;

@@ -1,0 +1,28 @@
+{
+    "name": "Empty Scene",
+    "objects": [
+        {
+            "name": "Playfield",
+            "tag": 0,
+            "position": [
+                400,
+                300
+            ],
+            "size": [
+                500,
+                400
+            ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "tag": 0,
+            "position": [
+                400,
+                500
+            ],
+            "type": "Player"
+        }
+    ],
+    "type": "Scene"
+}

@@ -53,29 +53,31 @@ void Player::Update()
 			direction = Vector2();
 			path.clear();
 			path.push_back(position);
-			path.push_back(position);
+			//path.push_back(position);
 		}
 	}
 
 	// Keep the player in bounds
-    if (Playfield::GetInstance()->IsInBounds(position, sprite.getGlobalBounds(), true)) {
+    if (!Playfield::GetInstance()->IsInBounds(position, true)) {
 		lastDirection = Vector2();
 		if (path.size() > 1) {
 			path[path.size() - 1] = position;
 			direction = Vector2();
 			Playfield::GetInstance()->AddWall(path);
+			Playfield::GetInstance()->AreaFill(path);
 			path.clear();
 			path.push_back(position);
-			path.push_back(position);
+			//path.push_back(position);
 		}
     }
 	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
 		if (enemy->IsTouching(*this) && !path.empty() && Time::GetInstance()->GetFrameCount() > 1) {
 			position = path[0];
 			direction = Vector2();
+			lastDirection = direction;
 			path.clear();
 			path.push_back(position);
-			path.push_back(position);
+			//path.push_back(position);
 			Debug::Log("DED!");
 			break;
 		}
@@ -84,6 +86,11 @@ void Player::Update()
 
 void Player::Draw(sf::RenderTarget& target)
 {
+	std::string p;
+	for (auto pos : path) {
+		p += pos.toString() + "\n";
+	}
+	Debug::DrawText(p, Vector2(300, 10));
 	sprite.setPosition(position.x, position.y);
 	target.draw(sprite);
 
