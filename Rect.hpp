@@ -22,7 +22,8 @@ namespace shape {
 		/// Does the point lie within the rectangle?
 		/// </summary>
 		inline bool Contains(const Vector2& point) {
-			if (point.x >= min.x && point.x <= max.x && point.y >= min.y && point.y <= max.y) {
+
+			if (point.x >= std::min(min.x, max.x) && point.x <= std::max(min.x, max.x) && point.y >= std::min(min.y, max.y) && point.y <= std::max(min.y, max.y)) {
 				return true;
 			}
 			return false;

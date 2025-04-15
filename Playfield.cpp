@@ -5,23 +5,34 @@
 Playfield* Playfield::instance = nullptr;
 void Playfield::Awake()
 {
+	if (!texture.loadFromFile("assets/sprites/mask.png")) {
+		std::cerr << "Error loading player texture\n";
+		return;
+	}
+	sprite.setTexture(texture);
+	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
+	animator = new Animator(false);
+	animator->AddAnimation("bg", "assets/sprites/tiles/Background.png");
+	animator->SetAnimation("bg");
 }
 
 void Playfield::Start()
 {
-	mask = new SpriteMask("assets/sprites/ik.png", false);
+	sprite.setPosition(position.x, position.y);
+	mask = new SpriteMask("assets/sprites/mask.png", false);
 	mask->setPosition(position);
+	animator->position = position;
 
-	size = size * 0.5f;
+	Vector2 extents = GetExtents();
 	std::vector<Vector2> wallPoints = {
-		Vector2(position.x + size.x, position.y + size.y),
-		Vector2(position.x + size.x, position.y - size.y),
-		Vector2(position.x - size.x, position.y - size.y),
-		Vector2(position.x - size.x, position.y + size.y),
-		Vector2(position.x + size.x, position.y + size.y)
+		Vector2(position.x + extents.x, position.y + extents.y),
+		Vector2(position.x + extents.x, position.y - extents.y),
+		Vector2(position.x - extents.x, position.y - extents.y),
+		Vector2(position.x - extents.x, position.y + extents.y),
+		Vector2(position.x + extents.x, position.y + extents.y)
 	};
 	AddWall(wallPoints);
-	size = size * 2;
 }
 
 void Playfield::Update()
@@ -31,13 +42,21 @@ void Playfield::Update()
 void Playfield::Draw(sf::RenderTarget& target)
 {
 	//for (auto& area : wallArea) {
-	//	Debug::DrawRect(area, sf::Color(0, 255, 0, 50));
-	//	//Debug::DrawRect(area, sf::Color(RNG::GetRange(0, 255), RNG::GetRange(0, 255), RNG::GetRange(0, 255), 255));
+	//	Debug::DrawWireRect(area);
 	//}
-	for (auto& area : wallArea) {
-		Debug::DrawWireRect(area);
-	}
 
+	target.draw(sprite);
+	animator->current->Update();
+	sf::Vector2u screenSize = target.getSize();
+	Vector2 size = animator->current->frameSize;
+
+	// Loop through the screen and draw tiles
+	for (int y = 0; y < static_cast<int>(screenSize.y) + 1; y += static_cast<int>(size.y)) {
+		for (int x = 0; x < static_cast<int>(screenSize.x) + 1; x += static_cast<int>(size.x)) {
+			animator->position = Vector2(x, y);
+			animator->Draw(target);
+		}
+	}
 	mask->draw(target);
 
 	sf::VertexArray line(sf::LineStrip, wall.size());
@@ -83,21 +102,36 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 {
 	if (points.size() < 2) return;
 	Vector2 extents = GetExtents();
+	Vector2 bossPos = SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithSubtag(2)[0]->position;
 	if (points.size() == 2) {
 		Vector2 direction = Vector2::Direction(points[0], points[1]);
-		Vector2 rightDirection = Vector2(-direction.y, direction.x); // Add 90 degrees
-		Vector2 sidePoint;
-		if (direction.x == 0 && direction.y != 0)
-			sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, points[1].y);
-		else if (direction.y == 0 && direction.x != 0)
-			sidePoint = Vector2(points[1].x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+		Vector2 leftPoint;
+		Vector2 rightPoint;
+		if (direction.x == 0 && direction.y != 0) {
+			leftPoint = Vector2(position.x - extents.x, points[1].y);
+			rightPoint = Vector2(position.x + extents.x, points[1].y);
+		}
+		else if (direction.y == 0 && direction.x != 0) {
+			leftPoint = Vector2(points[1].x, position.y - extents.y);
+			rightPoint = Vector2(points[1].x, position.y + extents.y);
+		}
 		else return;
-		std::vector<Vector2> p = {
+		std::vector<Vector2> leftPoints = {
 			points[0],
 			points[1],
-			sidePoint
+			leftPoint
 		};
-		wallArea.push_back(Rect(p));
+		std::vector<Vector2> rightPoints = {
+			points[0],
+			points[1],
+			rightPoint
+		};
+		Rect leftArea = Rect(leftPoints);
+		Rect rightArea = Rect(rightPoints);
+		if (leftArea.Contains(bossPos))
+			wallArea.push_back(rightArea);
+		else
+			wallArea.push_back(leftArea);
 		mask->setRects(wallArea);
 		return;
 	}
@@ -119,8 +153,8 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	std::vector<Rect> leftAreas;
 
 	Vector2 p1;
-	Vector2 p2 = points[points.size() - 2];
-	Vector2 p3 = points[points.size() - 1];
+	Vector2 p2;
+	Vector2 p3;
 	Vector2 direction;
 	Vector2 nextDirection;
 	Vector2 rightDirection;
@@ -207,15 +241,15 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		leftAreas.push_back(inArea);
 	}
 
-	float rightAreaTotal = 0;
-	float leftAreaTotal = 0;
-	for (auto& area : rightAreas) {
-		rightAreaTotal += area.SurfaceArea();
-	}
+	bool bossInLeft = false;
 	for (auto& area : leftAreas) {
-		leftAreaTotal += area.SurfaceArea();
+		if (area.Contains(bossPos)) {
+			bossInLeft = true;
+			break;
+		}
 	}
-	if (leftAreaTotal > rightAreaTotal) {
+
+	if (bossInLeft) {
 		wallArea.insert(wallArea.end(), rightAreas.begin(), rightAreas.end());
 	}
 	else {

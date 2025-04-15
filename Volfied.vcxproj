@@ -144,6 +144,7 @@
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Animator.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Game.h" />

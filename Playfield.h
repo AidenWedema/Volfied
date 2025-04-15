@@ -4,6 +4,7 @@
 #include "Object.h"
 #include "Rect.hpp"
 #include "SpriteMask.h"
+#include "Animator.hpp"
 
 using shape::Rect;
 
@@ -57,4 +58,5 @@ private:
 	std::vector<Vector2> wall;
 	std::vector<Rect> wallArea;
 	SpriteMask* mask;
+	Animator* animator;
 };

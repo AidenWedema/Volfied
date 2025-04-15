@@ -110,5 +110,8 @@
     <ClInclude Include="SpriteMask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Animator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

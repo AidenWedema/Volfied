@@ -15,8 +15,9 @@ public:
 	inline virtual ~Object() {};
 
 	std::string name;
-	int tag;
 	bool shouldDie;
+	int tag;
+	std::vector<int> subTags;
 	Vector2 position;
 
 	sf::Texture texture;
@@ -51,6 +52,7 @@ public:
 			{"type", "Object"},
 			{"name", name},
 			{"tag", tag},
+			{"subTags", subTags},
 			{"position", {position.x, position.y}}
 		};
 	}
@@ -58,6 +60,7 @@ public:
 	inline virtual void FromJson(const nlohmann::json& json) {
 		name = json["name"];
 		tag = json["tag"];
+		subTags = json["subTags"].get<std::vector<int>>();
 		position = Vector2(json["position"][0], json["position"][1]);
 	}
 

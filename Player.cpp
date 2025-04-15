@@ -53,7 +53,6 @@ void Player::Update()
 			direction = Vector2();
 			path.clear();
 			path.push_back(position);
-			//path.push_back(position);
 		}
 	}
 
@@ -67,7 +66,6 @@ void Player::Update()
 			Playfield::GetInstance()->AreaFill(path);
 			path.clear();
 			path.push_back(position);
-			//path.push_back(position);
 		}
     }
 	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
@@ -86,11 +84,6 @@ void Player::Update()
 
 void Player::Draw(sf::RenderTarget& target)
 {
-	std::string p;
-	for (auto pos : path) {
-		p += pos.toString() + "\n";
-	}
-	Debug::DrawText(p, Vector2(300, 10));
 	sprite.setPosition(position.x, position.y);
 	target.draw(sprite);
 

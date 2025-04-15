@@ -15,13 +15,13 @@ public:
 
 	std::string name;
 
-    static Scene* CreateSceneFromJson(const nlohmann::json& json) {
+	inline static Scene* CreateSceneFromJson(const nlohmann::json& json) {
 		Scene* scene = new Scene();
 		scene->FromJson(json);
 		return scene;
     }
 
-    void SaveToJson() {
+	inline void SaveToJson() {
         std::filesystem::path cwd = std::filesystem::current_path();
         std::string path = cwd.string() + "/assets/scenes/" + name + ".json";
 
@@ -36,7 +36,7 @@ public:
         }
     }
 
-	void Update() {
+	inline void Update() {
         for (Object* obj : newObjects) {
             obj->Start();
             objects.push_back(obj);
@@ -62,12 +62,12 @@ public:
 			obj->Update();
 	}
 
-    void Draw(sf::RenderTarget& target) {
+	inline void Draw(sf::RenderTarget& target) {
         for (Object* obj : objects)
             obj->Draw(target);
     }
 
-    nlohmann::json ToJson() {
+	inline nlohmann::json ToJson() {
         nlohmann::json json;
         json["type"] = "Scene";
 		json["name"] = name;
@@ -82,7 +82,7 @@ public:
         return json;
     }
 
-    void FromJson(const nlohmann::json& json) {
+	inline void FromJson(const nlohmann::json& json) {
         name = json["name"];
         for (const auto& objJson : json["objects"]) {
             Object* obj = ObjectFactory::CreateFromJson(objJson);
@@ -92,11 +92,11 @@ public:
         }
     }
 
-    void AddObject(Object* object) {
+	inline void AddObject(Object* object) {
         newObjects.push_back(object);
     }
 
-	void RemoveObject(Object* object) {
+	inline void RemoveObject(Object* object) {
 		auto it = std::find(objects.begin(), objects.end(), object);
 		if (it != objects.end()) {
 			objects.erase(it);
@@ -104,7 +104,7 @@ public:
 		}
 	}
 
-	Object* GetObjectByName(std::string name) {
+	inline Object* GetObjectByName(std::string name) {
 		for (Object* obj : objects) {
 			if (obj->name == name) {
 				return obj;
@@ -112,7 +112,7 @@ public:
 		}
 	}
 
-	std::vector<Object*> GetObjectsByName(std::string name) {
+	inline std::vector<Object*> GetObjectsByName(std::string name) {
 		std::vector<Object*> foundObjects;
 		for (Object* obj : objects) {
 			if (obj->name == name) {
@@ -122,15 +122,36 @@ public:
 		return foundObjects;
 	}
 
-    std::vector<Object*> GetObjectsWithTag(int tag) {
-        std::vector<Object*> foundObjects;
+	inline std::vector<Object*> GetObjectsWithTag(int tag, bool inlcudeSubtag = false) {
+		std::vector<Object*> foundObjects;
 		for (Object* obj : objects) {
 			if (obj->tag == tag) {
 				foundObjects.push_back(obj);
 			}
+			else if (inlcudeSubtag) {
+				for (int subTag : obj->subTags) {
+					if (subTag == tag) {
+						foundObjects.push_back(obj);
+						break;
+					}
+				}
+			}
 		}
-        return foundObjects;
-    }
+		return foundObjects;
+	}
+
+	inline std::vector<Object*> GetObjectsWithSubtag(int tag) {
+		std::vector<Object*> foundObjects;
+		for (Object* obj : objects) {
+			for (int subTag : obj->subTags) {
+				if (subTag == tag) {
+					foundObjects.push_back(obj);
+					break;
+				}
+			}
+		}
+		return foundObjects;
+	}
 
 private:
     std::vector<Object*> objects;

@@ -53,6 +53,7 @@ public:
             {"type", "Snake"},
 			{"name", name},
 			{"tag", tag},
+			{"subTags", subTags},
 			{"length", length},
             {"position", {position.x, position.y}}
         };
@@ -61,7 +62,8 @@ public:
     void FromJson(const nlohmann::json& json) override {  
        name = json["name"];
 	   tag = json["tag"];
-	   length = json["length"];
+       subTags = json["subTags"].get<std::vector<int>>();
+       length = json["length"];
        position = Vector2(json["position"][0], json["position"][1]);
     }
 

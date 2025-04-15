@@ -4,6 +4,7 @@
         {
             "name": "Playfield",
             "tag": 0,
+            "subTags": [],
             "position": [
                 400,
                 300
@@ -17,6 +18,7 @@
         {
             "name": "Player",
             "tag": 0,
+            "subTags": [],
             "position": [
                 400,
                 500
@@ -26,6 +28,7 @@
         {
             "name": "Enemy",
             "tag": 1,
+            "subTags": [],
             "position": [
                 400,
                 300
@@ -36,6 +39,7 @@
             "name": "Snake",
             "tag": 1,
             "length": 10,
+            "subTags": [],
             "position": [
                 600,
                 400
@@ -45,6 +49,7 @@
         {
             "name": "Ship",
             "tag": 1,
+            "subTags": [2],
             "position": [
                 200,
                 400
