@@ -79,7 +79,7 @@ namespace shape
 		/// </summary>
 		inline static bool Intersects(const Line& line, const std::vector<Line>& lineList, Vector2& point, bool strict = false) {
 			if (lineList.size() < 2) return false;
-			for (size_t i = 0; i < lineList.size() - 1; i++) {
+			for (size_t i = 0; i < lineList.size(); i++) {
 				if (Intersects(line, lineList[i], point, strict))
 					return true;
 			}
@@ -92,7 +92,7 @@ namespace shape
 		/// </summary>
 		inline static bool Intersects(const Line& line, const std::vector<Line>& lineList, int& pointIndex, bool strict = false) {
 			if (lineList.size() < 2) return false;
-			for (size_t i = 0; i < lineList.size() - 1; i++) {
+			for (size_t i = 0; i < lineList.size(); i++) {
 				if (Intersects(line, lineList[i], strict)) {
 					pointIndex = i;
 					return true;
@@ -107,7 +107,7 @@ namespace shape
 		/// </summary>
 		inline static bool Intersects(const Line& line, const std::vector<Line>& lineList, Vector2& point, int& pointIndex, bool strict = false) {
 			if (lineList.size() < 2) return false;
-			for (size_t i = 0; i < lineList.size() - 1; i++) {
+			for (size_t i = 0; i < lineList.size(); i++) {
 				if (Intersects(line, lineList[i], point, strict)) {
 					pointIndex = i;
 					return true;
@@ -122,7 +122,7 @@ namespace shape
 		/// </summary>
 		inline static bool Intersects(const Line& line, const std::vector<Line>& lineList, bool strict = false) {
 			if (lineList.size() < 2) return false;
-			for (size_t i = 0; i < lineList.size() - 1; i++) {
+			for (size_t i = 0; i < lineList.size(); i++) {
 				if (Intersects(line, lineList[i], strict))
 					return true;
 			}

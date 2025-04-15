@@ -22,8 +22,8 @@ namespace shape {
 		/// Does the point lie within the rectangle?
 		/// </summary>
 		inline bool Contains(const Vector2& point) {
-
-			if (point.x >= std::min(min.x, max.x) && point.x <= std::max(min.x, max.x) && point.y >= std::min(min.y, max.y) && point.y <= std::max(min.y, max.y)) {
+			UpdateMinMax();
+			if (point.x > min.x && point.x < max.x && point.y > min.y && point.y < max.y) {
 				return true;
 			}
 			return false;
@@ -33,6 +33,7 @@ namespace shape {
 		/// Does the rectangle intersect with another rectangle?
 		/// </summary>
 		inline bool Intersects(const Rect& other) {
+			UpdateMinMax();
 			return !(min.x > other.max.x || max.x < other.min.x || min.y < other.max.y || max.y > other.min.y);
 		}
 
@@ -40,16 +41,19 @@ namespace shape {
 		/// Expands the rectangle to include the point.
 		/// </summary>
 		inline void Eat(const Vector2& point) {
+			UpdateMinMax();
 			if (point.x < min.x) min.x = point.x;
-			if (point.y > min.y) min.y = point.y;
+			if (point.y < min.y) min.y = point.y;
 			if (point.x > max.x) max.x = point.x;
-			if (point.y < max.y) max.y = point.y;
+			if (point.y > max.y) max.y = point.y;
+			UpdateMinMax();
 		}
 
 		/// <summary>
 		/// Returns the closest point on the rectangle to the given point. If the point is inside the rectangle, it returns the point itself.
 		/// </summary>
 		inline Vector2 ClosestPoint(const Vector2& point) {
+			UpdateMinMax();
 			Vector2 closestPoint;
 			closestPoint.x = std::max(min.x, std::min(point.x, max.x));
 			closestPoint.y = std::max(min.y, std::min(point.y, max.y));
@@ -63,28 +67,32 @@ namespace shape {
 			Vector2 closestPoint = ClosestPoint(point);
 			if (Contains(point)) {
 				if (point.x < min.x) closestPoint.x = min.x;
-				if (point.y > min.y) closestPoint.y = min.y;
+				if (point.y < min.y) closestPoint.y = min.y;
 				if (point.x > max.x) closestPoint.x = max.x;
-				if (point.y < max.y) closestPoint.y = max.y;
+				if (point.y > max.y) closestPoint.y = max.y;
 			}
 			return closestPoint;
 		}
 
 		inline float SurfaceArea() {
+			UpdateMinMax();
 			Vector2 dis = Vector2::AxisDistance(min, max);
 			return dis.x * dis.y;
 		}
 
 		inline float Perimeter() {
+			UpdateMinMax();
 			Vector2 dis = Vector2::AxisDistance(min, max);
 			return dis.x * 2 + dis.y * 2;
 		}
 
 		inline Vector2 GetCenter() {
+			UpdateMinMax();
 			return Vector2((min.x + max.x) * 0.5f, (min.y + max.y) * 0.5f);
 		}
 
 		inline Vector2 GetSize() {
+			UpdateMinMax();
 			return Vector2(max.x - min.x, max.y - min.y);
 		}
 
@@ -96,6 +104,7 @@ namespace shape {
 		/// Shorthand for writing Vector2(rect.max.x, rect.min.y)
 		/// </summary>
 		inline Vector2 GetOtherMin() {
+			UpdateMinMax();
 			return Vector2(max.x, min.y);
 		}
 
@@ -103,7 +112,15 @@ namespace shape {
 		/// Shorthand for writing Vector2(rect.min.x, rect.max.y)
 		/// </summary>
 		inline Vector2 GetOtherMax() {
+			UpdateMinMax();
 			return Vector2(min.x, max.y);
+		}
+	private:
+		inline void UpdateMinMax() {
+			Vector2 tempMin(min.x, min.y);
+			Vector2 tempMax(max.x, max.y);
+			min = Vector2(std::min(tempMin.x, tempMax.x), std::min(tempMin.y, tempMax.y));
+			max = Vector2(std::max(tempMin.x, tempMax.x), std::max(tempMin.y, tempMax.y));
 		}
 	};
 }

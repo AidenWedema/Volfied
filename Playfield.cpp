@@ -90,6 +90,11 @@ bool Playfield::IsInBounds(Vector2& point, bool correct = false)
 	if (!OOB) {
 		for (auto& area : wallArea) {
 			if (area.Contains(point)) {
+				if (correct) {
+					Vector2 closestPoint = area.ClosestPerimeterPoint(point);
+					point.x = closestPoint.x;
+					point.y = closestPoint.y;
+				}
 				OOB = true;
 				break;
 			}
