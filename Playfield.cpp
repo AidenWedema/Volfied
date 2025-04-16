@@ -44,6 +44,8 @@ void Playfield::Draw(sf::RenderTarget& target)
 	//for (auto& area : wallArea) {
 	//	Debug::DrawWireRect(area);
 	//}
+	Debug::DrawText("Cleared: " + std::to_string(percentCleared * 100), Vector2(300, 10));
+
 
 	target.draw(sprite);
 	animator->current->Update();
@@ -107,6 +109,12 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 {
 	if (points.size() < 2) return;
 	Vector2 extents = GetExtents();
+	std::vector<Line> edge = {
+	Line(Vector2(position.x - extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y - extents.y)),
+	Line(Vector2(position.x + extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y + extents.y)),
+	Line(Vector2(position.x + extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y + extents.y)),
+	Line(Vector2(position.x - extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y - extents.y))
+	};
 	Vector2 bossPos = SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithSubtag(2)[0]->position;
 	if (points.size() == 2) {
 		Vector2 direction = Vector2::Direction(points[0], points[1]);
@@ -137,35 +145,47 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 			wallArea.push_back(rightArea);
 		else
 			wallArea.push_back(leftArea);
-		mask->setRects(wallArea);
-		return;
-	}
-	if (points.size() == 3) {
-		Rect newArea = Rect(points);
-		wallArea.push_back(newArea);
+		Rect fieldRect(position, position);
+		for (auto& line : edge) {
+			fieldRect.Eat(line.start);
+			fieldRect.Eat(line.end);
+		}
+
+		float totalArea = fieldRect.SurfaceArea();
+		float areaCleared = 0;
+		for (auto& area : wallArea) {
+			areaCleared = area.SurfaceArea();
+		}
+		percentCleared = areaCleared / totalArea;
 		mask->setRects(wallArea);
 		return;
 	}
 
-	std::vector<Line> edge = {
-		Line(Vector2(position.x - extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y - extents.y)),
-		Line(Vector2(position.x + extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y + extents.y)),
-		Line(Vector2(position.x + extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y + extents.y)),
-		Line(Vector2(position.x - extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y - extents.y))
-	};
 	std::vector<Line> pointLines = Line::CreateLineList(points);
 	std::vector<Rect> rightAreas;
 	std::vector<Rect> leftAreas;
 
-	Vector2 p1;
-	Vector2 p2;
-	Vector2 p3;
+	Vector2 p1 = points[0];
+	Vector2 p2 = points[1];
+	Vector2 p3 = points[2];
 	Vector2 direction;
 	Vector2 nextDirection;
 	Vector2 rightDirection;
 	Vector2 leftDirection;
 	Vector2 endPoint;
 	Vector2 sidePoint;
+	Line line = Line(p2, p2 + (size * direction));
+	// Get the end point of the line if points ony has 3 points.
+	// This makes the code work when the for loop is skipped.
+	if (points.size() == 3) {
+		if (!Line::Intersects(line, pointLines, endPoint))
+			if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
+				if (!Line::Intersects(line, edge, endPoint, true))
+					if (direction.x == 0 && direction.y != 0)
+						endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+					else if (direction.y == 0 && direction.x != 0)
+						endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+	}
 	for (int i = 0; i < points.size() - 2; i++) {
 		p1 = points[i];
 		p2 = points[i + 1];
@@ -174,7 +194,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		nextDirection = Vector2::Direction(p2, p3);
 		rightDirection = Vector2(-direction.y, direction.x); // Add 90 degrees
 		leftDirection = Vector2(direction.y, -direction.x); // Subtract 90 degrees
-		Line line = Line(p2, p2 + (size * direction));
+		line = Line(p2, p2 + (size * direction));
 
 		// Get the end point of the line
 		if (!Line::Intersects(line, pointLines, endPoint))
@@ -260,5 +280,19 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	else {
 		wallArea.insert(wallArea.end(), leftAreas.begin(), leftAreas.end());
 	}
+
+	Rect fieldRect(position, position);
+	for (auto& line : edge) {
+		fieldRect.Eat(line.start);
+		fieldRect.Eat(line.end);
+	}
+
+	float totalArea = fieldRect.SurfaceArea();
+	float areaCleared = 0;
+	for (auto& area : wallArea) {
+		areaCleared = area.SurfaceArea();
+	}
+	percentCleared = areaCleared / totalArea;
+
 	mask->setRects(wallArea);
 }

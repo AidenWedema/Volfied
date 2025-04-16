@@ -2,11 +2,12 @@
 #include <queue>
 #include <unordered_set>
 #include "Object.h"
-#include "Rect.hpp"
+#include "Line.hpp"
 #include "SpriteMask.h"
 #include "Animator.hpp"
 
 using shape::Rect;
+using shape::Line;
 
 class Playfield : public Object
 {
@@ -59,4 +60,5 @@ private:
 	std::vector<Rect> wallArea;
 	SpriteMask* mask;
 	Animator* animator;
+	float percentCleared = 0.0f;
 };

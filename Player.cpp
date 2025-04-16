@@ -75,7 +75,6 @@ void Player::Update()
 			lastDirection = direction;
 			path.clear();
 			path.push_back(position);
-			//path.push_back(position);
 			Debug::Log("DED!");
 			break;
 		}
