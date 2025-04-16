@@ -61,4 +61,6 @@ private:
 	SpriteMask* mask;
 	Animator* animator;
 	float percentCleared = 0.0f;
+
+	void KillEnemiesInWall();
 };

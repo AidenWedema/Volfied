@@ -3,6 +3,7 @@
 
 void Ship::Awake()
 {
+	score = 25;
 	if (!texture.loadFromFile("assets/sprites/ship.png")) {
 		std::cerr << "Error loading ship texture\n";
 		return;

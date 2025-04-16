@@ -160,6 +160,7 @@
     <ClInclude Include="RNG.hpp" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.hpp" />
+    <ClInclude Include="Score.hpp" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SpriteMask.h" />

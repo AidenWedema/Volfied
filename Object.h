@@ -8,17 +8,18 @@
 class Object
 {
 public:
-	inline Object() : tag(-1), shouldDie(false) {};
-	inline Object(std::string name) : name(name), tag(-1), shouldDie(false) {};
-	inline Object(Vector2 position) : position(position), tag(-1), shouldDie(false) {};
-	inline Object(std::string name, Vector2 position) : name(name), position(position), tag(-1), shouldDie(false) {};
+	inline Object() : score(0), tag(-1), shouldDie(false) {};
+	inline Object(std::string name) : name(name), score(0), tag(-1), shouldDie(false) {};
+	inline Object(Vector2 position) : score(0), position(position), tag(-1), shouldDie(false) {};
+	inline Object(std::string name, Vector2 position) : name(name), score(0), position(position), tag(-1), shouldDie(false) {};
 	inline virtual ~Object() {};
 
 	std::string name;
-	bool shouldDie;
+	int score;
 	int tag;
 	std::vector<int> subTags;
 	Vector2 position;
+	bool shouldDie;
 
 	sf::Texture texture;
 	sf::Sprite sprite;
@@ -68,6 +69,14 @@ public:
 		return sprite.getGlobalBounds().intersects(other.sprite.getGlobalBounds()) || sprite.getGlobalBounds().contains(other.position.x, other.position.y);
 	}
 
+
+	/// <summary>
+	/// Marks the object for destruction. The object is deleted at the start of the next frame.
+	/// </summary>
 	static void Destroy(Object* obj);
+
+	/// <summary>
+	/// Instantiates a prefab object from a JSON file.
+	/// </summary>
 	Object* Instantiate(std::string path);
 };

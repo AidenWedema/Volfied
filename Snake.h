@@ -6,6 +6,7 @@
 #include "Time.h"
 #include "RNG.hpp"
 #include "Line.hpp"
+#include "Score.hpp"
 
 using shape::Line;
 

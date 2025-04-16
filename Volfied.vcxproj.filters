@@ -113,5 +113,8 @@
     <ClInclude Include="Animator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Score.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

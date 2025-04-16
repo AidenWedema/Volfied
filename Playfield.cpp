@@ -44,7 +44,8 @@ void Playfield::Draw(sf::RenderTarget& target)
 	//for (auto& area : wallArea) {
 	//	Debug::DrawWireRect(area);
 	//}
-	Debug::DrawText("Cleared: " + std::to_string(percentCleared * 100), Vector2(300, 10));
+	Debug::DrawText("Cleared: " + std::to_string(percentCleared * 100), Vector2(400, 10));
+	Debug::DrawText("SCORE: " + std::to_string(Score::score * 1000), Vector2(200, 10));
 
 
 	target.draw(sprite);
@@ -154,10 +155,11 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		float totalArea = fieldRect.SurfaceArea();
 		float areaCleared = 0;
 		for (auto& area : wallArea) {
-			areaCleared = area.SurfaceArea();
+			areaCleared += area.SurfaceArea();
 		}
 		percentCleared = areaCleared / totalArea;
 		mask->setRects(wallArea);
+		KillEnemiesInWall();
 		return;
 	}
 
@@ -295,4 +297,18 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	percentCleared = areaCleared / totalArea;
 
 	mask->setRects(wallArea);
+	KillEnemiesInWall();
+}
+
+void Playfield::KillEnemiesInWall()
+{
+	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
+		for (auto& area : wallArea) {
+			if (area.Contains(enemy->position)) {
+				Score::Add(enemy->score);
+				Destroy(enemy);
+				break;
+			}
+		}
+	}
 }

@@ -4,6 +4,7 @@
 
 void Enemy::Awake()
 {
+	score = 20;
 	if (!texture.loadFromFile("assets/sprites/enemy.png")) {
 		std::cerr << "Error loading enemy texture\n";
 		return;

@@ -4,6 +4,7 @@
 
 void Snake::Awake()
 {
+	score = 50;
 	if (!texture.loadFromFile("assets/sprites/snake.png")) {
 		std::cerr << "Error loading snake texture\n";
 		return;
