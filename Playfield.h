@@ -14,8 +14,8 @@ class Playfield : public Object
 public:
 	~Playfield() {};
 
-	static Playfield* instance;
-	static Playfield* GetInstance() {
+	inline static Playfield* instance = nullptr;
+	inline static Playfield* GetInstance() {
 		if (instance == nullptr)
 			instance = new Playfield();
 		return instance;
@@ -43,20 +43,41 @@ public:
 	bool IsInBounds(Vector2& point, bool correct);
 	void AreaFill(std::vector<Vector2> points);
 
-	void SetSize(const Vector2& newSize) { size = newSize; }
-	Vector2 GetSize() const { return size; }
-	Vector2 GetExtents() const { return Vector2(size.x * 0.5f, size.y * 0.5f); }
-	void AddWall(const std::vector<Vector2>& newWall) {
-		for (const auto& point : newWall) {
-			wall.push_back(point);
+	inline void SetSize(const Vector2& newSize) { size = newSize; }
+	inline Vector2 GetSize() const { return size; }
+	inline Vector2 GetExtents() const { return Vector2(size.x * 0.5f, size.y * 0.5f); }
+	inline std::vector<Rect>* GetWallArea() { return &wallArea; }
+	inline Vector2 GetClosestWallPoint(Vector2& pos) {
+		Vector2 closestPoint = Vector2(-100000, -100000);
+		for (auto& area : wallArea) {
+			Vector2 point = area.ClosestPerimeterPoint(pos);
+			if (Vector2::Distance(point, pos) < Vector2::Distance(closestPoint, pos))
+				closestPoint = point;
 		}
+		return closestPoint;
 	}
-	std::vector<Vector2>* GetWall() { return &wall; }
+	inline Vector2 GetClosestEdgePoint(Vector2& pos) {
+		Rect fieldRect(position, position);
+		Vector2 extents = GetExtents();
+		for (auto& point : GetExtentPoints()) {
+			fieldRect.Eat(point);
+		}
+		Vector2 closestPoint = fieldRect.ClosestPerimeterPoint(pos);
+		return closestPoint;
+	}
+	inline std::vector<Vector2> GetExtentPoints() {
+		std::vector<Vector2> points;
+		Vector2 extents = GetExtents();
+		points.push_back(Vector2(position.x - extents.x, position.y - extents.y));
+		points.push_back(Vector2(position.x + extents.x, position.y - extents.y));
+		points.push_back(Vector2(position.x + extents.x, position.y + extents.y));
+		points.push_back(Vector2(position.x - extents.x, position.y + extents.y));
+		return points;
+	}
 
 private:
 	Playfield() : Object("Playfield") { Awake(); };
 	Vector2 size;
-	std::vector<Vector2> wall;
 	std::vector<Rect> wallArea;
 	SpriteMask* mask;
 	Animator* animator;

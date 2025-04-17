@@ -55,13 +55,6 @@ void Snake::Update()
 		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
 		position = point;
 	}
-	p = Playfield::GetInstance()->GetWall();
-	if (Line::Intersects(Line(nextPoint, position), Line::CreateLineList(*p), point, index, true)) {
-		Vector2 a = Vector2::FromDegrees(angle);
-		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
-		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
-		position = point;
-	}
 	Vector2 pos = position;
 	if (!Playfield::GetInstance()->IsInBounds(position, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);

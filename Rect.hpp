@@ -21,10 +21,22 @@ namespace shape {
 		/// <summary>
 		/// Does the point lie within the rectangle?
 		/// </summary>
-		inline bool Contains(const Vector2& point) {
+		inline bool Contains(const Vector2& point, bool strict=false) {
 			UpdateMinMax();
+			if (strict && OnEdge(point)) return true;
 			if (point.x > min.x && point.x < max.x && point.y > min.y && point.y < max.y) {
 				return true;
+			}
+			return false;
+		}
+
+		inline bool OnEdge(const Vector2& point) {
+			UpdateMinMax();
+			if (point.x == min.x || point.x == max.x) {
+				if (point.y >= min.y && point.y <= max.y) return true;
+			}
+			if (point.y == min.y || point.y == max.y) {
+				if (point.x >= min.x && point.x <= max.x) return true;
 			}
 			return false;
 		}
@@ -34,7 +46,7 @@ namespace shape {
 		/// </summary>
 		inline bool Intersects(const Rect& other) {
 			UpdateMinMax();
-			return !(min.x > other.max.x || max.x < other.min.x || min.y < other.max.y || max.y > other.min.y);
+			return !(min.x >= other.max.x || max.x <= other.min.x || min.y <= other.max.y || max.y >= other.min.y);
 		}
 
 		/// <summary>
@@ -65,12 +77,42 @@ namespace shape {
 		/// </summary>
 		inline Vector2 ClosestPerimeterPoint(const Vector2& point) {
 			Vector2 closestPoint = ClosestPoint(point);
-			if (Contains(point)) {
-				if (point.x < min.x) closestPoint.x = min.x;
-				if (point.y < min.y) closestPoint.y = min.y;
-				if (point.x > max.x) closestPoint.x = max.x;
-				if (point.y > max.y) closestPoint.y = max.y;
+			if (Contains(point, true)) {
+				float leftDist = std::abs(point.x - min.x);
+				float rightDist = std::abs(point.x - max.x);
+				float topDist = std::abs(point.y - min.y);
+				float bottomDist = std::abs(point.y - max.y);
+				float minDist = std::min({ leftDist, rightDist, topDist, bottomDist });
+				if (minDist == leftDist)
+					closestPoint.x = min.x;
+				else if (minDist == rightDist)
+					closestPoint.x = max.x;
+				else if (minDist == topDist)
+					closestPoint.y = min.y;
+				else if (minDist == bottomDist)
+					closestPoint.y = max.y;
 			}
+			return closestPoint;
+		}
+
+		/// <summary>
+		/// Returns the closest corner of the rectangle to the given point.
+		/// </summary>
+		inline Vector2 ClosestCorner(const Vector2& point) {
+			Vector2 closestPoint = point;
+			float tlDist = Vector2::Distance(point, Vector2(min.x, min.y));
+			float trDist = Vector2::Distance(point, Vector2(max.x, min.y));
+			float blDist = Vector2::Distance(point, Vector2(min.x, max.y));
+			float brDist = Vector2::Distance(point, Vector2(max.x, max.y));
+			float minDist = std::min({ tlDist, trDist, blDist, brDist });
+			if (minDist == tlDist)
+				closestPoint = Vector2(min.x, min.y);
+			else if (minDist == trDist)
+				closestPoint = Vector2(max.x, min.y);
+			else if (minDist == blDist)
+				closestPoint = Vector2(min.x, max.y);
+			else if (minDist == brDist)
+				closestPoint = Vector2(max.x, max.y);
 			return closestPoint;
 		}
 

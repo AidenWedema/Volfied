@@ -2,7 +2,6 @@
 #include "Game.h"
 #include "Debug.hpp"
 
-Playfield* Playfield::instance = nullptr;
 void Playfield::Awake()
 {
 	if (!texture.loadFromFile("assets/sprites/mask.png")) {
@@ -23,16 +22,6 @@ void Playfield::Start()
 	mask = new SpriteMask("assets/sprites/mask.png", false);
 	mask->setPosition(position);
 	animator->position = position;
-
-	Vector2 extents = GetExtents();
-	std::vector<Vector2> wallPoints = {
-		Vector2(position.x + extents.x, position.y + extents.y),
-		Vector2(position.x + extents.x, position.y - extents.y),
-		Vector2(position.x - extents.x, position.y - extents.y),
-		Vector2(position.x - extents.x, position.y + extents.y),
-		Vector2(position.x + extents.x, position.y + extents.y)
-	};
-	AddWall(wallPoints);
 }
 
 void Playfield::Update()
@@ -41,9 +30,9 @@ void Playfield::Update()
 
 void Playfield::Draw(sf::RenderTarget& target)
 {
-	//for (auto& area : wallArea) {
-	//	Debug::DrawWireRect(area);
-	//}
+	for (auto& area : wallArea) {
+		Debug::DrawWireRect(area);
+	}
 	Debug::DrawText("Cleared: " + std::to_string(percentCleared * 100), Vector2(400, 10));
 	Debug::DrawText("SCORE: " + std::to_string(Score::score * 1000), Vector2(200, 10));
 
@@ -62,10 +51,17 @@ void Playfield::Draw(sf::RenderTarget& target)
 	}
 	mask->draw(target);
 
-	sf::VertexArray line(sf::LineStrip, wall.size());
-	for (int i = 0; i < wall.size(); i++)
+	Vector2 extents = GetExtents();
+	std::vector<Vector2> edge = {
+		Vector2(position.x - extents.x, position.y - extents.y),
+		Vector2(position.x + extents.x, position.y - extents.y),
+		Vector2(position.x + extents.x, position.y + extents.y),
+		Vector2(position.x - extents.x, position.y + extents.y)
+	};
+	sf::VertexArray line(sf::LineStrip, edge.size());
+	for (int i = 0; i < edge.size(); i++)
 	{
-		line[i] = sf::Vertex(sf::Vector2f(wall[i].x, wall[i].y), sf::Color::Red);
+		line[i] = sf::Vertex(sf::Vector2f(edge[i].x, edge[i].y), sf::Color::Red);
 	}
 	target.draw(line);
 }

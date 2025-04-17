@@ -3,7 +3,6 @@
 #include "Object.h"
 #include "Input.hpp"
 #include "Playfield.h"
-#include "Line.hpp"
 
 class Player : public Object
 {
@@ -45,8 +44,12 @@ public:
 
 private:
 	int speed = 3;
+	bool isDigging = false;
 	Vector2 direction;
 	Vector2 lastDirection;
 	std::vector<Vector2> path;
+
+	void Walk();
+	void Dig();
 };
 
