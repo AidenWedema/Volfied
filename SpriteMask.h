@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include "Rect.hpp"
+#include "Rect.h"
 
 using shape::Rect;
 

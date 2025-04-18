@@ -138,24 +138,8 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		};
 		Rect leftArea = Rect(leftPoints);
 		Rect rightArea = Rect(rightPoints);
-		if (leftArea.Contains(bossPos))
-			wallArea.push_back(rightArea);
-		else
-			wallArea.push_back(leftArea);
-		Rect fieldRect(position, position);
-		for (auto& line : edge) {
-			fieldRect.Eat(line.start);
-			fieldRect.Eat(line.end);
-		}
-
-		float totalArea = fieldRect.SurfaceArea();
-		float areaCleared = 0;
-		for (auto& area : wallArea) {
-			areaCleared += area.SurfaceArea();
-		}
-		percentCleared = areaCleared / totalArea;
-		mask->setRects(wallArea);
-		KillEnemiesInWall();
+		if (leftArea.Contains(bossPos)) AddWalls({ rightArea });
+		else AddWalls({ leftArea });
 		return;
 	}
 
@@ -272,27 +256,80 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		}
 	}
 
-	if (bossInLeft) {
-		wallArea.insert(wallArea.end(), rightAreas.begin(), rightAreas.end());
-	}
-	else {
-		wallArea.insert(wallArea.end(), leftAreas.begin(), leftAreas.end());
+	if (bossInLeft) AddWalls(rightAreas);
+	else AddWalls(leftAreas);
+}
+
+void Playfield::AddWalls(std::vector<Rect> newAreas)
+{
+	// Add the new areas to the wall area
+	wallArea.insert(wallArea.end(), newAreas.begin(), newAreas.end());
+
+	std::vector<Rect> removedAreas;
+	// Check for areas completely inside other areas and remove them
+	for (size_t i = 0; i < wallArea.size(); i++) {
+		for (size_t j = 0; j < wallArea.size(); j++) {
+			if (i == j) continue;
+			if (wallArea[i].ContainsAll({ wallArea[j].min, wallArea[j].max, wallArea[j].GetOtherMin(), wallArea[j].GetOtherMax() }, true))
+				removedAreas.push_back(wallArea[j]);
+		}
 	}
 
+	// Remove the areas that are completely inside other areas
+	for (auto& area : removedAreas) {
+		auto it = std::remove(wallArea.begin(), wallArea.end(), area);
+		wallArea.erase(it, wallArea.end());
+	}
+
+	// Check for areas that intersect with other areas and change them to not intersect
+	bool nonIntersect = false;
+	while (!nonIntersect) {
+		nonIntersect = true;
+		std::vector<Rect> newWallArea;
+
+		for (size_t i = 0; i < wallArea.size(); i++) {
+			bool intersected = false;
+			for (size_t j = i; j < wallArea.size(); j++) {
+				if (i == j) continue;
+
+				Rect& a = wallArea[i];
+				Rect& b = wallArea[j];
+
+				if (a.Intersects(b)) {
+					nonIntersect = false;
+					intersected = true;
+
+					// Remove a and replace it with a sliced by b
+					std::vector<Rect> split = a.Slice(b);
+					newWallArea.insert(newWallArea.end(), split.begin(), split.end());
+					break; // break inner loop and move to next rect
+				}
+			}
+
+			if (!intersected) {
+				newWallArea.push_back(wallArea[i]);
+			}
+		}
+
+		wallArea = newWallArea;
+	}
+
+	// Calculate the percent cleared
 	Rect fieldRect(position, position);
-	for (auto& line : edge) {
-		fieldRect.Eat(line.start);
-		fieldRect.Eat(line.end);
+	for (auto& point : GetExtentPoints()) {
+		fieldRect.Eat(point);
 	}
-
 	float totalArea = fieldRect.SurfaceArea();
 	float areaCleared = 0;
 	for (auto& area : wallArea) {
-		areaCleared = area.SurfaceArea();
+		areaCleared += area.SurfaceArea();
 	}
 	percentCleared = areaCleared / totalArea;
 
+	// Update the mask
 	mask->setRects(wallArea);
+
+	// Kill any enemies in the wall
 	KillEnemiesInWall();
 }
 

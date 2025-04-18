@@ -32,7 +32,7 @@ void Player::Update()
 			direction = Vector2();
 			lastDirection = direction;
 			path.clear();
-			path.push_back(position);
+			isDigging = false;
 			Debug::Log("DED!");
 			break;
 		}
@@ -65,10 +65,13 @@ void Player::Walk()
 	Vector2 newPosition = position + direction * speed;
 	Vector2 closestWallPoint = Playfield::GetInstance()->GetClosestWallPoint(newPosition);
 	Vector2 closestEdgePoint = Playfield::GetInstance()->GetClosestEdgePoint(newPosition);
+	Vector2 closestCorner = Vector2(-100000, -100000);
 	bool isCurOnWall = false;
 	bool isNewOnWall = false;
 	bool isCurOnEdge = false;
 	bool isNewOnEdge = false;
+	bool isCurSmushed = false;
+	bool isNewSmushed = false;
 	for (auto& point : Playfield::GetInstance()->GetExtentPoints()) {
 		if (position.x == point.x || position.y == point.y) {
 			isCurOnEdge = true;
@@ -82,44 +85,40 @@ void Player::Walk()
 		}
 	}
 	for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
-		if (area.OnEdge(position)) {
+		if (area.OnEdge(position) && !isCurOnWall) {
 			isCurOnWall = true;
+		} else if (isCurOnWall) {
+			isCurSmushed = true;
 			break;
 		}
 	}
 	for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
-		if (area.OnEdge(newPosition)) {
+		if (area.OnEdge(newPosition) && !isNewOnWall) {
 			isNewOnWall = true;
+		} else if (isNewOnWall) {
+			isNewSmushed = true;
 			break;
 		}
+	}
+	for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
+		Vector2 point = area.ClosestCorner(position);
+		if (Vector2::Distance(point, position) < Vector2::Distance(closestCorner, position))
+			closestCorner = point;
 	}
 
 	// Stay on the edge of the playfield
 	if (isCurOnEdge && isNewOnEdge) {
 		if (!Playfield::GetInstance()->IsInBounds(newPosition, false)) {
 			// Is the player moveing out of the playfield or into a wall?
-			if (isNewOnWall) {
-				Vector2 closestPoint = Vector2 (-100000, -100000);
-				for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
-					Vector2 point = area.ClosestCorner(position);
-					if (Vector2::Distance(point, position) < Vector2::Distance(closestPoint, position))
-						closestPoint = point;
-				}
-				position = closestPoint;
-			}
+			if (isNewOnWall) position = closestCorner;
 			else position = closestEdgePoint;
 		}
 		else if (!isCurOnWall && !isNewOnWall) position = newPosition;
 		else if (!isCurOnWall && isNewOnWall) position = newPosition;
 		else if (isCurOnWall && !isNewOnWall) position = newPosition;
 		else if (isCurOnWall && isNewOnWall) {
-			Vector2 closestPoint = Vector2(-100000, -100000);
-			for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
-				Vector2 point = area.ClosestCorner(position);
-				if (Vector2::Distance(point, position) < Vector2::Distance(closestPoint, position))
-					closestPoint = point;
-			}
-			position = closestPoint;
+			if (lastDirection != direction) position = newPosition;
+			else position = closestCorner;
 		}
 	}
 	// Move off the edge of the playfield
@@ -135,10 +134,16 @@ void Player::Walk()
 	}
 	// Stay on the wall
 	else if (!isCurOnEdge && !isNewOnEdge) {
-		if (!Playfield::GetInstance()->IsInBounds(newPosition, false)) position = position;
-		else if (isCurOnWall && isNewOnWall) position = newPosition;
-		else if (!isCurOnWall && isNewOnWall) position = closestEdgePoint;
-		else if (isCurOnWall && !isNewOnWall) position = position;
+		/*if (!Playfield::GetInstance()->IsInBounds(newPosition, false)) {
+			if (isCurSmushed) position = closestWallPoint;
+			else position = closestEdgePoint;
+		}
+		else */
+		if (isCurOnWall && isNewOnWall) {
+			if (isCurSmushed && isNewSmushed) position = closestCorner;
+			else position = newPosition;
+		}
+		else if (isCurOnWall && !isNewOnWall) position = closestWallPoint;
 	}
 	if (!Input::GetInstance()->GetKey("A")) return;
 	isDigging = true;

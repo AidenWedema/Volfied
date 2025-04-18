@@ -48,6 +48,9 @@
     <ClCompile Include="SpriteMask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Rect.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -101,9 +104,6 @@
     <ClInclude Include="LineFollower.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Rect.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Line.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -114,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Score.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Rect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

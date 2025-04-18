@@ -137,6 +137,7 @@
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Playfield.cpp" />
+    <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Scene.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Snake.cpp" />
@@ -156,7 +157,7 @@
     <ClInclude Include="ObjectFactory.hpp" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Playfield.h" />
-    <ClInclude Include="Rect.hpp" />
+    <ClInclude Include="Rect.h" />
     <ClInclude Include="RNG.hpp" />
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.hpp" />

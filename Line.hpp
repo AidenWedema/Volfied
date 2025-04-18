@@ -1,7 +1,7 @@
 #pragma once
 #include <vector>
 #include "Vector2.hpp"
-#include "Rect.hpp"
+#include "Rect.h"
 
 namespace shape
 {
