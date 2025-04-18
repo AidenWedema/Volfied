@@ -59,8 +59,7 @@ void Player::Walk()
 	else if (Input::GetInstance()->GetKey("Right")) direction = Vector2::Right();
 	else if (Input::GetInstance()->GetKey("Up")) direction = Vector2::Up();
 	else if (Input::GetInstance()->GetKey("Down")) direction = Vector2::Down();
-	else direction = Vector2();
-	if (direction == Vector2()) return;
+	else return;
 
 	Vector2 newPosition = position + direction * speed;
 	Vector2 closestWallPoint = Playfield::GetInstance()->GetClosestWallPoint(newPosition);
@@ -85,20 +84,22 @@ void Player::Walk()
 		}
 	}
 	for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
-		if (area.OnEdge(position) && !isCurOnWall) {
-			isCurOnWall = true;
-		} else if (isCurOnWall) {
-			isCurSmushed = true;
-			break;
-		}
+		if (area.OnEdge(position)) {
+			if (!isCurOnWall) isCurOnWall = true;
+			else if (isCurOnWall) {
+				isCurSmushed = true;
+				break;
+			}
+		} 
 	}
 	for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
-		if (area.OnEdge(newPosition) && !isNewOnWall) {
-			isNewOnWall = true;
-		} else if (isNewOnWall) {
-			isNewSmushed = true;
-			break;
-		}
+		if (area.OnEdge(newPosition)) {
+			if (!isNewOnWall) isNewOnWall = true;
+			else {
+				isNewSmushed = true;
+				break;
+			}
+		} 
 	}
 	for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
 		Vector2 point = area.ClosestCorner(position);
@@ -134,11 +135,6 @@ void Player::Walk()
 	}
 	// Stay on the wall
 	else if (!isCurOnEdge && !isNewOnEdge) {
-		/*if (!Playfield::GetInstance()->IsInBounds(newPosition, false)) {
-			if (isCurSmushed) position = closestWallPoint;
-			else position = closestEdgePoint;
-		}
-		else */
 		if (isCurOnWall && isNewOnWall) {
 			if (isCurSmushed && isNewSmushed) position = closestCorner;
 			else position = newPosition;

@@ -4,6 +4,7 @@
         {
             "name": "Playfield",
             "tag": 0,
+            "subTags": [],
             "position": [
                 400,
                 300
@@ -17,6 +18,7 @@
         {
             "name": "Player",
             "tag": 0,
+            "subTags": [],
             "position": [
                 400,
                 500

@@ -112,7 +112,9 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	Line(Vector2(position.x + extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y + extents.y)),
 	Line(Vector2(position.x - extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y - extents.y))
 	};
-	Vector2 bossPos = SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithSubtag(2)[0]->position;
+	std::vector<Object*> bosses = SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithSubtag(2);
+	Vector2 bossPos = position;
+	if (!bosses.empty()) bossPos = bosses[0]->position;
 	if (points.size() == 2) {
 		Vector2 direction = Vector2::Direction(points[0], points[1]);
 		Vector2 leftPoint;
