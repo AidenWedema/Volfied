@@ -23,7 +23,7 @@ void Snake::Start()
 {
 	for (int i = 0; i < length; i++)
 	{
-		SnakeSegment segment(this, segmentOffset * (i + 1), position, &path, &segmentSprite);
+		SnakeSegment segment(this, segmentOffset * i, position, &path, &segmentSprite);
 		segments.push_back(segment);
 	}
 	for (int i = 0; i < length * segmentOffset; i++)
@@ -72,12 +72,12 @@ void Snake::Update()
 
 void Snake::Draw(sf::RenderTarget& target)
 {
-	sprite.setPosition(position.x, position.y);
-	sprite.setRotation(angle);
-	target.draw(sprite);
 	for (auto& segment : segments) {
 		segment.Draw(target);
 	}
+	sprite.setPosition(position.x, position.y);
+	sprite.setRotation(angle);
+	target.draw(sprite);
 }
 
 bool Snake::IsTouching(const Object& other) const {

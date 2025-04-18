@@ -32,7 +32,7 @@ public:
 
     inline void Draw(sf::RenderTarget& target) {
         sprite->setPosition(position.x, position.y);
-        sprite->setRotation(Vector2::Degrees(Vector2::Direction(position, parent->position)));
+        sprite->setRotation(Vector2::Degrees(Vector2::Direction(position, path->at(index + 1))));
         target.draw(*sprite);
     };
 };
@@ -55,7 +55,8 @@ public:
 			{"name", name},
 			{"tag", tag},
 			{"subTags", subTags},
-			{"length", length},
+            {"length", length},
+            {"segmentOffset", segmentOffset},
             {"position", {position.x, position.y}}
         };
     }
@@ -65,6 +66,7 @@ public:
 	   tag = json["tag"];
        subTags = json["subTags"].get<std::vector<int>>();
        length = json["length"];
+	   segmentOffset = json["segmentOffset"];
        position = Vector2(json["position"][0], json["position"][1]);
     }
 

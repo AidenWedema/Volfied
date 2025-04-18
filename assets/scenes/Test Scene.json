@@ -38,8 +38,9 @@
         {
             "name": "Snake",
             "tag": 1,
-            "length": 10,
             "subTags": [],
+            "length": 4,
+            "segmentOffset": 12,
             "position": [
                 600,
                 400
