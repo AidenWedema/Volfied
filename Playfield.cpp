@@ -115,10 +115,18 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	std::vector<Object*> bosses = SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithSubtag(2);
 	Vector2 bossPos = position;
 	if (!bosses.empty()) bossPos = bosses[0]->position;
+
+	std::vector<Rect> rightAreas;
+	std::vector<Rect> leftAreas;
+
+	// Fill in areas outside of the line
+	Vector2 leftPoint;
+	Vector2 rightPoint;
+	Vector2 endPoint;
+	Vector2 direction;
+
 	if (points.size() == 2) {
-		Vector2 direction = Vector2::Direction(points[0], points[1]);
-		Vector2 leftPoint;
-		Vector2 rightPoint;
+		direction = Vector2::Direction(points[0], points[1]);
 		if (direction.x == 0 && direction.y != 0) {
 			leftPoint = Vector2(position.x - extents.x, points[1].y);
 			rightPoint = Vector2(position.x + extents.x, points[1].y);
@@ -138,25 +146,29 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 			points[1],
 			rightPoint
 		};
-		Rect leftArea = Rect(leftPoints);
-		Rect rightArea = Rect(rightPoints);
-		if (leftArea.Contains(bossPos)) AddWalls({ rightArea });
-		else AddWalls({ leftArea });
+		leftAreas.push_back(Rect(leftPoints));
+		rightAreas.push_back(Rect(rightPoints));
+		bool bossInLeft = false;
+		for (auto& area : leftAreas) {
+			if (area.Contains(bossPos)) {
+				bossInLeft = true;
+				break;
+			}
+		}
+		FillWallGaps(&points, &leftAreas, &rightAreas);
+		if (bossInLeft) AddWalls(rightAreas);
+		else AddWalls(leftAreas);
 		return;
 	}
 
 	std::vector<Line> pointLines = Line::CreateLineList(points);
-	std::vector<Rect> rightAreas;
-	std::vector<Rect> leftAreas;
 
 	Vector2 p1 = points[0];
 	Vector2 p2 = points[1];
 	Vector2 p3 = points[2];
-	Vector2 direction;
 	Vector2 nextDirection;
 	Vector2 rightDirection;
 	Vector2 leftDirection;
-	Vector2 endPoint;
 	Vector2 sidePoint;
 	Line line = Line(p2, p2 + (size * direction));
 	// Get the end point of the line if points ony has 3 points.
@@ -257,9 +269,94 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 			break;
 		}
 	}
-
+	FillWallGaps(&points, &leftAreas, &rightAreas);
 	if (bossInLeft) AddWalls(rightAreas);
 	else AddWalls(leftAreas);
+}
+
+void Playfield::FillWallGaps(std::vector<Vector2>* points, std::vector<Rect>* leftAreas, std::vector<Rect>* rightAreas)
+{
+	Vector2 extents = GetExtents();
+	Vector2 leftPoint;
+	Vector2 rightPoint;
+	Vector2 endPoint;
+	Vector2 direction;
+	Vector2 checkPoint = (*points)[0];
+	bool onEdge = false;
+	// Check if the starting point is on the edge
+	for (auto& point : Playfield::GetInstance()->GetExtentPoints()) {
+		if (checkPoint.x == point.x || checkPoint.y == point.y) {
+			onEdge = true;
+			break;
+		}
+	}
+	if (!onEdge) {
+		direction = Vector2::Direction(checkPoint, (*points)[1]);
+		if (direction.x == 0 && direction.y != 0) {
+			leftPoint = Vector2(position.x - extents.x, checkPoint.y);
+			rightPoint = Vector2(position.x + extents.x, checkPoint.y);
+			if (direction.y > 0) endPoint = Vector2(checkPoint.x, position.y - extents.y);
+			else endPoint = Vector2(checkPoint.x, position.y + extents.y);
+		}
+		else if (direction.y == 0 && direction.x != 0) {
+			leftPoint = Vector2(checkPoint.x, position.y - extents.y);
+			rightPoint = Vector2(checkPoint.x, position.y + extents.y);
+			if (direction.x > 0) endPoint = Vector2(position.x - extents.x, checkPoint.y);
+			else endPoint = Vector2(position.x + extents.x, checkPoint.y);
+		}
+		std::vector<Vector2> leftPoints = {
+			checkPoint,
+			leftPoint,
+			endPoint
+		};
+		std::vector<Vector2> rightPoints = {
+			checkPoint,
+			rightPoint,
+			endPoint
+		};
+		Rect leftArea = Rect(leftPoints);
+		Rect rightArea = Rect(rightPoints);
+		leftAreas->push_back(leftArea);
+		rightAreas->push_back(rightArea);
+	}
+	checkPoint = (*points)[points->size() - 1];
+	onEdge = false;
+	// Check if the ending point is on the edge
+	for (auto& point : Playfield::GetInstance()->GetExtentPoints()) {
+		if (checkPoint.x == point.x || checkPoint.y == point.y) {
+			onEdge = true;
+			break;
+		}
+	}
+	if (!onEdge) {
+		direction = Vector2::Direction(checkPoint, (*points)[points->size() - 2]);
+		if (direction.x == 0 && direction.y != 0) {
+			leftPoint = Vector2(position.x - extents.x, checkPoint.y);
+			rightPoint = Vector2(position.x + extents.x, checkPoint.y);
+			if (direction.y > 0) endPoint = Vector2(checkPoint.x, position.y - extents.y);
+			else endPoint = Vector2(checkPoint.x, position.y + extents.y);
+		}
+		else if (direction.y == 0 && direction.x != 0) {
+			leftPoint = Vector2(checkPoint.x, position.y - extents.y);
+			rightPoint = Vector2(checkPoint.x, position.y + extents.y);
+			if (direction.x > 0) endPoint = Vector2(position.x - extents.x, checkPoint.y);
+			else endPoint = Vector2(position.x + extents.x, checkPoint.y);
+		}
+		std::vector<Vector2> leftPoints = {
+			checkPoint,
+			leftPoint,
+			endPoint
+		};
+		std::vector<Vector2> rightPoints = {
+			checkPoint,
+			rightPoint,
+			endPoint
+		};
+		Rect leftArea = Rect(leftPoints);
+		Rect rightArea = Rect(rightPoints);
+		leftAreas->push_back(leftArea);
+		rightAreas->push_back(rightArea);
+	}
 }
 
 void Playfield::AddWalls(std::vector<Rect> newAreas)
@@ -288,7 +385,6 @@ void Playfield::AddWalls(std::vector<Rect> newAreas)
 	while (!nonIntersect) {
 		nonIntersect = true;
 		std::vector<Rect> newWallArea;
-
 		for (size_t i = 0; i < wallArea.size(); i++) {
 			bool intersected = false;
 			for (size_t j = i; j < wallArea.size(); j++) {
@@ -312,7 +408,6 @@ void Playfield::AddWalls(std::vector<Rect> newAreas)
 				newWallArea.push_back(wallArea[i]);
 			}
 		}
-
 		wallArea = newWallArea;
 	}
 

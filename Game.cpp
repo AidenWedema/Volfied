@@ -5,12 +5,6 @@ void Game::Start()
 {
     window.create(sf::VideoMode({ 800, 600 }), "Volfied", sf::Style::Close);
 
-	//Scene* scene = new Scene();
-	//scene->name = "Test Scene";
-	//Player* player = new Player();
-	//scene->AddObject(player);
-	//scene->SaveToJson();
-
 	SceneManager::GetInstance()->LoadScene("Test Scene");
 
 	//RNG::seed = std::chrono::system_clock::now().time_since_epoch().count();

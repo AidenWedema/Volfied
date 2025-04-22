@@ -83,6 +83,7 @@ private:
 	Animator* animator;
 	float percentCleared = 0.0f;
 
+	void FillWallGaps(std::vector<Vector2>* points, std::vector<Rect>* leftAreas, std::vector<Rect>* rightAreas);
 	void AddWalls(std::vector<Rect> newAreas);
 	void KillEnemiesInWall();
 };

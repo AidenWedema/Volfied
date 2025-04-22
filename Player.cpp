@@ -17,7 +17,6 @@ void Player::Awake()
 
 void Player::Start()
 {
-	path.push_back(position);
 }
 
 void Player::Update()
