@@ -8,6 +8,9 @@
 #include "Ship.h"
 #include "LineFollower.h"
 #include "CutsceneObject.hpp"
+#include "Text.h"
+#include "Selection.h"
+#include "Cursor.h"
 
 class ObjectFactory {
 public:
@@ -54,7 +57,22 @@ public:
 			cutsceneObject->FromJson(json);
 			return cutsceneObject;
 		}
-		
+		else if (type == "Text") {
+			ui::Text* text = new ui::Text();
+			text->FromJson(json);
+			return text;
+		}
+		else if (type == "Selection") {
+			ui::Selection* selection = new ui::Selection();
+			selection->FromJson(json);
+			return selection;
+		}
+		else if (type == "Cursor") {
+			ui::Cursor* cursor = new ui::Cursor();
+			cursor->FromJson(json);
+			return cursor;
+		}
+
         return nullptr;
     }
 };

@@ -459,6 +459,17 @@ void Playfield::EndLevel()
 	clearTimer -= Time::GetInstance()->GetDeltaTime();
 	if (clearTimer <= 0) {
 		SceneManager::GetInstance()->LoadScene("Scoreboard");
+		clipped = true;
+		std::vector<Object*>* no = SceneManager::GetInstance()->GetActiveScene()->GetAllNewObjects();
+		
+		for (Object* obj : *no) {
+			if (obj->name == "scoreText") {
+				ui::Text* scoretext = dynamic_cast<ui::Text*>(obj);
+				scoretext->SetText("Score: " + std::to_string(Score::score * 1000));
+				scoretext->SetOrigin(Vector2(scoretext->text.getLocalBounds().width / 2, scoretext->text.getLocalBounds().height / 2));
+				break;
+			}
+		}
 	}
 
 	if (Time::GetInstance()->GetFrameCount() % 20 == 0 && clearTimer > 2) {

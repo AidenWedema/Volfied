@@ -31,6 +31,9 @@ public:
 		file >> json;
 		file.close();
 
+		if (activeScene != nullptr) {
+			delete activeScene;
+		}
 		activeScene = Scene::CreateSceneFromJson(json);
 	}
 

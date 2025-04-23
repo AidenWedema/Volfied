@@ -6,6 +6,7 @@
 #include "SpriteMask.h"
 #include "Animator.hpp"
 #include "CutsceneObject.hpp"
+#include "Text.h"
 
 using shape::Rect;
 using shape::Line;
@@ -13,7 +14,7 @@ using shape::Line;
 class Playfield : public Object
 {
 public:
-	~Playfield() {};
+	~Playfield() { instance = nullptr; };
 
 	inline static Playfield* instance = nullptr;
 	inline static Playfield* GetInstance() {

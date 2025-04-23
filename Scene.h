@@ -11,7 +11,7 @@ class Scene
 public:
 	Scene() : name("Scene") {};
 	Scene(std::string name) : name(name){};
-	~Scene() {};
+	~Scene() { Destroy(); };
 
 	std::string name;
 
@@ -37,6 +37,8 @@ public:
     }
 
 	inline void Update() {
+		if (stop) return;
+
         for (Object* obj : newObjects) {
             obj->Start();
             objects.push_back(obj);
@@ -58,12 +60,15 @@ public:
 			}
 		}
 
-		for (Object* obj : objects)
-			obj->Update();
+		for (int i = 0; i < objects.size(); i++) {
+			if (stop) break;
+			objects[i]->Update();
+		}
 	}
 
 	inline void Draw(sf::RenderTarget& target) {
-        for (Object* obj : objects)
+		if (stop) return;
+		for (Object* obj : objects)
             obj->Draw(target);
     }
 
@@ -92,10 +97,23 @@ public:
         }
     }
 
+	inline void Destroy() {
+		stop = true;
+		for (int i = 0; i < objects.size(); i++) {
+			delete objects[i];
+		}
+		objects.clear();
+		for (int i = 0; i < newObjects.size(); i++) {
+			delete newObjects[i];
+		}
+		newObjects.clear();
+	}
+
 	inline void AddObject(Object* object) {
         newObjects.push_back(object);
     }
 	inline std::vector<Object*>* GetAllObjects() { return &objects; }
+	inline std::vector<Object*>* GetAllNewObjects() { return &newObjects; }
 
 	inline void RemoveObject(Object* object) {
 		auto it = std::find(objects.begin(), objects.end(), object);
@@ -157,5 +175,6 @@ public:
 private:
     std::vector<Object*> objects;
     std::vector<Object*> newObjects;
+	bool stop;
 };
 

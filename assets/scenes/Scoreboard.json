@@ -1,0 +1,51 @@
+{
+    "name": "Scoreboard",
+    "objects": [
+        {
+            "name": "scoreText",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                400,
+                200
+            ],
+            "text": "",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 24,
+            "color": [ 255, 0, 0, 255 ],
+            "type": "Text"
+        },
+        {
+            "name": "cursor",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                400,
+                100
+            ],
+            "options": [
+                {
+                    "name": "selection",
+                    "tag": -1,
+                    "subTags": [],
+                    "position": [
+                        400,
+                        400
+                    ],
+                    "cursorPosition": [
+                        300,
+                        400
+                    ],
+                    "text": "Next",
+                    "font": "assets/fonts/Emulogic.ttf",
+                    "size": 14,
+                    "color": [ 255, 255, 255, 255 ],
+                    "actions": [0],
+                    "type": "Selection"
+                }
+            ],
+            "type": "Cursor"
+        }
+    ],
+    "type": "Scene"
+}

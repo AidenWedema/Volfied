@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="LineFollower.cpp" />
@@ -139,13 +140,16 @@
     <ClCompile Include="Playfield.cpp" />
     <ClCompile Include="Rect.cpp" />
     <ClCompile Include="Scene.cpp" />
+    <ClCompile Include="Selection.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="SpriteMask.cpp" />
+    <ClCompile Include="Text.cpp" />
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="Cursor.h" />
     <ClInclude Include="CutsceneObject.hpp" />
     <ClInclude Include="Debug.hpp" />
     <ClInclude Include="Enemy.h" />
@@ -163,9 +167,11 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="SceneManager.hpp" />
     <ClInclude Include="Score.hpp" />
+    <ClInclude Include="Selection.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SpriteMask.h" />
+    <ClInclude Include="Text.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>

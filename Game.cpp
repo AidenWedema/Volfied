@@ -38,7 +38,7 @@ void Game::Start()
 
 void Game::Run()
 {
-	Scene* activeScene = SceneManager::GetInstance()->GetActiveScene();
+    SceneManager* sceneManager = SceneManager::GetInstance();
     Time* time = Time::GetInstance();
 
     while (window.isOpen() && running)
@@ -61,16 +61,10 @@ void Game::Run()
 		Input::GetInstance()->Update();
 
         // Check for Reset input
-        if (Input::GetInstance()->GetKey("Reset")) // Replace "Reset" with the actual key binding
+        if (Input::GetInstance()->GetKey("Reset"))
         {
-			if (Playfield::instance != nullptr)
-			{
-                delete Playfield::instance;
-                Playfield::instance = nullptr;
-			}
-            std::string currentSceneName = activeScene->name;
-            SceneManager::GetInstance()->LoadScene(currentSceneName);
-            activeScene = SceneManager::GetInstance()->GetActiveScene(); // Update the active scene reference
+            std::string currentSceneName = sceneManager->GetActiveScene()->name;
+            sceneManager->LoadScene(currentSceneName);
             continue; // Skip the rest of the loop to avoid using the old scene
         }
 		
@@ -78,10 +72,10 @@ void Game::Run()
         RNG::GetRand();
 
         // Update objects
-		activeScene->Update();
+        sceneManager->GetActiveScene()->Update();
 
         // Draw objects
-        activeScene->Draw(window);
+        sceneManager->GetActiveScene()->Draw(window);
 
         // Debug draw
         Debug::Draw();
