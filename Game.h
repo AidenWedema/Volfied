@@ -30,6 +30,8 @@ public:
 
 	inline void SetGameState(GameState state) { gameState = state; }
 	inline GameState GetGameState() const { return gameState; }
+	inline void SetLevel(int newLevel) { level = newLevel; }
+	inline int GetLevel() const { return level; }
 
 	inline sf::RenderWindow* GetWindow() { return &window; }
 
@@ -45,4 +47,5 @@ private:
 	sf::RenderWindow window;
 	GameState gameState = MENU;
 	bool running;
+	int level;
 };

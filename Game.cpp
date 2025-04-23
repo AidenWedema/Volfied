@@ -4,8 +4,8 @@
 void Game::Start()
 {
     window.create(sf::VideoMode({ 800, 600 }), "Volfied", sf::Style::Close);
-
-	SceneManager::GetInstance()->LoadScene("Test Scene");
+    level = 0;
+    SceneManager::GetInstance()->LoadScene("Level-" + std::to_string(level));
 
 	//RNG::seed = std::chrono::system_clock::now().time_since_epoch().count();
 
