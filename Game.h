@@ -28,10 +28,16 @@ public:
 	void Start();
 	void Run();
 
-	void SetGameState(GameState state) { gameState = state; }
-	GameState GetGameState() const { return gameState; }
+	inline void SetGameState(GameState state) { gameState = state; }
+	inline GameState GetGameState() const { return gameState; }
 
-	sf::RenderWindow* GetWindow() { return &window; }
+	inline sf::RenderWindow* GetWindow() { return &window; }
+
+	inline void SetPaused(bool pause) { 
+		for (auto& obj : *SceneManager::GetInstance()->GetActiveScene()->GetAllObjects()) {
+			obj->inactive = pause;
+		}
+	}
 
 private:
 	Game() : running(true) {};

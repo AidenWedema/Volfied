@@ -19,6 +19,8 @@ void Ship::Start()
 
 void Ship::Update()
 {
+	if (inactive) return;
+
 	position = position + Vector2::FromDegrees(direction) * speed;
 
 	// Keep the enemy in bounds

@@ -5,6 +5,7 @@
 #include "Line.hpp"
 #include "SpriteMask.h"
 #include "Animator.hpp"
+#include "CutsceneObject.hpp"
 
 using shape::Rect;
 using shape::Line;
@@ -82,8 +83,10 @@ private:
 	SpriteMask* mask;
 	Animator* animator;
 	float percentCleared = 0.0f;
+	float clearTimer;
 
 	void FillWallGaps(std::vector<Vector2>* points, std::vector<Rect>* leftAreas, std::vector<Rect>* rightAreas);
 	void AddWalls(std::vector<Rect> newAreas);
 	void KillEnemiesInWall();
+	void EndLevel();
 };

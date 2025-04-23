@@ -26,10 +26,15 @@ void Playfield::Start()
 
 void Playfield::Update()
 {
+	if (inactive) return;
+
+	if (clearTimer > 0) EndLevel();
 }
 
 void Playfield::Draw(sf::RenderTarget& target)
 {
+	if (clipped) return;
+
 	for (auto& area : wallArea) {
 		Debug::DrawWireRect(area);
 	}
@@ -428,6 +433,12 @@ void Playfield::AddWalls(std::vector<Rect> newAreas)
 
 	// Kill any enemies in the wall
 	KillEnemiesInWall();
+
+	if (percentCleared >= 0.80f) {
+		clearTimer = 5;
+		Game::GetInstance()->SetPaused(true);
+		inactive = false;
+	}
 }
 
 void Playfield::KillEnemiesInWall()
@@ -440,5 +451,21 @@ void Playfield::KillEnemiesInWall()
 				break;
 			}
 		}
+	}
+}
+
+void Playfield::EndLevel()
+{
+	clearTimer -= Time::GetInstance()->GetDeltaTime();
+	if (clearTimer <= 0) {
+		SceneManager::GetInstance()->LoadScene("Scoreboard");
+	}
+
+	if (Time::GetInstance()->GetFrameCount() % 20 == 0 && clearTimer > 2) {
+		Vector2 extents = GetExtents();
+		CutsceneObject* explosion = dynamic_cast<CutsceneObject*>(Object::Instantiate("prefabs/CutsceneObjects/explosion"));
+		explosion->position = Vector2(RNG::GetRange(position.x - extents.x, position.x + extents.x), RNG::GetRange(position.y - extents.y, position.y + extents.y));
+		explosion->destroyOnEnd = true;
+		explosion->animator.SetAnimation(0);
 	}
 }

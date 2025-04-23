@@ -7,6 +7,7 @@
 #include "Snake.h"
 #include "Ship.h"
 #include "LineFollower.h"
+#include "CutsceneObject.hpp"
 
 class ObjectFactory {
 public:
@@ -47,6 +48,11 @@ public:
 			LineFollower* lineFollower = new LineFollower();
 			lineFollower->FromJson(json);
 			return lineFollower;
+		}
+		else if (type == "CutsceneObject") {
+			CutsceneObject* cutsceneObject = new CutsceneObject();
+			cutsceneObject->FromJson(json);
+			return cutsceneObject;
 		}
 		
         return nullptr;

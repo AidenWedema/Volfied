@@ -95,6 +95,7 @@ public:
 	inline void AddObject(Object* object) {
         newObjects.push_back(object);
     }
+	inline std::vector<Object*>* GetAllObjects() { return &objects; }
 
 	inline void RemoveObject(Object* object) {
 		auto it = std::find(objects.begin(), objects.end(), object);

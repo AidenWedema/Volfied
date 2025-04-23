@@ -21,6 +21,8 @@ void Player::Start()
 
 void Player::Update()
 {
+	if (inactive) return;
+
 	if (direction != Vector2()) lastDirection = direction;
 	if (isDigging) Dig();
 	else Walk();
@@ -40,6 +42,8 @@ void Player::Update()
 
 void Player::Draw(sf::RenderTarget& target)
 {
+	if (clipped) return;
+
 	sprite.setPosition(position.x, position.y);
 	target.draw(sprite);
 

@@ -8,18 +8,20 @@
 class Object
 {
 public:
-	inline Object() : score(0), tag(-1), shouldDie(false) {};
-	inline Object(std::string name) : name(name), score(0), tag(-1), shouldDie(false) {};
-	inline Object(Vector2 position) : score(0), position(position), tag(-1), shouldDie(false) {};
-	inline Object(std::string name, Vector2 position) : name(name), score(0), position(position), tag(-1), shouldDie(false) {};
+	inline Object() : score(0), tag(-1), shouldDie(false) { clipped = false; inactive = false; };
+	inline Object(std::string name) : name(name), score(0), tag(-1), shouldDie(false) { clipped = false; inactive = false; };
+	inline Object(Vector2 position) : score(0), position(position), tag(-1), shouldDie(false) { clipped = false; inactive = false; };
+	inline Object(std::string name, Vector2 position) : name(name), score(0), position(position), tag(-1), shouldDie(false) { clipped = false; inactive = false; };
 	inline virtual ~Object() {};
 
-	std::string name;
-	int score;
-	int tag;
-	std::vector<int> subTags;
-	Vector2 position;
-	bool shouldDie;
+	std::string name;				// The name of the object
+	int score;						// The amount of score the object is worth
+	int tag;						// The main tag of the object
+	std::vector<int> subTags;		// The sub tags of the object
+	Vector2 position;				// The position of the object
+	bool shouldDie;					// If the object should be destroyed
+	bool clipped;					// If the object is clipped it is not being drawn
+	bool inactive;					// If the object is inactive it is not being updated
 
 	sf::Texture texture;
 	sf::Sprite sprite;
@@ -44,6 +46,8 @@ public:
 	/// </summary>
 	/// <param name="target">The sf::RenderTarget to draw on.</param>
 	inline virtual void Draw(sf::RenderTarget& target) {
+		if (clipped) return;
+
 		sprite.setPosition(position.x, position.y);
 		target.draw(sprite);
 	}

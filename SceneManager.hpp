@@ -17,7 +17,7 @@ public:
 		return instance;
 	};
 
-	void LoadScene(std::string name) {
+	inline void LoadScene(std::string name) {
 		//load a json file with the scene data from assets/scenes
 		std::filesystem::path cwd = std::filesystem::current_path();
 		std::string path = cwd.string() + "/assets/scenes/" + name + ".json";
@@ -34,7 +34,7 @@ public:
 		activeScene = Scene::CreateSceneFromJson(json);
 	}
 
-	Scene* GetActiveScene() {
+	inline Scene* GetActiveScene() {
 		if (activeScene == nullptr)
 			activeScene = new Scene();
 		return activeScene;

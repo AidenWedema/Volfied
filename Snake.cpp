@@ -32,6 +32,8 @@ void Snake::Start()
 
 void Snake::Update()
 {
+	if (inactive) return;
+
 	turnAroundTimer -= Time::GetInstance()->GetDeltaTime();
 	if (turnAroundTimer <= 0) {
 		turnAroundTimer = RNG::GetRange(0.5f, 3.0f);
@@ -72,6 +74,8 @@ void Snake::Update()
 
 void Snake::Draw(sf::RenderTarget& target)
 {
+	if (clipped) return;
+
 	for (auto& segment : segments) {
 		segment.Draw(target);
 	}

@@ -1,0 +1,13 @@
+{
+    "name": "explosion",
+    "tag": -1,
+    "subTags": [],
+    "position": [
+        0,
+        0
+    ],
+    "animations": {
+        "explosion": "assets/sprites/explosion.png"
+    },
+    "type": "CutsceneObject"
+}

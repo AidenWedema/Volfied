@@ -7,14 +7,14 @@
 #include "Vector2.hpp"
 #include "Time.hpp"
 
-
 struct Animation {
-	Animation() {};
-	Animation(std::string path) : frameTime(0), frame(0), loopmode(1), useDeltatime(false) {		
+	Animation() : frameTime(0), time(0), frame(-1), loopmode(1), useDeltatime(false), finished(false) {};
+	Animation(std::string path) : frameTime(0), time(0), frame(-1), loopmode(1), useDeltatime(false), finished(false) {
+		this->path = path;
 		std::filesystem::path cwd = std::filesystem::current_path();
 		std::string p = cwd.string() + "/" + path + ".json";
 		std::ifstream file(p);
-		if (!file.is_open()) {
+ 		if (!file.is_open()) {
 			std::cerr << "Could not open file: " << p << std::endl;
 			return;
 		}
@@ -24,13 +24,10 @@ struct Animation {
 		file.close();
 		FromJson(json);
 
-		time = frameTime;
 		if (!sheet.loadFromFile(path)) {
 			std::cerr << "Error loading texture from path: " << path << std::endl;
 			return;
 		}
-		sprite.setTexture(sheet);
-		sprite.setTextureRect(sf::IntRect(0, 0, static_cast<int>(frameSize.x), static_cast<int>(frameSize.y)));
 		sprite.setOrigin(frameSize.x / 2, frameSize.y / 2);
 	}
 
@@ -41,7 +38,18 @@ struct Animation {
 	float time;			// The current time in the animation
 	int frame;			// The current frame of the animation
 	int loopmode;		// The loop mode of the animation, 0 = no loop, 1 = loop, 2 = ping pong, 3 = ping pong reverse
+	std::string path;   // The path to the texture sheet
 	bool useDeltatime;	// Whether to use delta time for animation. if false, playtime and time are in counted in frames, if true, playtime and time are counted in seconds
+	bool finished;		// Whether the animation has finished playing. only used for loopmode 0
+
+	inline nlohmann::json ToJson() const {
+		return {
+			{"frameSize", {frameSize.x, frameSize.y}},
+			{"frameTime", frameTime},
+			{"loopmode", loopmode},
+			{"useDeltatime", useDeltatime}
+		};
+	}
 
 	inline void FromJson(nlohmann::json& json) {
 		frameSize = Vector2(json["frameSize"][0], json["frameSize"][1]);
@@ -59,7 +67,8 @@ struct Animation {
 			frame++;
 			if (frame * frameSize.y >= sheet.getSize().y) {
 				if (loopmode == 0) {
-					frame--;
+					finished = true;
+					return;
 				}
 				else if (loopmode == 1) {
 					frame = 0;
@@ -101,8 +110,19 @@ public:
 		if (animations.find(name) == animations.end())
 			return;
 		current = &animations[name];
-		current->frame = 0;
-		current->time = current->frameTime;
+		current->frame = -1;
+		current->time = 0;
+		sprite = &current->sprite;
+	}
+
+	inline void SetAnimation(int index) {
+		if (index < 0 || index >= animations.size())
+			return;
+		auto it = animations.begin();
+		std::advance(it, index);
+		current = &it->second;
+		current->frame = -1;
+		current->time = 0;
 		sprite = &current->sprite;
 	}
 

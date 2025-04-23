@@ -19,6 +19,8 @@ void Enemy::Start()
 
 void Enemy::Update()
 {
+	if (inactive) return;
+
 	turnAroundTimer -= Time::GetInstance()->GetDeltaTime();
 	if (turnAroundTimer <= 0) {
 		turnAroundTimer = RNG::GetRange(1.0f, 4.0f);
@@ -53,6 +55,8 @@ void Enemy::Update()
 
 void Enemy::Draw(sf::RenderTarget& target)
 {
+	if (clipped) return;
+
 	sprite.setPosition(position.x, position.y);
 	sprite.setRotation(angle);
 	target.draw(sprite);

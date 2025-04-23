@@ -19,6 +19,8 @@ void LineFollower::Start()
 
 void LineFollower::Update()
 {
+	if (inactive) return;
+
 	if (index >= path->size()) {
 		Destroy(this);
 		return;
