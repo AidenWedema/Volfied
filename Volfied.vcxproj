@@ -150,6 +150,7 @@
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="SpriteMask.cpp" />
+    <ClCompile Include="Stinger.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TimeFreeze.cpp" />
     <ClCompile Include="Volfied.cpp" />
@@ -182,6 +183,7 @@
     <ClInclude Include="Ship.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="SpriteMask.h" />
+    <ClInclude Include="Stinger.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="TimeFreeze.h" />

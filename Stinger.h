@@ -1,18 +1,16 @@
 #pragma once
-#include <algorithm>
-#include <random>
 #include "Object.h"
-#include "Time.h"
+#include "Score.hpp"
 #include "RNG.hpp"
 #include "Line.hpp"
-#include "Score.hpp"
 
-class Enemy : public Object
+using namespace shape;
+class Stinger : public Object
 {
 public:
-	Enemy() : Object("Enemy") { Awake(); };
-	Enemy(Vector2 position) : Object("Enemy", position) { Awake(); };
-	~Enemy() {};
+	Stinger() : Object("Stinger") { Awake(); };
+	Stinger(Vector2 position) : Object("Stinger", position) { Awake(); };
+	~Stinger() {};
 
 	void Awake() override;
 	void Start() override;
@@ -21,7 +19,7 @@ public:
 
 	nlohmann::json ToJson() const override {
 		return {
-			{"type", "Enemy"},
+			{"type", "Stinger"},
 			{"name", name},
 			{"tag", tag},
 			{"subTags", subTags},
@@ -35,13 +33,10 @@ public:
 		subTags = json["subTags"].get<std::vector<int>>();
 		position = Vector2(json["position"][0], json["position"][1]);
 	}
-
-	void SpawnLineFollower(Vector2 start, int index, std::vector<Vector2>* path);
-
 private:
-	int speed = 3;
 	int angle = 0;
-	int rotationSpeed = 3;
-	float turnAroundTimer = 0;
+	float speed = 0;
+	float maxSpeed = 3;
+	float acceleration = 0.1f;
+	float maxRotation = 3;
 };
-

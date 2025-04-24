@@ -13,6 +13,7 @@
 #include "Cursor.h"
 #include "Laser.h"
 #include "Box.h"
+#include "Stinger.h"
 
 class ObjectFactory {
 public:
@@ -83,6 +84,11 @@ public:
 			Box* box = new Box();
 			box->FromJson(json);
 			return box;
+		}
+		else if (type == "Stinger") {
+			Stinger* stinger = new Stinger();
+			stinger->FromJson(json);
+			return stinger;
 		}
 
         return nullptr;
