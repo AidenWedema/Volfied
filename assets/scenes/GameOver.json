@@ -1,0 +1,34 @@
+{
+    "name": "Scoreboard",
+    "objects": [
+        {
+            "name": "Text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                200,
+                200
+            ],
+            "text": "Game Over",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 48,
+            "color": [ 255, 0, 0, 255 ],
+            "type": "Text"
+        },
+        {
+            "name": "Text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                270,
+                400
+            ],
+            "text": "Insert coin",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 24,
+            "color": [ 255, 255, 255, 255 ],
+            "type": "Text"
+        }
+    ],
+    "type": "Scene"
+}

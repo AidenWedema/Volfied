@@ -12,6 +12,7 @@ public:
 	Player(Vector2 position) : Object("Player", position) { Awake(); };
 	~Player() {};
 
+	inline static int lives = 5;
 	static Player* activePlayer;
 	static Player* GetActivePlayer() {
 		if (activePlayer == nullptr)
@@ -60,11 +61,12 @@ public:
 
 private:
 	int speed = 3;
-	bool isDigging = false;
+	float respawnTimer;
 	Vector2 direction;
 	Vector2 lastDirection;
 	std::vector<Vector2> path;
 	std::vector<Powerup*> powers;
+	bool isDigging = false;
 
 	void Walk();
 	void Dig();

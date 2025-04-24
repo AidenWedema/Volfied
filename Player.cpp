@@ -23,6 +23,13 @@ void Player::Update()
 {
 	if (inactive) return;
 
+	if (respawnTimer > 0) {
+		respawnTimer -= Time::GetInstance()->GetDeltaTime();
+		if (respawnTimer < 1) clipped = false;
+		if (respawnTimer <= 0) Game::GetInstance()->SetPaused(false);
+		return;
+	}
+
 	if (direction != Vector2()) lastDirection = direction;
 	if (isDigging) Dig();
 	else Walk();
@@ -43,12 +50,28 @@ void Player::Update()
 
 	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
 		if (enemy->IsTouching(*this) && !path.empty() && Time::GetInstance()->GetFrameCount() > 1) {
-			position = path[0];
-			direction = Vector2();
-			lastDirection = direction;
-			path.clear();
-			isDigging = false;
-			Debug::Log("DED!");
+			lives--;
+			clipped = true;
+			CutsceneObject* explosion = dynamic_cast<CutsceneObject*>(Object::Instantiate("prefabs/CutsceneObjects/explosion"));
+			explosion->position = position;
+			explosion->destroyOnEnd = true;
+			explosion->animator.SetAnimation(0);
+			if (lives <= 0) {
+				// Game over
+				Game::GetInstance()->SetGameState(Game::END);
+				SceneManager::GetInstance()->LoadScene("GameOver");
+			}
+			else {
+				// Respawn
+				Game::GetInstance()->SetPaused(true);
+				inactive = false;
+				respawnTimer = 3;
+				position = path[0];
+				direction = Vector2();
+				lastDirection = direction;
+				path.clear();
+				isDigging = false;
+			}
 			break;
 		}
 	}

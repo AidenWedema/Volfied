@@ -49,7 +49,7 @@ public:
 	}
 
 private:
-	SceneManager() { activeScene = nullptr; };
+	SceneManager() { activeScene = nullptr; newScene = nullptr; };
 
 	Scene* activeScene;
 	Scene* newScene;
