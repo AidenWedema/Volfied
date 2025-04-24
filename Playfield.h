@@ -14,7 +14,8 @@ using shape::Line;
 class Playfield : public Object
 {
 public:
-	~Playfield() { instance = nullptr; };
+	Playfield() : Object("Playfield") { Awake(); };
+	~Playfield() {};
 
 	inline static Playfield* instance = nullptr;
 	inline static Playfield* GetInstance() {
@@ -78,7 +79,6 @@ public:
 	}
 
 private:
-	Playfield() : Object("Playfield") { Awake(); };
 	Vector2 size;
 	std::vector<Rect> wallArea;
 	SpriteMask* mask;

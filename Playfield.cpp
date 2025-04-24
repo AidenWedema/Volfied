@@ -14,6 +14,7 @@ void Playfield::Awake()
 	animator = new Animator(false);
 	animator->AddAnimation("bg", "assets/sprites/tiles/Background.png");
 	animator->SetAnimation("bg");
+	instance = this;
 }
 
 void Playfield::Start()

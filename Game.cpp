@@ -57,6 +57,8 @@ void Game::Run()
         auto start = std::chrono::high_resolution_clock::now();
         window.clear();
 
+        sceneManager->SwapSceneIfAvailable();
+
 		// Poll input
 		Input::GetInstance()->Update();
 
@@ -65,17 +67,23 @@ void Game::Run()
         {
             std::string currentSceneName = sceneManager->GetActiveScene()->name;
             sceneManager->LoadScene(currentSceneName);
-            continue; // Skip the rest of the loop to avoid using the old scene
         }
+
+
+
 		
         // Cycle the RNG
         RNG::GetRand();
 
-        // Update objects
-        sceneManager->GetActiveScene()->Update();
+		Scene* activeScene = sceneManager->GetActiveScene();
+        if (activeScene != nullptr)
+        {
+            // Update objects
+            activeScene->Update();
 
-        // Draw objects
-        sceneManager->GetActiveScene()->Draw(window);
+            // Draw objects
+            activeScene->Draw(window);
+        }
 
         // Debug draw
         Debug::Draw();

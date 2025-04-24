@@ -31,20 +31,26 @@ public:
 		file >> json;
 		file.close();
 
-		if (activeScene != nullptr) {
-			delete activeScene;
+		if (newScene != nullptr) {
+			delete newScene;
 		}
-		activeScene = Scene::CreateSceneFromJson(json);
+		newScene = Scene::CreateSceneFromJson(json);
+		return;
 	}
 
-	inline Scene* GetActiveScene() {
-		if (activeScene == nullptr)
-			activeScene = new Scene();
-		return activeScene;
+	inline Scene* GetActiveScene() { return activeScene; }
+
+	inline void SwapSceneIfAvailable() {
+		if (newScene == nullptr || newScene == activeScene) return;
+		delete activeScene;
+		activeScene = nullptr;
+		activeScene = newScene;
+		newScene = nullptr;
 	}
 
 private:
 	SceneManager() { activeScene = nullptr; };
 
 	Scene* activeScene;
+	Scene* newScene;
 };

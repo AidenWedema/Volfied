@@ -25,7 +25,7 @@ public:
             return object;
 		}
 		else if (type == "Playfield") {
-			Playfield* playfield = Playfield::GetInstance();
+			Playfield* playfield = new Playfield();
 			playfield->FromJson(json);
 			return playfield;
 		}

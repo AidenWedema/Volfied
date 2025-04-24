@@ -89,7 +89,7 @@ public:
 
 	inline void FromJson(const nlohmann::json& json) {
         name = json["name"];
-        for (const auto& objJson : json["objects"]) {
+        for (auto& objJson : json["objects"]) {
             Object* obj = ObjectFactory::CreateFromJson(objJson);
             if (obj) {
                 AddObject(obj);
@@ -99,13 +99,13 @@ public:
 
 	inline void Destroy() {
 		stop = true;
-		for (int i = 0; i < objects.size(); i++) {
-			delete objects[i];
+		for (Object* obj : objects) {
+			delete obj;
+		}
+		for (Object* obj : newObjects) {
+			delete obj;
 		}
 		objects.clear();
-		for (int i = 0; i < newObjects.size(); i++) {
-			delete newObjects[i];
-		}
 		newObjects.clear();
 	}
 
