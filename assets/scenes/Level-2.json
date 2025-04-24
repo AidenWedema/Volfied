@@ -1,81 +1,70 @@
 {
-    "name": "Level-0",
+    "name": "Level-2",
     "objects": [
         {
             "name": "Playfield",
             "tag": 0,
             "subTags": [],
-            "position": [
-                400,
-                300
-            ],
-            "size": [
-                500,
-                400
-            ],
+            "position": [ 400, 300 ],
+            "size": [ 500, 400 ],
             "type": "Playfield"
         },
         {
             "name": "Player",
             "tag": 0,
             "subTags": [],
-            "position": [
-                400,
-                500
-            ],
+            "position": [ 400, 500 ],
             "type": "Player"
+        },
+        {
+            "name": "Ship",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 100, 200 ],
+            "type": "Ship"
+        },
+        {
+            "name": "Ship",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 700, 200 ],
+            "type": "Ship"
         },
         {
             "name": "Enemy",
             "tag": 1,
             "subTags": [],
-            "position": [
-                400,
-                300
-            ],
+            "position": [ 300, 300 ],
             "type": "Enemy"
         },
         {
-            "name": "Snake",
+            "name": "Enemy",
             "tag": 1,
             "subTags": [],
-            "length": 4,
-            "segmentOffset": 12,
-            "position": [
-                600,
-                400
-            ],
-            "type": "Snake"
+            "position": [ 500, 300 ],
+            "type": "Enemy"
         },
         {
             "name": "Ship",
             "tag": 1,
             "subTags": [ 2 ],
-            "position": [
-                200,
-                400
-            ],
+            "position": [ 400, 250 ],
             "type": "Ship"
         },
+
         {
             "name": "Box",
             "tag": 0,
             "subTags": [],
-            "position": [
-                200,
-                480
-            ],
-            "powers": [ "", "", "TimeFreeze" ],
+            "position": [ 200, 480 ],
+            "powers": [ "", "", "Gun" ],
             "type": "Box"
         },
         {
             "name": "Box",
             "tag": 0,
             "subTags": [],
-            "position": [
-                500,
-                480
-            ],
+            "position": [ 600, 480 ],
             "powers": [ "", "", "Gun" ],
             "type": "Box"
         }

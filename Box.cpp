@@ -31,15 +31,16 @@ void Box::Update()
 		Vector2(position.x - extents.x, position.y + extents.y)
 	};
 
-	bool inWall = true;
+	bool inWall = false;
 	for (auto& point : points) {
+		inWall = false;
 		for (auto& area : *Playfield::GetInstance()->GetWallArea()) {
 			if (area.Contains(point, true)) {
+				inWall = true;
 				break;
 			}
 		}
-		inWall = false;
-		break;
+		if (!inWall) break;
 	}
 	if (inWall) {
 		Destroy(this);

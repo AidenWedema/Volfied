@@ -1,0 +1,55 @@
+{
+    "name": "Level-1",
+    "objects": [
+        {
+            "name": "Playfield",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "size": [ 500, 400 ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 500 ],
+            "type": "Player"
+        },
+        {
+            "name": "Snake",
+            "tag": 1,
+            "subTags": [],
+            "length": 5,
+            "segmentOffset": 14,
+            "position": [ 200, 250 ],
+            "type": "Snake"
+        },
+        {
+            "name": "Snake",
+            "tag": 1,
+            "subTags": [],
+            "length": 4,
+            "segmentOffset": 12,
+            "position": [ 600, 250 ],
+            "type": "Snake"
+        },
+        {
+            "name": "Enemy",
+            "tag": 1,
+            "subTags": [ 2 ],
+            "position": [ 400, 250 ],
+            "type": "Enemy"
+        },
+
+        {
+            "name": "Box",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 480 ],
+            "powers": [ "", "", "TimeFreeze" ],
+            "type": "Box"
+        }
+    ],
+    "type": "Scene"
+}
