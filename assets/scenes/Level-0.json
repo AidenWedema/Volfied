@@ -1,5 +1,5 @@
 {
-    "name": "Test Scene",
+    "name": "Level-0",
     "objects": [
         {
             "name": "Playfield",
@@ -50,12 +50,34 @@
         {
             "name": "Ship",
             "tag": 1,
-            "subTags": [2],
+            "subTags": [ 2 ],
             "position": [
                 200,
                 400
             ],
             "type": "Ship"
+        },
+        {
+            "name": "Box",
+            "tag": 0,
+            "subTags": [],
+            "position": [
+                200,
+                480
+            ],
+            "powers": [ "TimeFreeze" ],
+            "type": "Box"
+        },
+        {
+            "name": "Box",
+            "tag": 0,
+            "subTags": [],
+            "position": [
+                500,
+                480
+            ],
+            "powers": [ "Gun" ],
+            "type": "Box"
         }
     ],
     "type": "Scene"

@@ -82,5 +82,5 @@ public:
 	/// <summary>
 	/// Instantiates a prefab object from a JSON file.
 	/// </summary>
-	Object* Instantiate(std::string path);
+	static Object* Instantiate(std::string path);
 };

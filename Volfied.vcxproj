@@ -131,9 +131,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Box.cpp" />
     <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="Laser.cpp" />
     <ClCompile Include="LineFollower.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
@@ -145,10 +147,12 @@
     <ClCompile Include="Snake.cpp" />
     <ClCompile Include="SpriteMask.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TimeFreeze.cpp" />
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="Box.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="CutsceneObject.hpp" />
     <ClInclude Include="Debug.hpp" />
@@ -156,12 +160,15 @@
     <ClInclude Include="Game.h" />
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="Input.hpp" />
+    <ClInclude Include="Gun.h" />
+    <ClInclude Include="Laser.h" />
     <ClInclude Include="Line.hpp" />
     <ClInclude Include="LineFollower.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.hpp" />
     <ClInclude Include="Player.h" />
     <ClInclude Include="Playfield.h" />
+    <ClInclude Include="Powerup.hpp" />
     <ClInclude Include="Rect.h" />
     <ClInclude Include="RNG.hpp" />
     <ClInclude Include="Scene.h" />
@@ -173,6 +180,7 @@
     <ClInclude Include="SpriteMask.h" />
     <ClInclude Include="Text.h" />
     <ClInclude Include="Time.hpp" />
+    <ClInclude Include="TimeFreeze.h" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

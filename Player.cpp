@@ -27,6 +27,20 @@ void Player::Update()
 	if (isDigging) Dig();
 	else Walk();
 
+	std::vector<Powerup*> oldPowers;
+	for (auto& power : powers) {
+		power->Use();
+		if (power->timer <= 0) {
+			oldPowers.push_back(power);
+		}
+	}
+
+	for (auto& power : oldPowers) {
+		auto it = std::remove(powers.begin(), powers.end(), power);
+		powers.erase(it, powers.end());
+		delete power;
+	}
+
 	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
 		if (enemy->IsTouching(*this) && !path.empty() && Time::GetInstance()->GetFrameCount() > 1) {
 			position = path[0];

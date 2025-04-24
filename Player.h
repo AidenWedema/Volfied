@@ -3,6 +3,7 @@
 #include "Object.h"
 #include "Input.hpp"
 #include "Playfield.h"
+#include "Powerup.hpp"
 
 class Player : public Object
 {
@@ -41,6 +42,21 @@ public:
     }
 
 	std::vector<Vector2>* GetPath() { return &path; }
+	Vector2 GetLastDirection() { return lastDirection; }
+
+    inline void AddPower(Powerup* power)
+    {
+       // Check if the power already exists
+       auto it = std::find_if(powers.begin(), powers.end(), [&](const Powerup* p) {
+           return p->name == power->name;
+       });
+       if (it != powers.end()) {
+           (*it)->Start();
+           return;
+       }
+       power->user = this;
+       powers.push_back(power);
+    }
 
 private:
 	int speed = 3;
@@ -48,6 +64,7 @@ private:
 	Vector2 direction;
 	Vector2 lastDirection;
 	std::vector<Vector2> path;
+	std::vector<Powerup*> powers;
 
 	void Walk();
 	void Dig();

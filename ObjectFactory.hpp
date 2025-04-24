@@ -11,6 +11,8 @@
 #include "Text.h"
 #include "Selection.h"
 #include "Cursor.h"
+#include "Laser.h"
+#include "Box.h"
 
 class ObjectFactory {
 public:
@@ -71,6 +73,16 @@ public:
 			ui::Cursor* cursor = new ui::Cursor();
 			cursor->FromJson(json);
 			return cursor;
+		}
+		else if (type == "Laser") {
+			Laser* laser = new Laser();
+			laser->FromJson(json);
+			return laser;
+		}
+		else if (type == "Box") {
+			Box* box = new Box();
+			box->FromJson(json);
+			return box;
 		}
 
         return nullptr;
