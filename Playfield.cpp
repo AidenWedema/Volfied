@@ -459,18 +459,22 @@ void Playfield::EndLevel()
 {
 	clearTimer -= Time::GetInstance()->GetDeltaTime();
 	if (clearTimer <= 0) {
-		SceneManager::GetInstance()->LoadScene("Scoreboard");
-		clipped = true;
-		std::vector<Object*>* no = SceneManager::GetInstance()->GetActiveScene()->GetAllNewObjects();
-		
-		for (Object* obj : *no) {
-			if (obj->name == "scoreText") {
-				ui::Text* scoretext = dynamic_cast<ui::Text*>(obj);
-				scoretext->SetText("Score: " + std::to_string(Score::score * 1000));
-				scoretext->SetOrigin(Vector2(scoretext->text.getLocalBounds().width / 2, scoretext->text.getLocalBounds().height / 2));
-				break;
-			}
+		Scene* activeScene = SceneManager::GetInstance()->GetActiveScene();
+		for (auto& obj : *activeScene->GetAllObjects()) {
+			obj->clipped = true;
 		}
+		ui::Text* scoreText = dynamic_cast<ui::Text*>(Object::Instantiate("prefabs/Text"));
+		scoreText->SetText("Score: " + std::to_string(Score::score * 1000));
+		scoreText->SetOrigin(Vector2(scoreText->text.getLocalBounds().width / 2, scoreText->text.getLocalBounds().height / 2));
+		scoreText->SetPosition(position);
+		scoreText->SetColor(sf::Color::Red);
+
+		ui::Cursor* cursor = dynamic_cast<ui::Cursor*>(Object::Instantiate("prefabs/Cursor"));
+		cursor->selected = &cursor->options[0];
+		cursor->selected->select->actions.push_back(3);
+		cursor->selected->select->SetPosition(Vector2(position.x, position.y + 100));
+		cursor->selected->select->SetText("Continue");
+		cursor->selected->select->SetOrigin(Vector2(cursor->selected->select->text.getLocalBounds().width / 2, cursor->selected->select->text.getLocalBounds().height / 2));
 	}
 
 	if (Time::GetInstance()->GetFrameCount() % 20 == 0 && clearTimer > 2) {

@@ -6,8 +6,8 @@
 
 namespace ui {  
    class Selection : public Text  
-   {  
-   public:  
+   {
+   public:
        Selection() {};  
        ~Selection() {};  
 

@@ -1,0 +1,31 @@
+{
+    "name": "Cursor",
+    "tag": -1,
+    "subTags": [],
+    "position": [
+        0,
+        0
+    ],
+    "options": [
+        {
+            "name": "Selection",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                0,
+                0
+            ],
+            "cursorPosition": [
+                0,
+                0
+            ],
+            "text": "",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 14,
+            "color": [ 255, 255, 255, 255 ],
+            "actions": [],
+            "type": "Selection"
+        }
+    ],
+    "type": "Cursor"
+}

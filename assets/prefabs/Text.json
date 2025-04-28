@@ -1,0 +1,14 @@
+{
+    "name": "Text",
+    "tag": -1,
+    "subTags": [],
+    "position": [
+        0,
+        0
+    ],
+    "text": "",
+    "font": "assets/fonts/Emulogic.ttf",
+    "size": 24,
+    "color": [ 255, 0, 0, 255 ],
+    "type": "Text"
+},
