@@ -190,19 +190,18 @@ void Player::Walk()
 
 void Player::Dig()
 {
-	Vector2 oppositeDirection = lastDirection * -1;
-	if (Input::GetInstance()->GetKey("Left") && Vector2::Left() != oppositeDirection)
+	if (Input::GetInstance()->GetKey("Left"))
 		direction = Vector2::Left();
-	else if (Input::GetInstance()->GetKey("Right") && Vector2::Right() != oppositeDirection)
+	else if (Input::GetInstance()->GetKey("Right"))
 		direction = Vector2::Right();
-	else if (Input::GetInstance()->GetKey("Up") && Vector2::Up() != oppositeDirection)
+	else if (Input::GetInstance()->GetKey("Up"))
 		direction = Vector2::Up();
-	else if (Input::GetInstance()->GetKey("Down") && Vector2::Down() != oppositeDirection)
+	else if (Input::GetInstance()->GetKey("Down"))
 		direction = Vector2::Down();
 	else direction = Vector2();
 
 	// Add the current position to the path if the direction has changed
-	if (lastDirection != direction && direction != Vector2()) {
+	if (lastDirection != direction && direction != lastDirection * -1 && direction != Vector2()) {
 		path.push_back(position);
 	}
 
