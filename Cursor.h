@@ -14,7 +14,7 @@ namespace ui {
 		{
 			ui::Selection* select;
 			Vector2 position;
-			std::unordered_map<Vector2, Index> connections;
+			std::unordered_map<Vector2, Index*> connections;
 		};
 
 		inline void Start()
@@ -81,13 +81,18 @@ namespace ui {
 				index.position = Vector2(option["cursorPosition"][0], option["cursorPosition"][1]);
 				options.push_back(index);
 			}
+			for (int i = 1; i < options.size(); i++) {
+				options[i - 1].connections[Vector2::Down()] = &options[i];
+				options[i].connections[Vector2::Up()] = &options[i - 1];
+			}
 		}
 
         void Move(Vector2 direction)
         {
 			if (selected == nullptr || selected->connections.find(direction) == selected->connections.end())
 				return;
-           selected = &selected->connections[direction];
+
+			selected = selected->connections[direction];
         }
 	};
 }

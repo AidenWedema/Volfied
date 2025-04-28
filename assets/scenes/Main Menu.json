@@ -1,17 +1,17 @@
 {
-    "name": "Scoreboard",
+    "name": "Main Menu",
     "objects": [
         {
-            "name": "Text",
+            "name": "title",
             "tag": -1,
             "subTags": [],
             "position": [
-                200,
+                310,
                 200
             ],
-            "text": "Game Over",
+            "text": "Volfied",
             "font": "assets/fonts/Emulogic.ttf",
-            "size": 48,
+            "size": 24,
             "color": [ 255, 0, 0, 255 ],
             "type": "Text"
         },
@@ -25,7 +25,7 @@
             ],
             "options": [
                 {
-                    "name": "restart",
+                    "name": "start",
                     "tag": -1,
                     "subTags": [],
                     "position": [
@@ -33,14 +33,33 @@
                         400
                     ],
                     "cursorPosition": [
-                        -100,
+                        350,
                         400
                     ],
-                    "text": "Insert coin",
+                    "text": "Start",
                     "font": "assets/fonts/Emulogic.ttf",
-                    "size": 24,
+                    "size": 14,
                     "color": [ 255, 255, 255, 255 ],
-                    "actions": [ 2 ],
+                    "actions": [ 0 ],
+                    "type": "Selection"
+                },
+                {
+                    "name": "quit",
+                    "tag": -1,
+                    "subTags": [],
+                    "position": [
+                        400,
+                        450
+                    ],
+                    "cursorPosition": [
+                        350,
+                        450
+                    ],
+                    "text": "Quit",
+                    "font": "assets/fonts/Emulogic.ttf",
+                    "size": 14,
+                    "color": [ 255, 255, 255, 255 ],
+                    "actions": [ 1 ],
                     "type": "Selection"
                 }
             ],

@@ -45,7 +45,7 @@ private:
 	Game() : running(true) {};
 
 	sf::RenderWindow window;
-	GameState gameState = MENU;
+	GameState gameState = GAME;
 	bool running;
 	int level;
 };

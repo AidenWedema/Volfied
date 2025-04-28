@@ -1,11 +1,13 @@
 #include "Game.h"
+#include "Player.h"
+#include "Score.hpp"
 #include "Debug.hpp"
 
 void Game::Start()
 {
     window.create(sf::VideoMode({ 800, 600 }), "Volfied", sf::Style::Close);
-    level = 0;
-    SceneManager::GetInstance()->LoadScene("Level-" + std::to_string(level));
+    level = -1;
+    SceneManager::GetInstance()->LoadScene("Main Menu");
 
 	//RNG::seed = std::chrono::system_clock::now().time_since_epoch().count();
 
@@ -26,6 +28,11 @@ void Game::Start()
             Run();
             break;
         case Game::END:
+            level = -1;
+            Player::lives = 5;
+            Score::Reset();
+            SceneManager::GetInstance()->LoadScene("Main Menu");
+            gameState = GAME;
             break;
         case Game::WIN:
             break;
@@ -43,6 +50,9 @@ void Game::Run()
 
     while (window.isOpen() && running)
     {
+		if (gameState != Game::GAME)
+			return;
+
         sf::Event event;
         while (window.pollEvent(event))
         {

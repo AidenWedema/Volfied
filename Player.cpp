@@ -58,7 +58,6 @@ void Player::Update()
 			explosion->animator.SetAnimation(0);
 			if (lives <= 0) {
 				// Game over
-				Game::GetInstance()->SetGameState(Game::END);
 				SceneManager::GetInstance()->LoadScene("GameOver");
 			}
 			else {
