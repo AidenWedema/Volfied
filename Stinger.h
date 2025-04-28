@@ -36,7 +36,8 @@ public:
 private:
 	int angle = 0;
 	float speed = 0;
-	float maxSpeed = 3;
-	float acceleration = 0.1f;
+	float maxSpeed = 5;
+	float acceleration = 0.02f;
+	float decceleration = 0.05f;
 	float maxRotation = 3;
 };

@@ -20,21 +20,35 @@ void Stinger::Update()
 {
 	if (inactive) return;
 
-	int newAngle = Vector2::Degrees(Vector2::Direction(position, Player::GetActivePlayer()->position));
-	if (newAngle < 0) newAngle += 360;
-	int diff = newAngle - angle;
+	// Get target direction
+	Vector2 targetPos = Player::GetActivePlayer()->position;
+	Vector2 toTarget = Vector2::Direction(position, targetPos);
+	float newAngle = Vector2::Degrees(toTarget);
+	
+	// Normalize angles between [0, 360]
+	newAngle = fmod(newAngle + 360.0f, 360.0f);
+	angle = fmod(angle + 360.0f, 360.0f);
 
-	if (std::abs(diff) > 45) speed = std::max(0.5f, speed - 0.1f);
-	else speed = std::min(maxSpeed, speed + acceleration);
-
+	// Calculate the shortest difference between angles (-180 to 180)
+	float diff = newAngle - angle;
 	if (diff > 180) diff -= 360;
-	else if (diff < -180) diff += 360;
-	if (diff > maxRotation) diff = maxRotation;
-	else if (diff < -maxRotation) diff = -maxRotation;
-	angle += diff;
+	if (diff < -180) diff += 360;
 
-	angle = angle % 360;
-	if (angle < 0) angle += 360;
+	// Check if target is in front
+	if (std::abs(diff) < 90)
+		speed = std::min(maxSpeed, speed + acceleration);
+	else
+		speed = std::max(decceleration, speed - decceleration);
+
+	// Rotate towards target
+	if (diff > maxRotation)
+		angle += maxRotation;
+	else if (diff < -maxRotation)
+		angle -= maxRotation;
+	else
+		angle = newAngle;
+
+	angle = fmod(angle + 360.0f, 360.0f);
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
 	// Keep the enemy in bounds
