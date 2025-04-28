@@ -1,0 +1,53 @@
+{
+    "name": "Cutscene-3",
+    "objects": [
+        {
+            "name": "text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                20,
+                10
+            ],
+            "text": "CHEESE",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 18,
+            "color": [ 255, 255, 255, 255 ],
+            "delay": 1,
+            "textWidth": 760,
+            "type": "AnimatedText"
+        },
+        {
+            "name": "cursor",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                -100,
+                -100
+            ],
+            "options": [
+                {
+                    "name": "start",
+                    "tag": -1,
+                    "subTags": [],
+                    "position": [
+                        -100,
+                        -100
+                    ],
+                    "cursorPosition": [
+                        -100,
+                        -100
+                    ],
+                    "text": "Start",
+                    "font": "assets/fonts/Emulogic.ttf",
+                    "size": 14,
+                    "color": [ 255, 255, 255, 255 ],
+                    "actions": [ 0 ],
+                    "type": "Selection"
+                }
+            ],
+            "type": "Cursor"
+        }
+    ],
+    "type": "Scene"
+}

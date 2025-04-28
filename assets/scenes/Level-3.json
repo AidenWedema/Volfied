@@ -1,0 +1,58 @@
+{
+    "name": "Level-3",
+    "objects": [
+        {
+            "name": "Playfield",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "size": [ 500, 400 ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 500 ],
+            "type": "Player"
+        },
+        {
+            "name": "Stinger",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 200, 300 ],
+            "type": "Stinger"
+        },
+        {
+            "name": "Stinger",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 600, 300 ],
+            "type": "Stinger"
+        },
+        {
+            "name": "Ship",
+            "tag": 1,
+            "subTags": [2],
+            "position": [ 400, 300 ],
+            "type": "Ship"
+        },
+        {
+            "name": "Box",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 200, 480 ],
+            "powers": [ "", "", "Gun" ],
+            "type": "Box"
+        },
+        {
+            "name": "Box",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 600, 480 ],
+            "powers": [ "", "", "Gun" ],
+            "type": "Box"
+        }
+    ],
+    "type": "Scene"
+}
