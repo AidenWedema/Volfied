@@ -37,5 +37,6 @@ public:
 private:
 	int speed = 1;
 	float direction;
+	float bounceTimer;
 };
 

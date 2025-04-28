@@ -21,6 +21,16 @@ void Ship::Update()
 {
 	if (inactive) return;
 
+	bounceTimer -= Time::GetInstance()->GetDeltaTime();
+	if (bounceTimer <= 0) {
+		bounceTimer = RNG::GetRange(30.0f, 60.0f);
+		Vector2 a = Vector2::FromDegrees(direction);
+		if (RNG::GetRand() < 4096)
+			direction = Vector2::Degrees(Vector2::Reflect(a, Vector2::Up()));
+		else
+			direction = Vector2::Degrees(Vector2::Reflect(a, Vector2::Right()));
+	}
+
 	position = position + Vector2::FromDegrees(direction) * speed;
 
 	// Keep the enemy in bounds
