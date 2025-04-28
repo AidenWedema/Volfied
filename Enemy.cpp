@@ -24,10 +24,19 @@ void Enemy::Update()
 	turnAroundTimer -= Time::GetInstance()->GetDeltaTime();
 	if (turnAroundTimer <= 0) {
 		turnAroundTimer = RNG::GetRange(1.0f, 4.0f);
-		rotationSpeed *= -1;
+		counterClockwise = !counterClockwise;
 	}
 
-	angle += rotationSpeed;
+	rotationSpeedTimer -= Time::GetInstance()->GetDeltaTime();
+	if (rotationSpeedTimer <= 0) {
+		rotationSpeedTimer = RNG::GetRange(0.5f, 3.0f);
+		rotationSpeedChange *= -1;
+	}
+
+	rotationSpeed += rotationSpeedChange;
+	rotationSpeed = std::clamp(rotationSpeed, rotationSpeedRange.x, rotationSpeedRange.y);
+
+	angle += counterClockwise ? -rotationSpeed : rotationSpeed;
 	angle = angle % 360;
 	if (angle < 0) angle += 360;
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);

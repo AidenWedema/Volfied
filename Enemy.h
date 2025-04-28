@@ -41,7 +41,11 @@ public:
 private:
 	int speed = 3;
 	int angle = 0;
-	int rotationSpeed = 3;
+	float rotationSpeed = 3.0f;
+	float rotationSpeedTimer;
+	float rotationSpeedChange = 0.2f;
+	Vector2 rotationSpeedRange = Vector2(2.5f, 3.5f);
 	float turnAroundTimer = 0;
+	bool counterClockwise = false;
 };
 

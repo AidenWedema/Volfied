@@ -75,8 +75,12 @@ public:
 private:
     int speed = 4;
     int angle = 0;
-    int rotationSpeed = 2;
+    float rotationSpeed = 2.0f;
+    float rotationSpeedTimer;
+    float rotationSpeedChange = 0.1f;
+    Vector2 rotationSpeedRange = Vector2(1.5f, 3);
     float turnAroundTimer = 0;
+	bool counterClockwise = false;
 
     int length;
     int segmentOffset = 5;
