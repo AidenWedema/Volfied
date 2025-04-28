@@ -1,0 +1,53 @@
+{
+    "name": "Cutscene--1",
+    "objects": [
+        {
+            "name": "text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                20,
+                10
+            ],
+            "text": "In the year 4022, after the Great Pancake Uprising and the tragic fall of the Hamster King, the universe teeters on the brink of chaos...\n\nOnly one hero - armed with nothing but a broken toaster and an encyclopedic knowledge of obscure cheese facts - can save reality itself.\n\nHis name... is Kevin.",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 18,
+            "color": [ 255, 255, 255, 255 ],
+            "delay": 0.1,
+            "textWidth": 760,
+            "type": "AnimatedText"
+        },
+        {
+            "name": "cursor",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                -100,
+                -100
+            ],
+            "options": [
+                {
+                    "name": "start",
+                    "tag": -1,
+                    "subTags": [],
+                    "position": [
+                        -100,
+                        -100
+                    ],
+                    "cursorPosition": [
+                        -100,
+                        -100
+                    ],
+                    "text": "Start",
+                    "font": "assets/fonts/Emulogic.ttf",
+                    "size": 14,
+                    "color": [ 255, 255, 255, 255 ],
+                    "actions": [ 0 ],
+                    "type": "Selection"
+                }
+            ],
+            "type": "Cursor"
+        }
+    ],
+    "type": "Scene"
+}

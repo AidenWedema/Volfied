@@ -1,46 +1,48 @@
 {
-    "name": "Scoreboard",
+    "name": "Cutscene-0",
     "objects": [
         {
-            "name": "scoreText",
+            "name": "text",
             "tag": -1,
             "subTags": [],
             "position": [
-                400,
-                200
+                20,
+                10
             ],
-            "text": "",
+            "text": "After the fall of the Hamster King, Kevin journeyed across the Seven Lava Oceans, battling sentient spoons and tax-evading goblins.\n\nHis quest: to find the Legendary Sock of Prophecy - lost somewhere in the Discount Bin of Destiny.",
             "font": "assets/fonts/Emulogic.ttf",
-            "size": 24,
-            "color": [ 255, 0, 0, 255 ],
-            "type": "Text"
+            "size": 18,
+            "color": [ 255, 255, 255, 255 ],
+            "delay": 0.1,
+            "textWidth": 760,
+            "type": "AnimatedText"
         },
         {
             "name": "cursor",
             "tag": -1,
             "subTags": [],
             "position": [
-                400,
-                100
+                -100,
+                -100
             ],
             "options": [
                 {
-                    "name": "selection",
+                    "name": "start",
                     "tag": -1,
                     "subTags": [],
                     "position": [
-                        400,
-                        400
+                        -100,
+                        -100
                     ],
                     "cursorPosition": [
-                        350,
-                        400
+                        -100,
+                        -100
                     ],
-                    "text": "Next",
+                    "text": "Start",
                     "font": "assets/fonts/Emulogic.ttf",
                     "size": 14,
                     "color": [ 255, 255, 255, 255 ],
-                    "actions": [3],
+                    "actions": [ 0 ],
                     "type": "Selection"
                 }
             ],

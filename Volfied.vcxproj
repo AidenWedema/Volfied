@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AnimatedText.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="Enemy.cpp" />
@@ -156,6 +157,7 @@
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AnimatedText.h" />
     <ClInclude Include="Animator.hpp" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="Cursor.h" />

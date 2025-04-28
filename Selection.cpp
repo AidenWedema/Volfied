@@ -2,6 +2,8 @@
 #include "Debug.hpp"
 #include "SceneManager.hpp"
 #include "Game.h"
+#include <thread>
+#include <chrono>
 
 void ui::Selection::Select()
 {
@@ -23,6 +25,14 @@ void ui::Selection::Select()
 		case 2:
 			Game::GetInstance()->SetGameState(Game::END);
 			break;
+
+			// Load next cutscene
+		case 3:
+			std::this_thread::sleep_for(std::chrono::seconds(1)); // Replace this
+			SceneManager::GetInstance()->LoadScene("Cutscene-" + std::to_string(Game::GetInstance()->GetLevel()));
+			break;
+
+			// Load main menu
 		default:
 			break;
 		}

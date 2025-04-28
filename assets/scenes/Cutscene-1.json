@@ -1,46 +1,48 @@
 {
-    "name": "Scoreboard",
+    "name": "Cutscene-1",
     "objects": [
         {
-            "name": "scoreText",
+            "name": "text",
             "tag": -1,
             "subTags": [],
             "position": [
-                400,
-                200
+                20,
+                10
             ],
-            "text": "",
+            "text": "But dark forces stir...\n\nIn the shadowy corners of the Flat Earth Confederacy, the Forbidden Donut has awoken, leaking ancient frosting into the fabric of space-time.\n\nKevin must hurry... or breakfast will never be the same again.",
             "font": "assets/fonts/Emulogic.ttf",
-            "size": 24,
-            "color": [ 255, 0, 0, 255 ],
-            "type": "Text"
+            "size": 18,
+            "color": [ 255, 255, 255, 255 ],
+            "delay": 0.1,
+            "textWidth": 760,
+            "type": "AnimatedText"
         },
         {
             "name": "cursor",
             "tag": -1,
             "subTags": [],
             "position": [
-                400,
-                100
+                -100,
+                -100
             ],
             "options": [
                 {
-                    "name": "selection",
+                    "name": "start",
                     "tag": -1,
                     "subTags": [],
                     "position": [
-                        400,
-                        400
+                        -100,
+                        -100
                     ],
                     "cursorPosition": [
-                        350,
-                        400
+                        -100,
+                        -100
                     ],
-                    "text": "Next",
+                    "text": "Start",
                     "font": "assets/fonts/Emulogic.ttf",
                     "size": 14,
                     "color": [ 255, 255, 255, 255 ],
-                    "actions": [3],
+                    "actions": [ 0 ],
                     "type": "Selection"
                 }
             ],

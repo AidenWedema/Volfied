@@ -14,6 +14,7 @@
 #include "Laser.h"
 #include "Box.h"
 #include "Stinger.h"
+#include "AnimatedText.h"
 
 class ObjectFactory {
 public:
@@ -89,6 +90,11 @@ public:
 			Stinger* stinger = new Stinger();
 			stinger->FromJson(json);
 			return stinger;
+		}
+		else if (type == "AnimatedText") {
+			ui::AnimatedText* animatedText = new ui::AnimatedText();
+			animatedText->FromJson(json);
+			return animatedText;
 		}
 
         return nullptr;
