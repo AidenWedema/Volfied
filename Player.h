@@ -43,7 +43,8 @@ public:
     }
 
 	std::vector<Vector2>* GetPath() { return &path; }
-	Vector2 GetLastDirection() { return lastDirection; }
+	Vector2 GetLastDirection() const { return lastDirection; }
+	int GetSpeed() const { return speed; }
 
     inline void AddPower(Powerup* power)
     {
@@ -58,6 +59,8 @@ public:
        power->user = this;
        powers.push_back(power);
     }
+
+	void Die();
 
 private:
 	int speed = 3;

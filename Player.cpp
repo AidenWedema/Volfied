@@ -25,7 +25,12 @@ void Player::Update()
 
 	if (respawnTimer > 0) {
 		respawnTimer -= Time::GetInstance()->GetDeltaTime();
-		if (respawnTimer < 1) clipped = false;
+		if (respawnTimer < 1) {
+			if (lives <= 0) {
+				SceneManager::GetInstance()->LoadScene("GameOver");
+			}
+			clipped = false;
+		} 
 		if (respawnTimer <= 0) Game::GetInstance()->SetPaused(false);
 		return;
 	}
@@ -50,27 +55,7 @@ void Player::Update()
 
 	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
 		if (enemy->IsTouching(*this) && !path.empty() && Time::GetInstance()->GetFrameCount() > 1) {
-			lives--;
-			clipped = true;
-			CutsceneObject* explosion = dynamic_cast<CutsceneObject*>(Object::Instantiate("prefabs/CutsceneObjects/explosion"));
-			explosion->position = position;
-			explosion->destroyOnEnd = true;
-			explosion->animator.SetAnimation(0);
-			if (lives <= 0) {
-				// Game over
-				SceneManager::GetInstance()->LoadScene("GameOver");
-			}
-			else {
-				// Respawn
-				Game::GetInstance()->SetPaused(true);
-				inactive = false;
-				respawnTimer = 3;
-				position = path[0];
-				direction = Vector2();
-				lastDirection = direction;
-				path.clear();
-				isDigging = false;
-			}
+			Die();
 			break;
 		}
 	}
@@ -90,6 +75,24 @@ void Player::Draw(sf::RenderTarget& target)
 	}
 	line[path.size()] = sf::Vertex(sf::Vector2f(position.x, position.y), sf::Color::White);
 	target.draw(line);
+}
+
+void Player::Die()
+{
+	lives--;
+	clipped = true;
+	CutsceneObject* explosion = dynamic_cast<CutsceneObject*>(Object::Instantiate("prefabs/CutsceneObjects/explosion"));
+	explosion->position = position;
+	explosion->destroyOnEnd = true;
+	explosion->animator.SetAnimation(0);
+	Game::GetInstance()->SetPaused(true);
+	inactive = false;
+	respawnTimer = 3;
+	position = path[0];
+	direction = Vector2();
+	lastDirection = direction;
+	path.clear();
+	isDigging = false;
 }
 
 void Player::Walk()
@@ -211,12 +214,7 @@ void Player::Dig()
 	{
 		Vector2 lastPoint = path[path.size() - 2];
 		if (Line::Intersects(Line(lastPoint, position), Line::CreateLineList(path)))
-		{
-			position = path[0];
-			direction = Vector2();
-			path.clear();
-			path.push_back(position);
-		}
+			Die();
 	}
 
 	// Keep the player in bounds

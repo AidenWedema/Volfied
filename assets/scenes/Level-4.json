@@ -1,0 +1,39 @@
+{
+    "name": "Level-4",
+    "objects": [
+        {
+            "name": "Playfield",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "size": [ 500, 400 ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 500 ],
+            "type": "Player"
+        },
+        {
+            "name": "Turret",
+            "tag": 1,
+            "subTags": [ 2 ],
+            "position": [ 400, 300 ],
+            "direction": 22.5,
+            "directionChange": 45,
+            "shootTime": 3,
+            "type": "Turret"
+        },
+        {
+            "name": "Mimic",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 600, 300 ],
+            "pathDrawInterval": 3,
+            "type": "Mimic"
+        }
+    ],
+    "type": "Scene"
+}

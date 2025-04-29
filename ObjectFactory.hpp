@@ -15,6 +15,8 @@
 #include "Box.h"
 #include "Stinger.h"
 #include "AnimatedText.h"
+#include "Turret.h"
+#include "Mimic.h"
 
 class ObjectFactory {
 public:
@@ -95,6 +97,16 @@ public:
 			ui::AnimatedText* animatedText = new ui::AnimatedText();
 			animatedText->FromJson(json);
 			return animatedText;
+		}
+		else if (type == "Turret") {
+			Turret* turret = new Turret();
+			turret->FromJson(json);
+			return turret;
+		}
+		else if (type == "Mimic") {
+			Mimic* mimic = new Mimic();
+			mimic->FromJson(json);
+			return mimic;
 		}
 
         return nullptr;

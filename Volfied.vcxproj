@@ -137,11 +137,13 @@
   <ItemGroup>
     <ClCompile Include="AnimatedText.cpp" />
     <ClCompile Include="Box.cpp" />
+    <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Laser.cpp" />
     <ClCompile Include="LineFollower.cpp" />
+    <ClCompile Include="Mimic.cpp" />
     <ClCompile Include="Object.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Playfield.cpp" />
@@ -154,12 +156,14 @@
     <ClCompile Include="Stinger.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TimeFreeze.cpp" />
+    <ClCompile Include="Turret.cpp" />
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedText.h" />
     <ClInclude Include="Animator.hpp" />
     <ClInclude Include="Box.h" />
+    <ClInclude Include="Bullet.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="CutsceneObject.hpp" />
     <ClInclude Include="Debug.hpp" />
@@ -171,6 +175,7 @@
     <ClInclude Include="Laser.h" />
     <ClInclude Include="Line.hpp" />
     <ClInclude Include="LineFollower.h" />
+    <ClInclude Include="Mimic.h" />
     <ClInclude Include="Object.h" />
     <ClInclude Include="ObjectFactory.hpp" />
     <ClInclude Include="Player.h" />
@@ -189,6 +194,7 @@
     <ClInclude Include="Text.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="TimeFreeze.h" />
+    <ClInclude Include="Turret.h" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
