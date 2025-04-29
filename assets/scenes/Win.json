@@ -1,0 +1,65 @@
+{
+    "name": "Win",
+    "objects": [
+        {
+            "name": "text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                250,
+                200
+            ],
+            "text": "You win!",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 36,
+            "color": [ 255, 224, 0, 255 ],
+            "type": "Text"
+        },
+        {
+            "name": "text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                220,
+                350
+            ],
+            "text": "Congratulations",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 24,
+            "color": [ 255, 255, 255, 255 ],
+            "type": "Text"
+        },
+        {
+            "name": "cursor",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                -100,
+                -100
+            ],
+            "options": [
+                {
+                    "name": "start",
+                    "tag": -1,
+                    "subTags": [],
+                    "position": [
+                        -100,
+                        -100
+                    ],
+                    "cursorPosition": [
+                        -100,
+                        -100
+                    ],
+                    "text": "Start",
+                    "font": "assets/fonts/Emulogic.ttf",
+                    "size": 14,
+                    "color": [ 255, 255, 255, 255 ],
+                    "actions": [ 3 ],
+                    "type": "Selection"
+                }
+            ],
+            "type": "Cursor"
+        }
+    ],
+    "type": "Scene"
+}

@@ -36,7 +36,7 @@ namespace ui {
 			if (Input::GetInstance()->GetKey("Right")) Move(Vector2::Right());
 			if (Input::GetInstance()->GetKey("Up")) Move(Vector2::Up());
 			if (Input::GetInstance()->GetKey("Down")) Move(Vector2::Down());
-			if (Input::GetInstance()->GetKey("Start")) {
+			if (Input::GetInstance()->GetKeyUp("Start")) {
 				if (selected != nullptr || selected->select != nullptr)
 					selected->select->Select();
 			}

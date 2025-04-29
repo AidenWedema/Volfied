@@ -28,7 +28,6 @@ void ui::Selection::Select()
 
 			// Load next cutscene
 		case 3:
-			std::this_thread::sleep_for(std::chrono::seconds(1)); // Replace this
 			SceneManager::GetInstance()->LoadScene("Cutscene-" + std::to_string(Game::GetInstance()->GetLevel()));
 			break;
 
