@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="AnimatedText.h" />
     <ClInclude Include="Animator.hpp" />
+    <ClInclude Include="AudioManager.hpp" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="Bullet.h" />
     <ClInclude Include="Cursor.h" />
