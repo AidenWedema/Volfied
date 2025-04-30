@@ -190,7 +190,7 @@ namespace shape
 			if (std::abs(cross) > 0.00001f) return false;
 			float dot = (point.x - p1.x) * (p2.x - p1.x) + (point.y - p1.y) * (p2.y - p1.y);
 			if (dot < 0) return false;
-			float len_sq = Vector2::Dot(p2, p2);
+			float len_sq = Vector2::Dot(p2 - p1, p2 - p1);
 			if (dot > len_sq) return false;
 			return true;
 		}
