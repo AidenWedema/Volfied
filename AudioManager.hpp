@@ -5,11 +5,12 @@
 class AudioManager
 {
 public:
-	inline static void PlayMusic(std::string path)
+	inline static void PlayMusic(std::string path, float volume = 50)
 	{
 		if (!music->openFromFile(path)) {
 			return;
 		}
+		music->setVolume(volume);
 		music->setLoop(true);
 		music->play();
 	}
@@ -19,7 +20,7 @@ public:
 		music->stop();
 	}
 
-	inline static void PlaySound(std::string path)
+	inline static void PlaySound(std::string path, float volume = 50)
 	{
 		// Remove sounds that finished playing
 		for (auto it = sounds.begin(); it != sounds.end();) {
@@ -38,6 +39,7 @@ public:
 			return;
 		}
 		sound->setBuffer(*buffer);
+		sound->setVolume(volume);
 		sound->play();
 		sounds.push_back(sound);
 	}
