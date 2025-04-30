@@ -15,7 +15,10 @@ class Playfield : public Object
 {
 public:
 	Playfield() : Object("Playfield") { Awake(); };
-	~Playfield() {};
+	~Playfield() {
+		delete animator;
+		delete mask;
+	};
 
 	inline static Playfield* instance = nullptr;
 	inline static Playfield* GetInstance() {

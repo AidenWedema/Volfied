@@ -8,7 +8,12 @@ namespace ui {
 	{
 	public:
 		Cursor() {};
-		~Cursor() {};
+		~Cursor() {
+			for (auto& option : options) {
+				delete option.select;
+			}
+			selected = nullptr;
+		};
 
 		struct Index
 		{

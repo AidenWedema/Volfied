@@ -30,6 +30,7 @@ struct Animation {
 		}
 		sprite.setOrigin(frameSize.x / 2, frameSize.y / 2);
 	}
+	~Animation() {};
 
 	sf::Texture sheet;  // The texture sheet for the animation
 	sf::Sprite sprite;	// The sprite to display
@@ -92,7 +93,10 @@ class Animator
 {
 public:
 	Animator(bool autoUpdate=true) : current(nullptr), autoUpdate(autoUpdate) {};
-	~Animator() {};
+	~Animator() {
+		current = nullptr;
+		sprite = nullptr;
+	};
 
 	Animation* current;									   // The animation that's currently playing
 	sf::Sprite* sprite;									   // The sprite to display the animation on
