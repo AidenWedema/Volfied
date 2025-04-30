@@ -22,6 +22,11 @@ void Turret::Update()
 	if (inactive) return;
 
 	shootTimer -= Time::GetInstance()->GetDeltaTime();
+
+	float t = shootTimer / shootTime;
+	float angle = 360 * (1 - t) + directionChange;
+	sprite.setRotation(angle);
+
 	if (shootTimer <= 0) {
 		shootTimer = shootTime;
 		direction += directionChange;
