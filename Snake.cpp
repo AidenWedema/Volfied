@@ -52,19 +52,19 @@ void Snake::Update()
 	angle += counterClockwise ? -rotationSpeed : rotationSpeed;
 	angle = angle % 360;
 	if (angle < 0) angle += 360;
+	Vector2 lastPos = position;
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
 	// Keep the enemy in bounds
 	Player* player = Player::GetActivePlayer();
 	std::vector<Vector2>* p = player->GetPath();
-	Vector2 nextPoint = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 	Vector2 point = Vector2();
 	int index;
-	if (Line::Intersects(Line(nextPoint, position), Line::CreateLineList(*p), point, index, true)) {
+	if (Line::Intersects(Line(lastPos, position), Line::CreateLineList(*p), point, index, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
 		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
 		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
-		position = point;
+		position = point + Vector2::Rotate(Vector2::Up() * speed, angle);
 	}
 	Vector2 pos = position;
 	if (!Playfield::GetInstance()->IsInBounds(position, true)) {
