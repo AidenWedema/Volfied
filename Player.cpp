@@ -55,7 +55,7 @@ void Player::Update()
 	}
 
 	for (auto& enemy : SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithTag(1)) {
-		if (enemy->IsTouching(*this) && !path.empty() && Time::GetInstance()->GetFrameCount() > 1) {
+		if (enemy->IsTouching(*this) && !path.empty()) {
 			Die();
 			break;
 		}

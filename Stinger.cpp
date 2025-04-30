@@ -9,7 +9,6 @@ void Stinger::Awake()
 	}
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
-	sprite.setScale(0.5f, 0.5f);
 }
 
 void Stinger::Start()

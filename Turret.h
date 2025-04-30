@@ -38,7 +38,7 @@ public:
 
 private:
 	float direction;
-	float directionChange = 45.0f;;
+	float directionChange = 45.0f;
 	float shootTimer;
 	float shootTime = 3.0f;
 };
