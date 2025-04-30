@@ -5,6 +5,7 @@
 #include <filesystem>
 #include "json.hpp"
 #include "Scene.h"
+#include "AudioManager.hpp"
 
 class SceneManager
 {
@@ -42,6 +43,9 @@ public:
 
 	inline void SwapSceneIfAvailable() {
 		if (newScene == nullptr || newScene == activeScene) return;
+		AudioManager::StopMusic();
+		AudioManager::StopSound();
+		AudioManager::PlayMusic(newScene->music);
 		delete activeScene;
 		activeScene = nullptr;
 		activeScene = newScene;

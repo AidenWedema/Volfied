@@ -1,5 +1,6 @@
 {
     "name": "Cutscene-3",
+    "music": "assets/audio/music/placeholder.ogg",
     "objects": [
         {
             "name": "text",

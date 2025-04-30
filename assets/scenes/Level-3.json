@@ -1,5 +1,6 @@
 {
     "name": "Level-3",
+    "music": "assets/audio/music/placeholder.ogg",
     "objects": [
         {
             "name": "Playfield",
@@ -33,7 +34,7 @@
         {
             "name": "Ship",
             "tag": 1,
-            "subTags": [2],
+            "subTags": [ 2 ],
             "position": [ 400, 300 ],
             "type": "Ship"
         },

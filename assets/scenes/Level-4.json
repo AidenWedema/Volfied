@@ -1,5 +1,6 @@
 {
     "name": "Level-4",
+    "music": "assets/audio/music/placeholder.ogg",
     "objects": [
         {
             "name": "Playfield",

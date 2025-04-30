@@ -14,6 +14,7 @@ public:
 	~Scene() { Destroy(); };
 
 	std::string name;
+	std::string music;
 
 	inline static Scene* CreateSceneFromJson(const nlohmann::json& json) {
 		Scene* scene = new Scene();
@@ -84,11 +85,13 @@ public:
         for (const auto& obj : objects) {
             json["objects"].push_back(obj->ToJson());
         }
+		json["music"] = music;
         return json;
     }
 
 	inline void FromJson(const nlohmann::json& json) {
         name = json["name"];
+		music = json["music"];
         for (auto& objJson : json["objects"]) {
             Object* obj = ObjectFactory::CreateFromJson(objJson);
             if (obj) {

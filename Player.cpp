@@ -1,6 +1,7 @@
 #include "Player.h"
 #include "Game.h"
 #include "Debug.hpp"
+#include "AudioManager.hpp"
 
 Player* Player::activePlayer = nullptr;
 
@@ -83,7 +84,6 @@ void Player::Die()
 	clipped = true;
 	CutsceneObject* explosion = dynamic_cast<CutsceneObject*>(Object::Instantiate("prefabs/CutsceneObjects/explosion"));
 	explosion->position = position;
-	explosion->destroyOnEnd = true;
 	explosion->animator.SetAnimation(0);
 	Game::GetInstance()->SetPaused(true);
 	inactive = false;

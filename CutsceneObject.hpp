@@ -3,6 +3,7 @@
 #include "json.hpp"
 #include "Object.h"
 #include "Animator.hpp"
+#include "AudioManager.hpp"
 
 class CutsceneObject : public Object
 {
@@ -12,7 +13,9 @@ public:
 	~CutsceneObject() {};
 
 	void Awake() override {};
-	void Start() override {};
+	void Start() override {
+		AudioManager::PlaySound(soundEffect);
+	};
 	void Update() override {
 		if (!animator.current->finished) return;
 		if (destroyOnEnd) Destroy(this);
@@ -23,7 +26,7 @@ public:
 	};
 
 	Animator animator;
-	//sf::Sound sound;
+	std::string soundEffect;
 	bool destroyOnEnd = false;
 
 	nlohmann::json ToJson() const override {
@@ -38,6 +41,8 @@ public:
 			{"subTags", subTags},
 			{"position", {position.x, position.y}},
 			{"animations", animations},
+			{"soundEffect", soundEffect},
+			{"destroyOnEnd", destroyOnEnd},
 			{"type", "CutsceneObject"}
 		};
 	}
@@ -47,6 +52,8 @@ public:
 		tag = json["tag"];
 		subTags = json["subTags"].get<std::vector<int>>();
 		position = Vector2(json["position"][0], json["position"][1]);
+		soundEffect = json["soundEffect"];
+		destroyOnEnd = json["destroyOnEnd"];
 		for (auto& anim : json["animations"].items()) {
 			animator.AddAnimation(anim.key(), anim.value());
 		}

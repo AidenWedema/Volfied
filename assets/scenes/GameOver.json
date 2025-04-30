@@ -1,5 +1,6 @@
 {
     "name": "Scoreboard",
+    "music": "assets/audio/music/placeholder.ogg",
     "objects": [
         {
             "name": "Text",

@@ -1,6 +1,7 @@
 #include "Playfield.h"
 #include "Game.h"
 #include "Debug.hpp"
+#include "AudioManager.hpp"
 
 void Playfield::Awake()
 {
@@ -436,6 +437,7 @@ void Playfield::AddWalls(std::vector<Rect> newAreas)
 	KillEnemiesInWall();
 
 	if (percentCleared >= 0.80f) {
+		AudioManager::StopMusic();
 		clearTimer = 5;
 		Game::GetInstance()->SetPaused(true);
 		inactive = false;
@@ -481,7 +483,6 @@ void Playfield::EndLevel()
 		Vector2 extents = GetExtents();
 		CutsceneObject* explosion = dynamic_cast<CutsceneObject*>(Object::Instantiate("prefabs/CutsceneObjects/explosion"));
 		explosion->position = Vector2(RNG::GetRange(position.x - extents.x, position.x + extents.x), RNG::GetRange(position.y - extents.y, position.y + extents.y));
-		explosion->destroyOnEnd = true;
 		explosion->animator.SetAnimation(0);
 	}
 }

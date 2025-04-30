@@ -9,5 +9,7 @@
     "animations": {
         "explosion": "assets/sprites/explosion.png"
     },
+    "soundEffect": "assets/audio/sound/explosion.ogg",
+    "destroyOnEnd": true,
     "type": "CutsceneObject"
 }
