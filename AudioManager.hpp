@@ -1,6 +1,5 @@
 #pragma once
 #include <SFML/Audio.hpp>
-#include <iostream>
 #include <vector>
 
 class AudioManager
@@ -43,8 +42,20 @@ public:
 		sounds.push_back(sound);
 	}
 
+	inline static void StopSound()
+	{
+		for (auto& sound : sounds) {
+			sound->stop();
+		}
+
+		for (auto it = sounds.begin(); it != sounds.end();) {
+			delete* it;
+			it = sounds.erase(it);
+		}
+	}
+
 private:
-	static sf::Music* music;
-	static std::vector<sf::Sound*> sounds;
-	static sf::SoundBuffer* buffer;
+	inline static sf::Music* music = new sf::Music();
+	inline static std::vector<sf::Sound*> sounds;
+	inline static sf::SoundBuffer* buffer = new sf::SoundBuffer();
 };
