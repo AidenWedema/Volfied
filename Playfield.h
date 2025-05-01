@@ -13,6 +13,7 @@ using shape::Line;
 
 class Playfield : public Object
 {
+friend class LevelEditor;
 public:
 	Playfield() : Object("Playfield") { Awake(); };
 	~Playfield() {

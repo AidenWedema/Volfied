@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="UiElements">
+      <UniqueIdentifier>{7907ad50-708d-419b-b50b-5458df697db2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Volfied.cpp">
@@ -82,6 +85,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Bullet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="LevelEditor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="UiElement.cpp">
+      <Filter>UiElements</Filter>
+    </ClCompile>
+    <ClCompile Include="TextElement.cpp">
+      <Filter>UiElements</Filter>
+    </ClCompile>
+    <ClCompile Include="ButtonElement.cpp">
+      <Filter>UiElements</Filter>
+    </ClCompile>
+    <ClCompile Include="InputElement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -195,6 +213,21 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="AudioManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="LevelEditor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="UiElement.h">
+      <Filter>UiElements</Filter>
+    </ClInclude>
+    <ClInclude Include="TextElement.h">
+      <Filter>UiElements</Filter>
+    </ClInclude>
+    <ClInclude Include="ButtonElement.h">
+      <Filter>UiElements</Filter>
+    </ClInclude>
+    <ClInclude Include="InputElement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

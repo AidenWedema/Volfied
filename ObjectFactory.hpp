@@ -17,6 +17,7 @@
 #include "AnimatedText.h"
 #include "Turret.h"
 #include "Mimic.h"
+#include "LevelEditor.h"
 
 class ObjectFactory {
 public:
@@ -107,6 +108,10 @@ public:
 			Mimic* mimic = new Mimic();
 			mimic->FromJson(json);
 			return mimic;
+		}
+		else if (type == "LevelEditor") {
+			LevelEditor* levelEditor = new LevelEditor();
+			return levelEditor;
 		}
 
         return nullptr;

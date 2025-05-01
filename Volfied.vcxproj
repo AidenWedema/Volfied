@@ -138,10 +138,13 @@
     <ClCompile Include="AnimatedText.cpp" />
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Bullet.cpp" />
+    <ClCompile Include="ButtonElement.cpp" />
     <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="InputElement.cpp" />
     <ClCompile Include="Laser.cpp" />
+    <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="LineFollower.cpp" />
     <ClCompile Include="Mimic.cpp" />
     <ClCompile Include="Object.cpp" />
@@ -155,8 +158,10 @@
     <ClCompile Include="SpriteMask.cpp" />
     <ClCompile Include="Stinger.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextElement.cpp" />
     <ClCompile Include="TimeFreeze.cpp" />
     <ClCompile Include="Turret.cpp" />
+    <ClCompile Include="UiElement.cpp" />
     <ClCompile Include="Volfied.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -165,6 +170,7 @@
     <ClInclude Include="AudioManager.hpp" />
     <ClInclude Include="Box.h" />
     <ClInclude Include="Bullet.h" />
+    <ClInclude Include="ButtonElement.h" />
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="CutsceneObject.hpp" />
     <ClInclude Include="Debug.hpp" />
@@ -173,7 +179,9 @@
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Gun.h" />
+    <ClInclude Include="InputElement.h" />
     <ClInclude Include="Laser.h" />
+    <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="Line.hpp" />
     <ClInclude Include="LineFollower.h" />
     <ClInclude Include="Mimic.h" />
@@ -193,9 +201,11 @@
     <ClInclude Include="SpriteMask.h" />
     <ClInclude Include="Stinger.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="TextElement.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="TimeFreeze.h" />
     <ClInclude Include="Turret.h" />
+    <ClInclude Include="UiElement.h" />
     <ClInclude Include="Vector2.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
