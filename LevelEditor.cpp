@@ -140,10 +140,6 @@ void LevelEditor::Draw(sf::RenderTarget& target)
 {
 	if (uiOpen) {
 		// Draw the UI elements
-		sf::RenderWindow* window = Game::GetInstance()->GetWindow();
-		for (auto& ui : uiElements) {
-			ui.second->draw(*window);
-		}
 		return;
 	}
 	if (selectedObject != nullptr) {
