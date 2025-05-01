@@ -1,0 +1,71 @@
+{
+    "name": "Level-5",
+    "music": "assets/audio/music/placeholder.ogg",
+    "objects": [
+        {
+            "name": "Playfield",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "size": [ 500, 400 ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 500 ],
+            "type": "Player"
+        },
+        {
+            "name": "Turret",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 200, 150 ],
+            "direction": 45,
+            "directionChange": 0,
+            "shootTime": 5,
+            "type": "Turret"
+        },
+        {
+            "name": "Turret",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 600, 150 ],
+            "direction": 45,
+            "directionChange": 0,
+            "shootTime": 5,
+            "type": "Turret"
+        },
+        {
+            "name": "Turret",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 200, 450 ],
+            "direction": 45,
+            "directionChange": 0,
+            "shootTime": 5,
+            "type": "Turret"
+        },
+        {
+            "name": "Turret",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 600, 450 ],
+            "direction": 45,
+            "directionChange": 0,
+            "shootTime": 5,
+            "type": "Turret"
+        },
+        {
+            "name": "Snake",
+            "tag": 1,
+            "subTags": [ 2 ],
+            "position": [ 400, 300 ],
+            "length": 2,
+            "segmentOffset": 12,
+            "type": "Snake"
+        }
+    ],
+    "type": "Scene"
+}
