@@ -14,10 +14,6 @@ class LevelEditor : public Object
 public:
 	LevelEditor() : Object("LevelEditor") { Awake(); };
 	~LevelEditor() {
-		for (auto& ui : uiElements) {
-			delete ui.second;
-		}
-		uiElements.clear();
 		if (currentScene != nullptr) {
 			delete currentScene;
 			currentScene = nullptr;
