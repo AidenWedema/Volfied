@@ -15,10 +15,6 @@
 #include "Mimic.h"
 #include "Scene.h"
 
-#include "TextElement.h"
-#include "ButtonElement.h"
-#include "InputElement.h"
-
 void LevelEditor::Awake()
 {
 	currentScene = new Scene("CustomScene");
@@ -224,96 +220,42 @@ void LevelEditor::LoadScene(std::string path)
 
 void LevelEditor::DoUiStuff()
 {
-	sf::RenderWindow* window = Game::GetInstance()->GetWindow();
-	sf::Vector2f mousepos = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
-	float deltaTime = Time::GetInstance()->GetDeltaTime();
-	for (auto& ui : uiElements) {
-		ui.second->update(deltaTime);
-	}
 }
 
 void LevelEditor::OpenUi()
 {
     // Create default UI
-    sf::Font font;
-    if (!font.loadFromFile("assets/fonts/Arial.ttf")) {
-        return;
-    }
 
-    // Title
-    TextElement* titletext = new TextElement(sf::Vector2f(20, 20), "Options", font);
-    uiElements["title"] = titletext;
-
-    // Save / Load Buttons
-    ButtonElement* saveButton = new ButtonElement(sf::Vector2f(20, 70), sf::Vector2f(100, 40), "Save", font);
-    saveButton->addCallback([this]() {
-        SaveScene();
-    });
-    ButtonElement* loadButton = new ButtonElement(sf::Vector2f(130, 70), sf::Vector2f(100, 40), "Load", font);
-    loadButton->addCallback([this]() {
-        LoadScene("/assets/scenes/custom/" + sceneName + ".json");
-    });
-    uiElements["save"] = saveButton;
-    uiElements["load"] = loadButton;
-
-    // Scene name input
-    TextElement* sceneNameLabel = new TextElement(sf::Vector2f(20, 120), "Scene Name:", font);
-    InputElement* sceneNameInput = new InputElement(sf::Vector2f(130, 120), sceneName, font);
-	ButtonElement* sceneNameButton = new ButtonElement(sf::Vector2f(240, 120), sf::Vector2f(100, 40), "Set", font);
-	sceneNameButton->addCallback([this, sceneNameInput]() {
-		sceneName = sceneNameInput->getText();
-		});
-    uiElements["sceneNameLabel"] = sceneNameLabel;
-    uiElements["sceneNameInput"] = sceneNameInput;
-
-    // Object variables
-	if (selectedObject == nullptr) return;
-	std::string objType = std::string(typeid(*selectedObject).name());
-
-	TextElement* objectLabel = new TextElement(sf::Vector2f(20, 170), "Object Variables:", font);
-	uiElements["objectLabel"] = objectLabel;
-
-	// Object name input
-	InputElement* objectNameInput = new InputElement(sf::Vector2f(20, 200), selectedObject->name, font);
-	ButtonElement* objectNameButton = new ButtonElement(sf::Vector2f(240, 200), sf::Vector2f(100, 40), "Set name", font);
-	objectNameButton->addCallback([this, objectNameInput]() {
-		selectedObject->name = objectNameInput->getText();
-		});
-	uiElements["objectNameInput"] = objectNameInput;
-	uiElements["objectNameButton"] = objectNameButton;
-
-	// Object position input
-	InputElement* objectPosXInput = new InputElement(sf::Vector2f(20, 250), std::to_string(selectedObject->position.x), font);
-	InputElement* objectPosYInput = new InputElement(sf::Vector2f(130, 250), std::to_string(selectedObject->position.y), font);
-	ButtonElement* objectPosButton = new ButtonElement(sf::Vector2f(240, 250), sf::Vector2f(100, 40), "Set position", font);
-	objectPosButton->addCallback([this, objectPosXInput, objectPosYInput]() {
-		selectedObject->position.x = std::stof(objectPosXInput->getText());
-		selectedObject->position.y = std::stof(objectPosYInput->getText());
-		});
-	uiElements["objectPosXInput"] = objectPosXInput;
-	uiElements["objectPosYInput"] = objectPosYInput;
-	uiElements["objectPosButton"] = objectPosButton;
-
-	// Object tag input
-	InputElement* objectTagInput = new InputElement(sf::Vector2f(20, 300), std::to_string(selectedObject->tag), font);
-	ButtonElement* objectTagButton = new ButtonElement(sf::Vector2f(240, 300), sf::Vector2f(100, 40), "Set tag", font);
-	objectTagButton->addCallback([this, objectTagInput]() {
-		selectedObject->tag = std::stoi(objectTagInput->getText());
-		});
-	uiElements["objectTagInput"] = objectTagInput;
-	uiElements["objectTagButton"] = objectTagButton;
-
-	// Object subtags input
-    InputElement* objectSubtagInput = new InputElement(sf::Vector2f(20, 350), "", font);
-    ButtonElement* objectSubtagButton = new ButtonElement(sf::Vector2f(240, 350), sf::Vector2f(100, 40), "Set subtags", font);
-    objectSubtagButton->addCallback([this, objectSubtagInput]() {
-       std::string input = objectSubtagInput->getText();
-	   std::vector<int> subtags;
+	// scene name
+	// save button
+	// load button
 
 
-       selectedObject->subTags = subtags;
-    });
-    uiElements["objectSubtagInput"] = objectSubtagInput;
-    uiElements["objectSubtagButton"] = objectSubtagButton;
+	// Create Object variable UI
+
+	// name
+	// position
+	// tag
+	// subtags
+
+
+	// Create Type specific UI
+
+	// Enemy:
+	// Ship:
+	// Stinger:
+	// [no extra parameters]
+
+	// Snake:
+	// length
+	// segmentOffset
+
+	// Turret:
+	// direction
+	// directionChange
+	// shootTime
+
+	// Mimic:
+	// pathDrawInterval
 }
 

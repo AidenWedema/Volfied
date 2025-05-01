@@ -6,7 +6,6 @@
 #include <filesystem>
 #include "json.hpp"
 #include "Object.h"
-#include "UiElement.h"
 
 class Scene;
 
@@ -14,7 +13,21 @@ class LevelEditor : public Object
 {
 public:
 	LevelEditor() : Object("LevelEditor") { Awake(); };
-	~LevelEditor() {};
+	~LevelEditor() {
+		for (auto& ui : uiElements) {
+			delete ui.second;
+		}
+		uiElements.clear();
+		if (currentScene != nullptr) {
+			delete currentScene;
+			currentScene = nullptr;
+		}
+		for (auto& obj : allAvailableObjects) {
+			delete obj;
+		}
+		allAvailableObjects.clear();
+		selectedObject = nullptr;
+	};
 
 	inline static LevelEditor* instance = nullptr;
 	inline static LevelEditor* GetInstance() {
@@ -39,5 +52,4 @@ private:
 	Scene* currentScene = nullptr;
 	bool uiOpen = false;
 	bool playtesting = false;
-	std::unordered_map<std::string, UiElement*> uiElements;
 };
