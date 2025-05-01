@@ -88,6 +88,8 @@ private:
 	Animator* animator;
 	float percentCleared = 0.0f;
 	float clearTimer;
+	ui::Text* scoreText;
+	ui::Text* clearedText;
 
 	void FillWallGaps(std::vector<Vector2>* points, std::vector<Rect>* leftAreas, std::vector<Rect>* rightAreas);
 	void AddWalls(std::vector<Rect> newAreas);

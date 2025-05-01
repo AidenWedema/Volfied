@@ -1,6 +1,5 @@
 #include "Playfield.h"
 #include "Game.h"
-#include "Debug.hpp"
 #include "AudioManager.hpp"
 
 void Playfield::Awake()
@@ -24,6 +23,21 @@ void Playfield::Start()
 	mask = new SpriteMask("assets/sprites/mask.png", false);
 	mask->setPosition(position);
 	animator->position = position;
+
+	clearedText = new ui::Text();
+	clearedText->SetPosition(Vector2(position.x, 550));
+	clearedText->SetColor(sf::Color::White);
+	clearedText->SetFont("assets/fonts/Emulogic.ttf");
+	clearedText->SetSize(20);
+
+	scoreText = new ui::Text();
+	scoreText->SetPosition(Vector2(position.x, 50));
+	scoreText->SetColor(sf::Color::White);
+	scoreText->SetFont("assets/fonts/Emulogic.ttf");
+	scoreText->SetSize(20);
+
+	SceneManager::GetInstance()->GetActiveScene()->AddObject(clearedText);
+	SceneManager::GetInstance()->GetActiveScene()->AddObject(scoreText);
 }
 
 void Playfield::Update()
@@ -36,13 +50,6 @@ void Playfield::Update()
 void Playfield::Draw(sf::RenderTarget& target)
 {
 	if (clipped) return;
-
-	for (auto& area : wallArea) {
-		Debug::DrawWireRect(area);
-	}
-	Debug::DrawText("Cleared: " + std::to_string(percentCleared * 100), Vector2(400, 10));
-	Debug::DrawText("SCORE: " + std::to_string(Score::score * 1000), Vector2(200, 10));
-
 
 	target.draw(sprite);
 	animator->current->Update();
@@ -58,17 +65,25 @@ void Playfield::Draw(sf::RenderTarget& target)
 	}
 	mask->draw(target);
 
+	// Update the text
+	clearedText->SetOrigin(Vector2(clearedText->text.getLocalBounds().width / 2, clearedText->text.getLocalBounds().height / 2));
+	scoreText->SetOrigin(Vector2(scoreText->text.getLocalBounds().width / 2, scoreText->text.getLocalBounds().height / 2));
+	clearedText->SetText("Cleared: " + std::to_string(percentCleared * 100) + "%");
+	scoreText->SetText("Score: " + std::to_string(Score::score * 1000));
+
+	// Draw the edges of the playfield
 	Vector2 extents = GetExtents();
 	std::vector<Vector2> edge = {
 		Vector2(position.x - extents.x, position.y - extents.y),
 		Vector2(position.x + extents.x, position.y - extents.y),
 		Vector2(position.x + extents.x, position.y + extents.y),
-		Vector2(position.x - extents.x, position.y + extents.y)
+		Vector2(position.x - extents.x, position.y + extents.y),
+		Vector2(position.x - extents.x, position.y - extents.y)
 	};
 	sf::VertexArray line(sf::LineStrip, edge.size());
 	for (int i = 0; i < edge.size(); i++)
 	{
-		line[i] = sf::Vertex(sf::Vector2f(edge[i].x, edge[i].y), sf::Color::Red);
+		line[i] = sf::Vertex(sf::Vector2f(edge[i].x, edge[i].y), sf::Color::Yellow);
 	}
 	target.draw(line);
 }

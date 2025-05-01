@@ -40,7 +40,8 @@ public:
 	inline void Update() {
 		if (stop) return;
 
-        for (Object* obj : newObjects) {
+        for (int i = 0; i < newObjects.size(); i++) {
+			Object* obj = newObjects[i];
             obj->Start();
             objects.push_back(obj);
         }
