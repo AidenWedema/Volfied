@@ -193,6 +193,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	Vector2 leftDirection;
 	Vector2 sidePoint;
 	Line line = Line(p2, p2 + (size * direction));
+	std::vector<Line> sideLines;
 	// Get the end point of the line if points ony has 3 points.
 	// This makes the code work when the for loop is skipped.
 	if (points.size() == 3) {
@@ -249,6 +250,12 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 						else continue;
 			}
 		}
+		Line sideLine = Line(p2, sidePoint);
+		if (Line::Intersects(line, sideLines, sidePoint)) {
+			sideLine = Line(p2, sidePoint);
+		}
+		sideLines.push_back(sideLine);
+
 		// Create the right area
 		std::vector<Vector2> rectPoints = {
 			p1,

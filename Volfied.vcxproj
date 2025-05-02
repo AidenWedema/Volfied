@@ -141,7 +141,6 @@
     <ClCompile Include="Cursor.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Game.cpp" />
-    <ClCompile Include="InputElement.cpp" />
     <ClCompile Include="Laser.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="LineFollower.cpp" />
@@ -175,7 +174,6 @@
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Gun.h" />
-    <ClInclude Include="InputElement.h" />
     <ClInclude Include="Laser.h" />
     <ClInclude Include="LevelEditor.h" />
     <ClInclude Include="Line.hpp" />
