@@ -1,6 +1,5 @@
 #pragma once
-#include <queue>
-#include <unordered_set>
+#include <stack>
 #include "Object.h"
 #include "Line.hpp"
 #include "SpriteMask.h"
@@ -92,7 +91,7 @@ private:
 	ui::Text* scoreText;
 	ui::Text* clearedText;
 
-	void FillWallGaps(std::vector<Vector2>* points, std::vector<Rect>* leftAreas, std::vector<Rect>* rightAreas);
+	std::vector<Vector2> GetFullLine(std::vector<Vector2> points);
 	void AddWalls(std::vector<Rect> newAreas);
 	void KillEnemiesInWall();
 	void EndLevel();
