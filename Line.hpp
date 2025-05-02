@@ -37,6 +37,25 @@ namespace shape
 			Vector2 p3 = l2.start;
 			Vector2 p4 = l2.end;
 
+			if (strict) {
+				if (IsPointOnLine(p1, l2)) {
+					point = p1;
+					return true;
+				}
+				if (IsPointOnLine(p2, l2)) {
+					point = p2;
+					return true;
+				}
+				if (IsPointOnLine(p3, l1)) {
+					point = p3;
+					return true;
+				}
+				if (IsPointOnLine(p4, l1)) {
+					point = p4;
+					return true;
+				}
+			}
+
 			const float den = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
 
 			if (den == 0)
@@ -50,16 +69,6 @@ namespace shape
 				point.x = p1.x + t * (p2.x - p1.x);
 				point.y = p1.y + t * (p2.y - p1.y);
 				return true;
-			}
-			if (strict) {
-				if (IsPointOnLine(p1, l2)) {
-					point = p1;
-					return true;
-				}
-				if (IsPointOnLine(p2, l2)) {
-					point = p2;
-					return true;
-				}
 			}
 			return false;
 		}

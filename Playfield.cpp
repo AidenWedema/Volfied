@@ -1,6 +1,7 @@
 #include "Playfield.h"
 #include "Game.h"
 #include "AudioManager.hpp"
+#include "Debug.hpp"
 
 void Playfield::Awake()
 {
@@ -50,6 +51,14 @@ void Playfield::Update()
 void Playfield::Draw(sf::RenderTarget& target)
 {
 	if (clipped) return;
+
+	// debug draw the edges of the wallarea
+	for (auto& area : wallArea) {
+		Debug::DrawLine(area.min, area.GetOtherMin(), sf::Color::White);
+		Debug::DrawLine(area.GetOtherMin(), area.max, sf::Color::White);
+		Debug::DrawLine(area.max, area.GetOtherMax(), sf::Color::White);
+		Debug::DrawLine(area.GetOtherMax(), area.min, sf::Color::White);
+	}
 
 	target.draw(sprite);
 	animator->current->Update();
@@ -129,6 +138,8 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	if (points.size() < 2) return;
 
 	points = GetFullLine(points);
+
+	Debug::ClearStaticDrawings();
 
 	Vector2 extents = GetExtents();
 	std::vector<Line> edge = {
@@ -216,6 +227,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		rightDirection = Vector2(-direction.y, direction.x); // Add 90 degrees
 		leftDirection = Vector2(direction.y, -direction.x); // Subtract 90 degrees
 		line = Line(p2, p2 + (size * direction));
+		Debug::DrawLine(line, sf::Color::Yellow, true);
 
 		// Get the end point of the line
 		if (!Line::Intersects(line, pointLines, endPoint))
@@ -230,6 +242,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		// Get the side point of the line
 		if (nextDirection == rightDirection) {
 			line = Line(p2, p2 + (size * leftDirection));
+			Debug::DrawLine(line, sf::Color::Green, true);
 			if (!Line::Intersects(line, pointLines, sidePoint)) {
 				if (!Line::Intersects(line, leftAreas, sidePoint))
 					if (!Line::Intersects(line, edge, sidePoint))
@@ -242,6 +255,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		}
 		if (nextDirection == leftDirection) {
 			line = Line(p2, p2 + (size * rightDirection));
+			Debug::DrawLine(line, sf::Color::Green, true);
 			if (!Line::Intersects(line, pointLines, sidePoint)) {
 				if (!Line::Intersects(line, rightAreas, sidePoint))
 					if (!Line::Intersects(line, edge, sidePoint))
@@ -257,6 +271,11 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 			sideLine = Line(p2, sidePoint);
 		}
 		sideLines.push_back(sideLine);
+
+		Debug::DrawLine(sidePoint + Vector2(-5, -5), sidePoint + Vector2(5, 5), sf::Color::Cyan, true);
+		Debug::DrawLine(sidePoint + Vector2(-5, 5), sidePoint + Vector2(5, -5), sf::Color::Cyan, true);
+		Debug::DrawLine(endPoint + Vector2(-5, -5), endPoint + Vector2(5, 5), sf::Color::Magenta, true);
+		Debug::DrawLine(endPoint + Vector2(-5, 5), endPoint + Vector2(5, -5), sf::Color::Magenta, true);
 
 		// Create the right area
 		std::vector<Vector2> rectPoints = {
@@ -302,6 +321,8 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	}
 	if (bossInLeft) AddWalls(rightAreas);
 	else AddWalls(leftAreas);
+	Debug::DrawLineList(&sideLines, sf::Color::Green, true);
+	Debug::DrawLineList(&points, sf::Color::Red, true);
 }
 
 std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)

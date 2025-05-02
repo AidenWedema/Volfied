@@ -29,6 +29,9 @@ public:
            delete drawable;
        }
 	   drawings.clear();
+       for (const auto& drawing : staticDrawings) {
+           Game::GetInstance()->GetWindow()->draw(*drawing);
+       }
    }
 
    /// <summary>
@@ -50,50 +53,58 @@ public:
    /// <summary>
    /// Draws a line between two points with the specified color.
    /// </summary>
-   inline static void DrawLine(const Vector2& p1, const Vector2& p2, sf::Color color = sf::Color::White) {
+   inline static void DrawLine(const Vector2& p1, const Vector2& p2, sf::Color color = sf::Color::White, bool isStatic = false) {
        sf::VertexArray* line = new sf::VertexArray(sf::Lines, 2);
        (*line)[0] = sf::Vertex(sf::Vector2f(p1.x, p1.y), color);
        (*line)[1] = sf::Vertex(sf::Vector2f(p2.x, p2.y), color);
-       drawings.push_back(line);
+
+	   if (isStatic) staticDrawings.push_back(line);
+       else drawings.push_back(line);
    }  
    
    /// <summary>
    /// Draws a line between two points with the specified color.
    /// </summary>
-   inline static void DrawLine(const Line& l, sf::Color color = sf::Color::White) {
+   inline static void DrawLine(const Line& l, sf::Color color = sf::Color::White, bool isStatic = false) {
        sf::VertexArray* line = new sf::VertexArray(sf::Lines, 2);
        (*line)[0] = sf::Vertex(sf::Vector2f(l.start.x, l.start.y), color);
        (*line)[1] = sf::Vertex(sf::Vector2f(l.end.x, l.end.y), color);
-       drawings.push_back(line);
+	   
+       if (isStatic) staticDrawings.push_back(line);
+	   else drawings.push_back(line);
    }
 
    /// <summary>
    /// Draws a continuous line from all points in the vector with the specified color.
    /// </summary>
-   inline static void DrawLineList(std::vector<Vector2>* line, sf::Color color = sf::Color::White) {
+   inline static void DrawLineList(std::vector<Vector2>* line, sf::Color color = sf::Color::White, bool isStatic = false) {
        sf::VertexArray* lineArray = new sf::VertexArray(sf::LineStrip, line->size());
        for (int i = 0; i < line->size(); i++) {
            (*lineArray)[i] = sf::Vertex(sf::Vector2f((*line)[i].x, (*line)[i].y), color);
        }
-       drawings.push_back(lineArray);
+
+	   if (isStatic) staticDrawings.push_back(lineArray);
+	   else drawings.push_back(lineArray);
    }
 
    /// <summary>
    /// Draws all lines in line with the specified color.
    /// </summary>
-   inline static void DrawLineList(std::vector<Line>* line, sf::Color color = sf::Color::White) {
+   inline static void DrawLineList(std::vector<Line>* line, sf::Color color = sf::Color::White, bool isStatic = false) {
        sf::VertexArray* lineArray = new sf::VertexArray(sf::Lines, line->size() * 2);
        for (int i = 0; i < line->size(); i += 2) {
            (*lineArray)[i] = sf::Vertex(sf::Vector2f((*line)[i].start.x, (*line)[i].start.y), color);
 		   (*lineArray)[i + 1] = sf::Vertex(sf::Vector2f((*line)[i].end.x, (*line)[i].end.y), color);
        }
-       drawings.push_back(lineArray);
+
+	   if (isStatic) staticDrawings.push_back(lineArray);
+	   else drawings.push_back(lineArray);
    }
 
    /// <summary>
    /// Draws the text in the specified position.
    /// </summary>
-   inline static void DrawText(std::string text, Vector2 position, int fontSize=14, sf::Color color = sf::Color::White) {
+   inline static void DrawText(std::string text, Vector2 position, int fontSize=14, sf::Color color = sf::Color::White, bool isStatic = false) {
        // Load the Arial font from the assets folder
        if (font == nullptr) {
            font = new sf::Font();
@@ -109,35 +120,49 @@ public:
 	   textObj->setPosition(position.x, position.y);
 	   textObj->setFillColor(color);
 	   textObj->setCharacterSize(fontSize);
-       drawings.push_back(textObj);
+
+	   if (isStatic) staticDrawings.push_back(textObj);
+	   else drawings.push_back(textObj);
    }
 
    /// <summary>
    /// Draws a rectangle with the specified color.
    /// </summary>
-   inline static void DrawRect(Rect rect, sf::Color color = sf::Color::White) {
+   inline static void DrawRect(Rect rect, sf::Color color = sf::Color::White, bool isStatic = false) {
 	   sf::VertexArray* line = new sf::VertexArray(sf::Quads, 4);
 	   (*line)[0] = sf::Vertex(sf::Vector2f(rect.min.x, rect.min.y), color);
 	   (*line)[1] = sf::Vertex(sf::Vector2f(rect.max.x, rect.min.y), color);
 	   (*line)[2] = sf::Vertex(sf::Vector2f(rect.max.x, rect.max.y), color);
 	   (*line)[3] = sf::Vertex(sf::Vector2f(rect.min.x, rect.max.y), color);
-	   drawings.push_back(line);
+
+	   if (isStatic) staticDrawings.push_back(line);
+	   else drawings.push_back(line);
    }
 
    /// <summary>
    /// Draws a rectangle outline with the specified color.
    /// </summary>
-   inline static void DrawWireRect(Rect rect, sf::Color color = sf::Color::White) {
+   inline static void DrawWireRect(Rect rect, sf::Color color = sf::Color::White, bool isStatic = false) {
 	   sf::VertexArray* line = new sf::VertexArray(sf::LineStrip, 5);
 	   (*line)[0] = sf::Vertex(sf::Vector2f(rect.min.x, rect.min.y), color);
 	   (*line)[1] = sf::Vertex(sf::Vector2f(rect.max.x, rect.min.y), color);
 	   (*line)[2] = sf::Vertex(sf::Vector2f(rect.max.x, rect.max.y), color);
 	   (*line)[3] = sf::Vertex(sf::Vector2f(rect.min.x, rect.max.y), color);
 	   (*line)[4] = sf::Vertex(sf::Vector2f(rect.min.x, rect.min.y), color);
-	   drawings.push_back(line);
+
+	   if (isStatic) staticDrawings.push_back(line);
+	   else drawings.push_back(line);
+   }
+
+   inline static void ClearStaticDrawings() {
+	   for (auto* drawable : staticDrawings) {
+		   delete drawable;
+	   }
+	   staticDrawings.clear();
    }
 
 private:
     inline static std::vector<sf::Drawable*> drawings;
+    inline static std::vector<sf::Drawable*> staticDrawings;
     inline static sf::Font* font;
 };
