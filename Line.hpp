@@ -208,7 +208,7 @@ namespace shape
 		/// Check if point is on any line in lineList.
 		/// </summary>
 		inline static bool IsPointOnLine(const Vector2& point, const std::vector<Line>& lineList) {
-			for (size_t i = 0; i < lineList.size() - 1; i++) {
+			for (size_t i = 0; i < lineList.size(); i++) {
 				if (IsPointOnLine(point, lineList[i]))
 					return true;
 			}

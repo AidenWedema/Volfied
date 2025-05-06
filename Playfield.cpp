@@ -244,26 +244,50 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 			line = Line(p2, p2 + (size * leftDirection));
 			Debug::DrawLine(line, sf::Color::Green, true);
 			if (!Line::Intersects(line, pointLines, sidePoint)) {
-				if (!Line::Intersects(line, leftAreas, sidePoint))
-					if (!Line::Intersects(line, edge, sidePoint))
-						if (direction.x == 0 && direction.y != 0)
-							sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-						else if (direction.y == 0 && direction.x != 0)
-							sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-						else continue;
+				bool found = false;
+				float minDist = FLT_MAX;
+				for (Vector2 p : points) {
+					if (p == p2) continue;
+					if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
+						sidePoint = p;
+						minDist = Vector2::Distance(p, p2);
+						found = true;
+					}
+				}
+				if (!found) {
+					if (!Line::Intersects(line, leftAreas, sidePoint))
+						if (!Line::Intersects(line, edge, sidePoint))
+							if (direction.x == 0 && direction.y != 0)
+								sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+							else if (direction.y == 0 && direction.x != 0)
+								sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+							else continue;
+				}
 			}
 		}
 		if (nextDirection == leftDirection) {
 			line = Line(p2, p2 + (size * rightDirection));
 			Debug::DrawLine(line, sf::Color::Green, true);
 			if (!Line::Intersects(line, pointLines, sidePoint)) {
-				if (!Line::Intersects(line, rightAreas, sidePoint))
-					if (!Line::Intersects(line, edge, sidePoint))
-						if (direction.x == 0 && direction.y != 0)
-							sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-						else if (direction.y == 0 && direction.x != 0)
-							sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-						else continue;
+				bool found = false;
+				float minDist = FLT_MAX;
+				for (Vector2 p : points) {
+					if (p == p2) continue;
+					if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
+						sidePoint = p;
+						minDist = Vector2::Distance(p, p2);
+						found = true;
+					}
+				}
+				if (!found) {
+					if (!Line::Intersects(line, rightAreas, sidePoint))
+						if (!Line::Intersects(line, edge, sidePoint))
+							if (direction.x == 0 && direction.y != 0)
+								sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+							else if (direction.y == 0 && direction.x != 0)
+								sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+							else continue;
+				}
 			}
 		}
 		Line sideLine = Line(p2, sidePoint);
@@ -321,6 +345,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	}
 	if (bossInLeft) AddWalls(rightAreas);
 	else AddWalls(leftAreas);
+
 	Debug::DrawLineList(&sideLines, sf::Color::Green, true);
 	Debug::DrawLineList(&points, sf::Color::Red, true);
 }
@@ -337,7 +362,6 @@ std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)
 	std::vector<Vector2> visitedPoints;
 	std::stack<Vector2> path;
 	allCheckpoints.push(checkPoint);
-	checkPoints.clear();
 	bool onEdge = false;
 	// Check if the starting point is on the edge
 	for (auto& point : extentPoints) {
@@ -349,12 +373,17 @@ std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)
 	while (!onEdge) {
 		std::vector<Rect> rects;
 		checkPoints.clear();
-		checkPoint = allCheckpoints.top();
-		allCheckpoints.pop();
+		if (!allCheckpoints.empty()) {
+			checkPoint = allCheckpoints.top();
+			allCheckpoints.pop();
+		}
+		else
+			break;	// Shouldn't happen
 
 		path.push(checkPoint);
 		visitedPoints.push_back(checkPoint);
 
+		// Check if the point is on the playfield edge
 		for (auto& point : extentPoints) {
 			if (checkPoint.x == point.x || checkPoint.y == point.y) {
 				onEdge = true;
@@ -375,41 +404,46 @@ std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)
 			break;
 		}
 
+		// Get all rects that the point is on the edge of
 		for (auto& wall : *GetWallArea()) {
 			if (wall.OnEdge(checkPoint)) {
 				rects.push_back(wall);
 				break;
-		}
+			}
 		}
 
 		for (auto& wall : rects) {
+			// Get the corners of the rect
 			std::vector<Vector2> rectPoints = {
 				wall.min,
 				wall.GetOtherMin(),
 				wall.max,
 				wall.GetOtherMax()
-		};
+			};
+			// Check if the line from checkPoint to each edge is axis aligned
 			for (auto& point : rectPoints) {
 				if (std::find(visitedPoints.begin(), visitedPoints.end(), point) != visitedPoints.end() ||
 					std::find(newPoints.begin(), newPoints.end(), point) != newPoints.end() ||
 					Line::IsPointOnLine(point, Line::CreateLineList(newPoints))) continue;
 				Vector2 dir = Line(checkPoint, point).Direction();
+				// If the line is axis aligned add the point to the checkpoints
 				if ((dir.x == 0) ^ (dir.y == 0)) {
 					checkPoints.push_back(point);
 				}
 			}
 		}
 
+		// If there are no checkpoints, go back to the previous point on the path
 		if (checkPoints.empty()) path.pop();
-
-		for (auto& point : checkPoints) {
-			allCheckpoints.push(point);
+		
+		for (int i = checkPoints.size() - 1; i >= 0; i--) {
+			allCheckpoints.push(checkPoints[i]);
 		}
 	}
 	checkPoint = points[points.size() - 1];
-	allCheckpoints.empty();
+	while(!allCheckpoints.empty()) allCheckpoints.pop();
 	visitedPoints.clear();
-	path.empty();
+	while(!path.empty()) path.pop();
 	allCheckpoints.push(checkPoint);
 	checkPoints.clear();
 	onEdge = false;
@@ -423,8 +457,12 @@ std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)
 	while (!onEdge) {
 		std::vector<Rect> rects;
 		checkPoints.clear();
-		checkPoint = allCheckpoints.top();
-		allCheckpoints.pop();
+		if (!allCheckpoints.empty()) {
+			checkPoint = allCheckpoints.top();
+			allCheckpoints.pop();
+		}
+		else
+			break;	// Shouldn't happen
 
 		path.push(checkPoint);
 		visitedPoints.push_back(checkPoint);
@@ -449,35 +487,40 @@ std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)
 			break;
 		}
 
+		// Get all rects that the point is on the edge of
 		for (auto& wall : *GetWallArea()) {
 			if (wall.OnEdge(checkPoint)) {
 				rects.push_back(wall);
 				break;
-		}
+			}
 		}
 
 		for (auto& wall : rects) {
+			// Get the corners of the rect
 			std::vector<Vector2> rectPoints = {
 				wall.min,
 				wall.GetOtherMin(),
 				wall.max,
 				wall.GetOtherMax()
-		};
+			};
+			// Check if the line from checkPoint to each edge is axis aligned
 			for (auto& point : rectPoints) {
 				if (std::find(visitedPoints.begin(), visitedPoints.end(), point) != visitedPoints.end() ||
 					std::find(newPoints.begin(), newPoints.end(), point) != newPoints.end() ||
 					Line::IsPointOnLine(point, Line::CreateLineList(newPoints))) continue;
 				Vector2 dir = Line(checkPoint, point).Direction();
+				// If the line is axis aligned add the point to the checkpoints
 				if ((dir.x == 0) ^ (dir.y == 0)) {
 					checkPoints.push_back(point);
 				}
 			}
 		}
 
+		// If there are no checkpoints, go back to the previous point on the path
 		if (checkPoints.empty()) path.pop();
 
-		for (auto& point : checkPoints) {
-			allCheckpoints.push(point);
+		for (int i = checkPoints.size() - 1; i >= 0; i--) {
+			allCheckpoints.push(checkPoints[i]);
 		}
 	}
 	return newPoints;
@@ -493,7 +536,7 @@ void Playfield::AddWalls(std::vector<Rect> newAreas)
 	for (size_t i = 0; i < wallArea.size(); i++) {
 		for (size_t j = 0; j < wallArea.size(); j++) {
 			if (i == j) continue;
-			if (wallArea[i].ContainsAll({ wallArea[j].min, wallArea[j].max, wallArea[j].GetOtherMin(), wallArea[j].GetOtherMax() }, true))
+			if (wallArea[i].ContainsAll({ wallArea[j].min, wallArea[j].max, wallArea[j].GetOtherMin(), wallArea[j].GetOtherMax() }))
 				removedAreas.push_back(wallArea[j]);
 		}
 	}
