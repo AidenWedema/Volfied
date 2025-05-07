@@ -47,6 +47,7 @@ public:
 	}
 
 	bool IsInBounds(Vector2& point, bool correct);
+	bool IsPointOnEdge(Vector2 point);
 	void AreaFill(std::vector<Vector2> points);
 
 	inline void SetSize(const Vector2& newSize) { size = newSize; }

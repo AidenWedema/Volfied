@@ -133,6 +133,17 @@ bool Playfield::IsInBounds(Vector2& point, bool correct = false)
 	return !OOB;
 }
 
+bool Playfield::IsPointOnEdge(Vector2 point)
+{
+	std::vector<Vector2> extentPoints = GetExtentPoints();
+	for (auto& p : extentPoints) {
+		if (p.x == point.x || p.y == point.y) {
+			return true;
+		}
+	}
+	return false;
+}
+
 void Playfield::AreaFill(std::vector<Vector2> points)
 {
 	if (points.size() < 2) return;
@@ -230,14 +241,27 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 		Debug::DrawLine(line, sf::Color::Yellow, true);
 
 		// Get the end point of the line
-		if (!Line::Intersects(line, pointLines, endPoint))
-			if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
-				if (!Line::Intersects(line, edge, endPoint, true))
-					if (direction.x == 0 && direction.y != 0)
-						endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-					else if (direction.y == 0 && direction.x != 0)
-						endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-					else continue;
+		if (!Line::Intersects(line, pointLines, endPoint)) {
+			bool found = false;
+			float minDist = FLT_MAX;
+			for (Vector2 p : points) {
+				if (p == p2) continue;
+				if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
+					endPoint = p;
+					minDist = Vector2::Distance(p, p2);
+					found = true;
+				}
+			}
+			if (!found) {
+				if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
+					if (!Line::Intersects(line, edge, endPoint, true))
+						if (direction.x == 0 && direction.y != 0)
+							endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+						else if (direction.y == 0 && direction.x != 0)
+							endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+						else continue;
+			}
+		}
 
 		// Get the side point of the line
 		if (nextDirection == rightDirection) {
@@ -323,7 +347,7 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	std::vector<Vector2> inPoints = {
 		p1,
 		p2,
-		p3,
+		p3
 	};
 	Rect outArea = Rect(outPoints);
 	Rect inArea = Rect(inPoints);
@@ -352,178 +376,202 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 
 std::vector<Vector2> Playfield::GetFullLine(std::vector<Vector2> points)
 {
+	if (points.size() < 2) return points;
+	if (IsPointOnEdge(points[0]) && IsPointOnEdge(points[points.size() - 1])) return points;
+
 	std::vector<Vector2> newPoints = points;
 	Vector2 extents = GetExtents();
 	std::vector<Vector2> extentPoints = GetExtentPoints();
 
-	Vector2 checkPoint = points[0];
-	std::vector<Vector2> checkPoints;
-	std::stack<Vector2> allCheckpoints;
-	std::vector<Vector2> visitedPoints;
-	std::stack<Vector2> path;
-	allCheckpoints.push(checkPoint);
-	bool onEdge = false;
-	// Check if the starting point is on the edge
-	for (auto& point : extentPoints) {
-		if (checkPoint.x == point.x || checkPoint.y == point.y) {
-			onEdge = true;
-			break;
-		}
+	std::vector<Vector2> allPoints = {points[0], points[points.size() - 1]};
+	std::vector<Vector2*> wallPoints;
+	std::vector<Vector2*> edgePoints;
+	// Get all unique points from the wall area
+	for (auto& area : wallArea) {
+		if (std::find(allPoints.begin(), allPoints.end(), area.GetOtherMin()) == allPoints.end())
+			allPoints.push_back(area.GetOtherMin());
+		if (std::find(allPoints.begin(), allPoints.end(), area.min) == allPoints.end())
+			allPoints.push_back(area.min);
+		if (std::find(allPoints.begin(), allPoints.end(), area.GetOtherMax()) == allPoints.end())
+			allPoints.push_back(area.GetOtherMax());
+		if (std::find(allPoints.begin(), allPoints.end(), area.max) == allPoints.end())
+			allPoints.push_back(area.max);
 	}
-	while (!onEdge) {
-		std::vector<Rect> rects;
-		checkPoints.clear();
-		if (!allCheckpoints.empty()) {
-			checkPoint = allCheckpoints.top();
-			allCheckpoints.pop();
-		}
-		else
-			break;	// Shouldn't happen
+	// move points that are on the edge to edgePoints
+	for (auto& point : allPoints) {
+		if (IsPointOnEdge(point)) edgePoints.push_back(&point);
+		else wallPoints.push_back(&point);
+	}
 
-		path.push(checkPoint);
-		visitedPoints.push_back(checkPoint);
+	// Find the shortest path from each edgepoint to the first point in points
+	// The path can only be made from axis-aligned lines
+	// The path can not go though any wall area or leave the wall area's edge
+	// From all paths choose the one with the least amount of points
+	// Repeat for the last point in points
+	// The two paths are not allowed to intersect with each other or use the same point(s)
+	// When a path from the edge to the first and a path to the last point in points is found, add them path to the points vector at the start and end respectively
 
-		// Check if the point is on the playfield edge
-		for (auto& point : extentPoints) {
-			if (checkPoint.x == point.x || checkPoint.y == point.y) {
-				onEdge = true;
-				break;
-			}
-		}
+	// Create the graph of points and their neighbors needed for Dijkstra's algorithm
+	std::unordered_map<Vector2*, std::vector<Vector2*>> graph;
+	for (auto& point : allPoints) {
+		graph[&point] = std::vector<Vector2*>();
+	}
+	for (int i = 0; i < allPoints.size(); i++) {
+		for (int j = i; j < allPoints.size(); j++) {
+			// Skip if the points are the same
+			if (i == j) continue;
+			
+			// Check if both points are in edgePoints, continue if so
+			if (std::find(edgePoints.begin(), edgePoints.end(), &allPoints[i]) != edgePoints.end() && std::find(edgePoints.begin(), edgePoints.end(), &allPoints[j]) != edgePoints.end())
+				continue;
 
-		if (onEdge) {
-			std::vector<Vector2> pathPoints;
-			while (!path.empty()) {
-				pathPoints.push_back(path.top());
-				path.pop();
-			}
-			// reverse the pathpoints and add to the start of newpoints
-			for (int i = pathPoints.size() - 2; i >= 0; i--) {
-				newPoints.insert(newPoints.begin(), pathPoints[i]);
-			}
-			break;
-		}
+			// Check if both points are the start and end points of points, continue if so
+			if ((allPoints[i] == points[0] || allPoints[i] == points[points.size() - 1]) && (allPoints[j] == points[0] || allPoints[j] == points[points.size() - 1]))
+				continue;
 
-		// Get all rects that the point is on the edge of
-		for (auto& wall : *GetWallArea()) {
-			if (wall.OnEdge(checkPoint)) {
-				rects.push_back(wall);
-				break;
-			}
-		}
-
-		for (auto& wall : rects) {
-			// Get the corners of the rect
-			std::vector<Vector2> rectPoints = {
-				wall.min,
-				wall.GetOtherMin(),
-				wall.max,
-				wall.GetOtherMax()
-			};
-			// Check if the line from checkPoint to each edge is axis aligned
-			for (auto& point : rectPoints) {
-				if (std::find(visitedPoints.begin(), visitedPoints.end(), point) != visitedPoints.end() ||
-					std::find(newPoints.begin(), newPoints.end(), point) != newPoints.end() ||
-					Line::IsPointOnLine(point, Line::CreateLineList(newPoints))) continue;
-				Vector2 dir = Line(checkPoint, point).Direction();
-				// If the line is axis aligned add the point to the checkpoints
-				if ((dir.x == 0) ^ (dir.y == 0)) {
-					checkPoints.push_back(point);
+			// Check if the points are axis-aligned
+			Vector2 dir = Vector2::Direction(allPoints[i], allPoints[j]);
+			if ((dir.x == 0) ^ (dir.y == 0)) {
+				// Check if the line between the two points intersects with any wall area
+				Line line(allPoints[i], allPoints[j]);
+				bool intersects = false;
+				for (auto& area : wallArea) {
+					if (Line::Intersects(line, area)) {
+						intersects = true;
+						break;
+					}
+				}
+				if (!intersects) {
+					// Add the points as each other's neighbors if they aren't already
+					if (std::find(graph[&allPoints[i]].begin(), graph[&allPoints[i]].end(), &allPoints[j]) == graph[&allPoints[i]].end())
+						graph[&allPoints[i]].push_back(&allPoints[j]);
+					if (std::find(graph[&allPoints[j]].begin(), graph[&allPoints[j]].end(), &allPoints[i]) == graph[&allPoints[j]].end())
+						graph[&allPoints[j]].push_back(&allPoints[i]);
 				}
 			}
 		}
-
-		// If there are no checkpoints, go back to the previous point on the path
-		if (checkPoints.empty()) path.pop();
-		
-		for (int i = checkPoints.size() - 1; i >= 0; i--) {
-			allCheckpoints.push(checkPoints[i]);
-		}
 	}
-	checkPoint = points[points.size() - 1];
-	while(!allCheckpoints.empty()) allCheckpoints.pop();
-	visitedPoints.clear();
-	while(!path.empty()) path.pop();
-	allCheckpoints.push(checkPoint);
-	checkPoints.clear();
-	onEdge = false;
-	// Check if the ending point is on the edge
-	for (auto& point : extentPoints) {
-		if (checkPoint.x == point.x || checkPoint.y == point.y) {
-			onEdge = true;
-			break;
-		}
-	}
-	while (!onEdge) {
-		std::vector<Rect> rects;
-		checkPoints.clear();
-		if (!allCheckpoints.empty()) {
-			checkPoint = allCheckpoints.top();
-			allCheckpoints.pop();
-		}
-		else
-			break;	// Shouldn't happen
 
-		path.push(checkPoint);
-		visitedPoints.push_back(checkPoint);
+	// Try to get the shortest path from each edge point to the first and last point in points
+	std::unordered_map<Vector2*, std::unordered_map<Vector2*, std::vector<Vector2*>>> allPaths;
+	allPaths[&points[0]] = std::unordered_map<Vector2*, std::vector<Vector2*>>();
+	allPaths[&points[points.size() - 1]] = std::unordered_map<Vector2*, std::vector<Vector2*>>();
 
-		for (auto& point : extentPoints) {
-			if (checkPoint.x == point.x || checkPoint.y == point.y) {
-				onEdge = true;
-				break;
-			}
+	for (auto& target : allPaths) {
+		std::unordered_map<Vector2*, std::vector<Vector2*>> paths;
+		for (auto& edgePoint : edgePoints) {
+			paths[edgePoint] = std::vector<Vector2*>();
 		}
-
-		if (onEdge) {
-			std::vector<Vector2> pathPoints;
-			while (!path.empty()) {
-				pathPoints.push_back(path.top());
-				path.pop();
-			}
-			// Add the path points to the new points in reverse order
-			for (int i = pathPoints.size() - 2; i >= 0; i--) {
-				newPoints.push_back(pathPoints[i]);
-			}
-			break;
-		}
-
-		// Get all rects that the point is on the edge of
-		for (auto& wall : *GetWallArea()) {
-			if (wall.OnEdge(checkPoint)) {
-				rects.push_back(wall);
-				break;
-			}
-		}
-
-		for (auto& wall : rects) {
-			// Get the corners of the rect
-			std::vector<Vector2> rectPoints = {
-				wall.min,
-				wall.GetOtherMin(),
-				wall.max,
-				wall.GetOtherMax()
-			};
-			// Check if the line from checkPoint to each edge is axis aligned
-			for (auto& point : rectPoints) {
-				if (std::find(visitedPoints.begin(), visitedPoints.end(), point) != visitedPoints.end() ||
-					std::find(newPoints.begin(), newPoints.end(), point) != newPoints.end() ||
-					Line::IsPointOnLine(point, Line::CreateLineList(newPoints))) continue;
-				Vector2 dir = Line(checkPoint, point).Direction();
-				// If the line is axis aligned add the point to the checkpoints
-				if ((dir.x == 0) ^ (dir.y == 0)) {
-					checkPoints.push_back(point);
+		std::vector<Vector2*> path;
+		std::stack<Vector2*> stack;
+		for (auto& edgePoint : edgePoints) {
+			// Clear the path and stack
+			path.clear();
+			stack = std::stack<Vector2*>();
+			stack.push(edgePoint);
+			Vector2* currentPoint = stack.top();
+			while (*currentPoint != *target.first) {
+				// Get the neighbors of the current point
+				std::vector<Vector2*> neighbors = graph[currentPoint];
+				if (neighbors.size() == 0 || stack.size() > 10000) {
+					stack = std::stack<Vector2*>();
+					break;
 				}
+				// Find the neighbor with the shortest distance to the first point in points
+				float minDist = FLT_MAX;
+				Vector2* closestPoint = nullptr;
+				for (auto& neighbor : neighbors) {
+					float dist = Vector2::Distance(*neighbor, *target.first);
+					if (dist < minDist) {
+						minDist = dist;
+						closestPoint = neighbor;
+					}
+				}
+				stack.push(closestPoint);
+				currentPoint = closestPoint;
+			}
+			if (stack.empty()) continue;
+			// Add the stack to the path
+			std::stack<Vector2*> reverseStack;
+			while (!stack.empty()) {
+				reverseStack.push(stack.top());
+				stack.pop();
+			}
+			while (!reverseStack.empty()) {
+				path.push_back(reverseStack.top());
+				reverseStack.pop();
+			}
+			// add the path to the paths
+			paths[edgePoint] = path;
+		}
+
+		// Remove empty paths
+		for (auto it = paths.begin(); it != paths.end();) {
+			if (it->second.empty()) it = paths.erase(it);
+			else it++;
+		}
+
+		target.second = paths;
+	}
+
+	//// Check for paths that intersect with each other
+	//for (auto& path : allPaths) {
+	//	for (auto& otherPath : allPaths) {
+	//		if (path.first == otherPath.first) continue;
+	//		for (auto& point : path.second) {
+	//			if (std::find(otherPath.second.begin(), otherPath.second.end(), point) != otherPath.second.end()) {
+	//				path.second.erase(std::remove(path.second.begin(), path.second.end(), point), path.second.end());
+	//				break;
+	//			}
+	//		}
+	//	}
+	//}
+
+	// Get the shortest path from the remaining paths
+	for (auto& point : allPaths) {
+		std::vector<Vector2*> shortestPath;
+		float minDist = FLT_MAX;
+		for (auto& path : point.second) {
+			float dist = 0;
+			for (int i = 0; i < path.second.size() - 1; i++) {
+				dist += Vector2::Distance(*path.second[i], *path.second[i + 1]);
+			}
+			if (dist < minDist) {
+				minDist = dist;
+				shortestPath = path.second;
 			}
 		}
 
-		// If there are no checkpoints, go back to the previous point on the path
-		if (checkPoints.empty()) path.pop();
-
-		for (int i = checkPoints.size() - 1; i >= 0; i--) {
-			allCheckpoints.push(checkPoints[i]);
+		if (*point.first == points[0]) {
+			// Add the path to the start of points
+			std::vector<Vector2> newPath;
+			for (auto& p : shortestPath) {
+				newPath.push_back(*p);
+			}
+			newPoints.insert(newPoints.begin(), newPath.begin(), newPath.end());
 		}
+		else if (*point.first == points[points.size() - 1]) {
+			// Add the path to the end of points
+			std::stack<Vector2> newPath;
+			for (auto& p : shortestPath) {
+				newPath.push(*p);
+			}
+			while (!newPath.empty()) {
+				newPoints.push_back(newPath.top());
+				newPath.pop();
+			}
+		}
+		else continue; // Should never happen but just in case...
 	}
-	return newPoints;
+
+	// remove duplicate points just in case
+	std::vector<Vector2> uniquePoints;
+	for (auto& point : newPoints) {
+		if (std::find(uniquePoints.begin(), uniquePoints.end(), point) == uniquePoints.end())
+			uniquePoints.push_back(point);
+	}
+
+	return uniquePoints;
 }
 
 void Playfield::AddWalls(std::vector<Rect> newAreas)
