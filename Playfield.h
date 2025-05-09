@@ -1,5 +1,5 @@
 #pragma once
-#include <stack>
+#include <queue>
 #include "Object.h"
 #include "Line.hpp"
 #include "SpriteMask.h"
@@ -92,7 +92,15 @@ private:
 	ui::Text* scoreText;
 	ui::Text* clearedText;
 
-	std::vector<Vector2> GetFullLine(std::vector<Vector2> points);
+	void HandleSingleLine(const std::vector<Vector2>& points, const Vector2& topLeft, const Vector2& bottomRight, std::vector<Rect>& leftAreas, std::vector<Rect>& rightAreas);
+	void CreateLeftRightRegions(const std::vector<Vector2>& points, const Vector2& topLeft, const Vector2& bottomRight, std::vector<Rect>& leftAreas, std::vector<Rect>& rightAreas);
+	bool IsPointOnLine(const Vector2& point, const Vector2& lineStart, const Vector2& lineEnd);
+	bool IsPointLeftOfPath(const Vector2& point, const std::vector<Vector2>& path);
+	bool IsPathClockwise(const std::vector<Vector2>& path);
+	void OptimizeRectangles(std::vector<Rect>& rects);
+	Rect MergeRectanglesIfPossible(const Rect& a, const Rect& b, bool& merged);
+	std::vector<Rect> DetectIsolatedAreas(const Vector2& topLeft, const Vector2& bottomRight, const Vector2& bossPos, const std::vector<Rect>& filledAreas);
+
 	void AddWalls(std::vector<Rect> newAreas);
 	void KillEnemiesInWall();
 	void EndLevel();
