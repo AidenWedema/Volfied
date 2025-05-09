@@ -66,6 +66,7 @@ void Player::Draw(sf::RenderTarget& target)
 {
 	if (clipped) return;
 
+	sprite.setRotation(Vector2::Degrees(lastDirection));
 	sprite.setPosition(position.x, position.y);
 	target.draw(sprite);
 

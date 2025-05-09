@@ -161,13 +161,172 @@ void Playfield::AreaFill(std::vector<Vector2> points)
     // General case: complex shape with many points
     // ----------------------------------------
     else {
-        // Close the path if it's not already closed
-        if (points.front() != points.back()) {
-            points.push_back(points.front());
-        }
+		Vector2 extents = GetExtents();
+		std::vector<Line> edge = {
+		Line(Vector2(position.x - extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y - extents.y)),
+		Line(Vector2(position.x + extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y + extents.y)),
+		Line(Vector2(position.x + extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y + extents.y)),
+		Line(Vector2(position.x - extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y - extents.y))
+		};
 
-        // Create the left and right regions
-        CreateLeftRightRegions(points, topLeft, bottomRight, leftAreas, rightAreas);
+		Vector2 leftPoint;
+		Vector2 rightPoint;
+		Vector2 endPoint;
+		Vector2 direction;
+
+		std::vector<Line> pointLines = Line::CreateLineList(points);
+
+		Vector2 p1 = points[0];
+		Vector2 p2 = points[1];
+		Vector2 p3 = points[2];
+		Vector2 nextDirection;
+		Vector2 rightDirection;
+		Vector2 leftDirection;
+		Vector2 sidePoint;
+		Line line = Line(p2, p2 + (size * direction));
+		std::vector<Line> sideLines;
+		// Get the end point of the line if points ony has 3 points.
+		// This makes the code work when the for loop is skipped.
+		if (points.size() == 3) {
+			if (!Line::Intersects(line, pointLines, endPoint))
+				if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
+					if (!Line::Intersects(line, edge, endPoint, true))
+						if (direction.x == 0 && direction.y != 0)
+							endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+						else if (direction.y == 0 && direction.x != 0)
+							endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+		}
+		for (int i = 0; i < points.size() - 2; i++) {
+			p1 = points[i];
+			p2 = points[i + 1];
+			p3 = points[i + 2];
+			direction = Vector2::Direction(p1, p2);
+			nextDirection = Vector2::Direction(p2, p3);
+			rightDirection = Vector2(-direction.y, direction.x); // Add 90 degrees
+			leftDirection = Vector2(direction.y, -direction.x); // Subtract 90 degrees
+			line = Line(p2, p2 + (size * direction));
+
+			// Get the end point of the line
+			if (!Line::Intersects(line, pointLines, endPoint))
+				if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
+					if (!Line::Intersects(line, edge, endPoint, true))
+						if (direction.x == 0 && direction.y != 0)
+							endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+						else if (direction.y == 0 && direction.x != 0)
+							endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+						else continue;
+			if (!Line::Intersects(line, pointLines, endPoint)) {
+				bool found = false;
+				float minDist = FLT_MAX;
+				for (Vector2 p : points) {
+					if (p == p2) continue;
+					if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
+						endPoint = p;
+						minDist = Vector2::Distance(p, p2);
+						found = true;
+					}
+				}
+				if (!found) {
+					if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
+						if (!Line::Intersects(line, edge, endPoint, true))
+							if (direction.x == 0 && direction.y != 0)
+								endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+							else if (direction.y == 0 && direction.x != 0)
+								endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+							else continue;
+				}
+			}
+
+			// Get the side point of the line
+			if (nextDirection == rightDirection) {
+				line = Line(p2, p2 + (size * leftDirection));
+				if (!Line::Intersects(line, pointLines, sidePoint)) {
+					bool found = false;
+					float minDist = FLT_MAX;
+					for (Vector2 p : points) {
+						if (p == p2) continue;
+						if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
+							sidePoint = p;
+							minDist = Vector2::Distance(p, p2);
+							found = true;
+						}
+					}
+					if (!found) {
+						if (!Line::Intersects(line, leftAreas, sidePoint))
+							if (!Line::Intersects(line, edge, sidePoint))
+								if (direction.x == 0 && direction.y != 0)
+									sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+								else if (direction.y == 0 && direction.x != 0)
+									sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+								else continue;
+					}
+				}
+			}
+			if (nextDirection == leftDirection) {
+				line = Line(p2, p2 + (size * rightDirection));
+				if (!Line::Intersects(line, pointLines, sidePoint)) {
+					bool found = false;
+					float minDist = FLT_MAX;
+					for (Vector2 p : points) {
+						if (p == p2) continue;
+						if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
+							sidePoint = p;
+							minDist = Vector2::Distance(p, p2);
+							found = true;
+						}
+					}
+					if (!found) {
+						if (!Line::Intersects(line, rightAreas, sidePoint))
+							if (!Line::Intersects(line, edge, sidePoint))
+								if (direction.x == 0 && direction.y != 0)
+									sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
+								else if (direction.y == 0 && direction.x != 0)
+									sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
+								else continue;
+					}
+				}
+			}
+			Line sideLine = Line(p2, sidePoint);
+			if (Line::Intersects(line, sideLines, sidePoint)) {
+				sideLine = Line(p2, sidePoint);
+			}
+			sideLines.push_back(sideLine);
+
+			// Create the right area
+			std::vector<Vector2> rectPoints = {
+				p1,
+				p2,
+				endPoint,
+				sidePoint
+			};
+			Rect newArea = Rect(rectPoints);
+			if (nextDirection == rightDirection)
+				leftAreas.push_back(newArea);
+			if (nextDirection == leftDirection)
+				rightAreas.push_back(newArea);
+		}
+		// Fill in the final area
+		std::vector<Vector2> outPoints = {
+			p2,
+			p3,
+			endPoint
+		};
+		std::vector<Vector2> inPoints = {
+			p1,
+			p2,
+			p3,
+			p3
+		};
+		Rect outArea = Rect(outPoints);
+		Rect inArea = Rect(inPoints);
+		if (nextDirection == rightDirection) {
+			leftAreas.push_back(outArea);
+			rightAreas.push_back(inArea);
+		}
+		if (nextDirection == leftDirection) {
+			rightAreas.push_back(outArea);
+			leftAreas.push_back(inArea);
+		}
     }
 
     // Determine which side contains the boss and fill the opposite side
