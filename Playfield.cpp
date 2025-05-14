@@ -292,7 +292,7 @@ void Playfield::FloodFill(std::vector<Vector2> points, Vector2 startPoint)
 
 	// Flood fill the area
 	std::queue<Vector2> queue;
-	queue.push(startPoint);
+	queue.push(Vector2((int)startPoint.x, (int)startPoint.y));
 	while (!queue.empty()) {
 		Vector2 current = queue.front();
 		Vector2 currentGrid = WorldToGrid(current);
@@ -316,8 +316,8 @@ void Playfield::FloodFill(std::vector<Vector2> points, Vector2 startPoint)
 	}
 
 	// Invert the visited array to get the filled area
-	for (int x = 0; x < filledArea.size(); x++) {
-		for (int y = 0; y < filledArea[x].size(); y++) {
+	for (int x = 0; x < visited.size(); x++) {
+		for (int y = 0; y < visited[x].size(); y++) {
 			if (inverse[x][y]) continue;
 			inverse[x][y] = !visited[x][y];
 		}
