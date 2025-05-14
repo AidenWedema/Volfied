@@ -151,7 +151,10 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	// Get the playfield bounds
 	Vector2 extents = GetExtents();
 	std::vector<Line> fullLine = Line::CreateLineList(points);
+
+	std::vector<Object*> bosses = SceneManager::GetInstance()->GetActiveScene()->GetObjectsWithSubtag(2);
 	Vector2 bossPos = position;
+	if (!bosses.empty()) bossPos = bosses[0]->position;
 
 	std::vector<Rect> leftAreas;
 	std::vector<Rect> rightAreas;
