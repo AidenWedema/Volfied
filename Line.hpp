@@ -37,6 +37,8 @@ namespace shape
 			Vector2 p3 = l2.start;
 			Vector2 p4 = l2.end;
 
+			if (p1 == p2 || p3 == p4) return false;
+
 			if (strict) {
 				if (IsPointOnLine(p1, l2)) {
 					point = p1;

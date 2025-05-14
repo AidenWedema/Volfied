@@ -35,6 +35,7 @@ void Mimic::Update()
 		}
 		for (int i = 0; i < path.size() - 1; i += 2) {
 			Line line(path[i], path[i + 1]);
+			if (playerLastPosition == player->position) continue;
 			if (Line::Intersects(line, Line(playerLastPosition, player->position), true)) {
 				player->Die();
 				break;

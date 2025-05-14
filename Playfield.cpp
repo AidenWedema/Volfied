@@ -110,14 +110,6 @@ bool Playfield::IsInBounds(Vector2& point, bool correct = false)
 		OOB = true;
 	}
 	if (!OOB) {
-		Vector2 gridPoint = WorldToGrid(point);
-		if (gridPoint.x < 0 || gridPoint.y < 0 || gridPoint.x > size.x || gridPoint.y > size.y) OOB = true;
-	}
-	if (!OOB) {
-		Vector2 gridPoint = WorldToGrid(point);
-		if(filledArea[gridPoint.x][gridPoint.y]) OOB = true;
-	}
-	if (!OOB) {
 		for (auto& area : wallArea) {
 			if (area.Contains(point)) {
 				if (correct) {
@@ -129,6 +121,14 @@ bool Playfield::IsInBounds(Vector2& point, bool correct = false)
 				break;
 			}
 		}
+	}
+	if (!OOB) {
+		Vector2 gridPoint = WorldToGrid(point);
+		if (gridPoint.x < 0 || gridPoint.y < 0 || gridPoint.x > size.x || gridPoint.y > size.y) OOB = true;
+	}
+	if (!OOB) {
+		Vector2 gridPoint = WorldToGrid(point);
+		if(filledArea[gridPoint.x][gridPoint.y]) OOB = true;
 	}
 	return !OOB;
 }
