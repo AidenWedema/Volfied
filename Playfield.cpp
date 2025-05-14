@@ -38,6 +38,7 @@ void Playfield::Start()
 
 	SceneManager::GetInstance()->GetActiveScene()->AddObject(clearedText);
 	SceneManager::GetInstance()->GetActiveScene()->AddObject(scoreText);
+	filledArea.resize(size.x + 1, std::vector<bool>(size.y + 1, false));
 }
 
 void Playfield::Update()
@@ -109,6 +110,14 @@ bool Playfield::IsInBounds(Vector2& point, bool correct = false)
 		OOB = true;
 	}
 	if (!OOB) {
+		Vector2 gridPoint = WorldToGrid(point);
+		if (gridPoint.x < 0 || gridPoint.y < 0 || gridPoint.x > size.x || gridPoint.y > size.y) OOB = true;
+	}
+	if (!OOB) {
+		Vector2 gridPoint = WorldToGrid(point);
+		if(filledArea[gridPoint.x][gridPoint.y]) OOB = true;
+	}
+	if (!OOB) {
 		for (auto& area : wallArea) {
 			if (area.Contains(point)) {
 				if (correct) {
@@ -137,671 +146,97 @@ bool Playfield::IsPointOnEdge(Vector2 point)
 
 void Playfield::AreaFill(std::vector<Vector2> points)
 {
-    if (points.size() < 2) return;
+	if (points.size() < 2) return;
 
-    // Get playfield boundary
-    Vector2 extents = GetExtents();
-    Vector2 topLeft = Vector2(position.x - extents.x, position.y - extents.y);
-    Vector2 bottomRight = Vector2(position.x + extents.x, position.y + extents.y);
+	// Get the playfield bounds
+	Vector2 extents = GetExtents();
+	std::vector<Line> fullLine = Line::CreateLineList(points);
+	Vector2 bossPos = position;
 
-    // Find the boss position
-    Vector2 bossPos = position;
+	std::vector<Rect> leftAreas;
+	std::vector<Rect> rightAreas;
 
-    // Create two complete polygon areas - one for left side and one for right side
-    std::vector<Rect> leftAreas;
-    std::vector<Rect> rightAreas;
+	FloodFill(points, bossPos);
 
-    // ----------------------------------------
-    // Special case: if only 2 points (single line)
-    // ----------------------------------------
-    if (points.size() == 2) {
-        HandleSingleLine(points, topLeft, bottomRight, leftAreas, rightAreas);
-    }
-    // ----------------------------------------
-    // General case: complex shape with many points
-    // ----------------------------------------
-    else {
-		Vector2 extents = GetExtents();
-		std::vector<Line> edge = {
-		Line(Vector2(position.x - extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y - extents.y)),
-		Line(Vector2(position.x + extents.x, position.y - extents.y), Vector2(position.x + extents.x, position.y + extents.y)),
-		Line(Vector2(position.x + extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y + extents.y)),
-		Line(Vector2(position.x - extents.x, position.y + extents.y), Vector2(position.x - extents.x, position.y - extents.y))
-		};
-
-		Vector2 leftPoint;
-		Vector2 rightPoint;
-		Vector2 endPoint;
-		Vector2 direction;
-
-		std::vector<Line> pointLines = Line::CreateLineList(points);
-
-		Vector2 p1 = points[0];
-		Vector2 p2 = points[1];
-		Vector2 p3 = points[2];
-		Vector2 nextDirection;
-		Vector2 rightDirection;
-		Vector2 leftDirection;
-		Vector2 sidePoint;
-		Line line = Line(p2, p2 + (size * direction));
-		std::vector<Line> sideLines;
-		// Get the end point of the line if points ony has 3 points.
-		// This makes the code work when the for loop is skipped.
-		if (points.size() == 3) {
-			if (!Line::Intersects(line, pointLines, endPoint))
-				if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
-					if (!Line::Intersects(line, edge, endPoint, true))
-						if (direction.x == 0 && direction.y != 0)
-							endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-						else if (direction.y == 0 && direction.x != 0)
-							endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-		}
-		for (int i = 0; i < points.size() - 2; i++) {
-			p1 = points[i];
-			p2 = points[i + 1];
-			p3 = points[i + 2];
-			direction = Vector2::Direction(p1, p2);
-			nextDirection = Vector2::Direction(p2, p3);
-			rightDirection = Vector2(-direction.y, direction.x); // Add 90 degrees
-			leftDirection = Vector2(direction.y, -direction.x); // Subtract 90 degrees
-			line = Line(p2, p2 + (size * direction));
-
-			// Get the end point of the line
-			if (!Line::Intersects(line, pointLines, endPoint))
-				if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
-					if (!Line::Intersects(line, edge, endPoint, true))
-						if (direction.x == 0 && direction.y != 0)
-							endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-						else if (direction.y == 0 && direction.x != 0)
-							endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-						else continue;
-			if (!Line::Intersects(line, pointLines, endPoint)) {
-				bool found = false;
-				float minDist = FLT_MAX;
-				for (Vector2 p : points) {
-					if (p == p2) continue;
-					if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
-						endPoint = p;
-						minDist = Vector2::Distance(p, p2);
-						found = true;
-					}
+	// Create Lines from the wallpoints
+	std::vector<Line> lines;
+	Line line(Vector2(-1, -1), Vector2(-1, -1));
+	bool newLine = true;
+	for (int x = 0; x < filledArea.size(); x++) {
+		for (int y = 0; y < filledArea[x].size(); y++) {
+			if (filledArea[x][y]) {
+				Vector2 worldPoint = GridToWorld(Vector2(x, y));
+				if (newLine) {
+					line.start = worldPoint;
+					line.end = worldPoint;
+					newLine = false;
 				}
-				if (!found) {
-					if (!Line::Intersects(line, rightAreas, endPoint) && !Line::Intersects(line, leftAreas, endPoint))
-						if (!Line::Intersects(line, edge, endPoint, true))
-							if (direction.x == 0 && direction.y != 0)
-								endPoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-							else if (direction.y == 0 && direction.x != 0)
-								endPoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-							else continue;
+				else if (line.start.x == worldPoint.x) {
+					line.end = worldPoint;
+				}
+				else {
+					lines.push_back(line);
+					line = Line(worldPoint, worldPoint);
 				}
 			}
-
-			// Get the side point of the line
-			if (nextDirection == rightDirection) {
-				line = Line(p2, p2 + (size * leftDirection));
-				if (!Line::Intersects(line, pointLines, sidePoint)) {
-					bool found = false;
-					float minDist = FLT_MAX;
-					for (Vector2 p : points) {
-						if (p == p2) continue;
-						if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
-							sidePoint = p;
-							minDist = Vector2::Distance(p, p2);
-							found = true;
-						}
-					}
-					if (!found) {
-						if (!Line::Intersects(line, leftAreas, sidePoint))
-							if (!Line::Intersects(line, edge, sidePoint))
-								if (direction.x == 0 && direction.y != 0)
-									sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-								else if (direction.y == 0 && direction.x != 0)
-									sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-								else continue;
-					}
+			else {
+				if (!newLine) {
+					lines.push_back(line);
+					line = Line(Vector2(-1, -1), Vector2(-1, -1));
+					newLine = true;
 				}
 			}
-			if (nextDirection == leftDirection) {
-				line = Line(p2, p2 + (size * rightDirection));
-				if (!Line::Intersects(line, pointLines, sidePoint)) {
-					bool found = false;
-					float minDist = FLT_MAX;
-					for (Vector2 p : points) {
-						if (p == p2) continue;
-						if (Line::IsPointOnLine(p, line) && Vector2::Distance(p, p2) < minDist) {
-							sidePoint = p;
-							minDist = Vector2::Distance(p, p2);
-							found = true;
-						}
-					}
-					if (!found) {
-						if (!Line::Intersects(line, rightAreas, sidePoint))
-							if (!Line::Intersects(line, edge, sidePoint))
-								if (direction.x == 0 && direction.y != 0)
-									sidePoint = Vector2(direction.x > 0 ? position.x + extents.x : position.x - extents.x, p2.y);
-								else if (direction.y == 0 && direction.x != 0)
-									sidePoint = Vector2(p2.x, direction.y > 0 ? position.y + extents.y : position.y - extents.y);
-								else continue;
-					}
-				}
+		}
+	}
+
+	// Merge lines into rects (if possible)
+	std::vector<shape::Rect> rects;
+	if (!lines.empty()) {
+		std::sort(lines.begin(), lines.end(), [](const Line& a, const Line& b) {
+			if (a.start.y == b.start.y) return a.start.x < b.start.x;
+			return a.start.y < b.start.y;
+			});
+
+		for (size_t i = 0; i < lines.size();) {
+			Line baseLine = lines[i];
+			float yStart = baseLine.start.y;
+			float yEnd = baseLine.end.y;
+			float xStart = baseLine.start.x;
+			float xEnd = baseLine.start.x;
+
+			size_t j = i + 1;
+			while (j < lines.size() &&
+				lines[j].start.y == yStart &&
+				lines[j].end.y == yEnd &&
+				lines[j].start.x == lines[j].end.x &&
+				lines[j].start.x == xEnd + 1 // assuming 1 unit grid spacing
+				) {
+				xEnd = lines[j].start.x;
+				j++;
 			}
-			Line sideLine = Line(p2, sidePoint);
-			if (Line::Intersects(line, sideLines, sidePoint)) {
-				sideLine = Line(p2, sidePoint);
-			}
-			sideLines.push_back(sideLine);
 
-			// Create the right area
-			std::vector<Vector2> rectPoints = {
-				p1,
-				p2,
-				endPoint,
-				sidePoint
-			};
-			Rect newArea = Rect(rectPoints);
-			if (nextDirection == rightDirection)
-				leftAreas.push_back(newArea);
-			if (nextDirection == leftDirection)
-				rightAreas.push_back(newArea);
+			i = j;
+			// Skip rects with a width or height of 0
+			if (xStart == xEnd || yStart == yEnd)
+				continue;
+
+			// Construct the rect
+			Vector2 topLeft(xStart - 1, yStart - 1);
+			Vector2 bottomRight(xEnd + 1, yEnd + 1); // +1 to include the full grid area
+			rects.emplace_back(topLeft, bottomRight);
 		}
-		// Fill in the final area
-		std::vector<Vector2> outPoints = {
-			p2,
-			p3,
-			endPoint
-		};
-		std::vector<Vector2> inPoints = {
-			p1,
-			p2,
-			p3,
-			p3
-		};
-		Rect outArea = Rect(outPoints);
-		Rect inArea = Rect(inPoints);
-		if (nextDirection == rightDirection) {
-			leftAreas.push_back(outArea);
-			rightAreas.push_back(inArea);
-		}
-		if (nextDirection == leftDirection) {
-			rightAreas.push_back(outArea);
-			leftAreas.push_back(inArea);
-		}
-    }
+	}
 
-    // Determine which side contains the boss and fill the opposite side
-    bool bossInLeft = false;
-    for (auto& area : leftAreas) {
-        if (area.Contains(bossPos)) {
-            bossInLeft = true;
-            break;
-        }
-    }
+	// Make the rects not go out of bounds
+	for (auto& rect : rects) {
+		if (rect.min.x < position.x - extents.x) rect.min.x = position.x - extents.x;
+		if (rect.min.y < position.y - extents.y) rect.min.y = position.y - extents.y;
+		if (rect.max.x > position.x + extents.x) rect.max.x = position.x + extents.x;
+		if (rect.max.y > position.y + extents.y) rect.max.y = position.y + extents.y;
+	}
 
-    std::vector<Rect> areasToFill;
-    if (bossInLeft) {
-        areasToFill = rightAreas;
-    }
-    else {
-        areasToFill = leftAreas;
-    }
-
-    // Also detect and fill any isolated areas (holes)
-    std::vector<Rect> isolatedAreas = DetectIsolatedAreas(topLeft, bottomRight, bossPos, areasToFill);
-    areasToFill.insert(areasToFill.end(), isolatedAreas.begin(), isolatedAreas.end());
-
-    AddWalls(areasToFill);
-}
-
-void Playfield::HandleSingleLine(const std::vector<Vector2>& points,
-    const Vector2& topLeft,
-    const Vector2& bottomRight,
-    std::vector<Rect>& leftAreas,
-    std::vector<Rect>& rightAreas)
-{
-    Vector2 direction = Vector2::Direction(points[0], points[1]);
-
-    // For horizontal line
-    if (direction.y == 0 && direction.x != 0) {
-        // Create top and bottom regions
-        std::vector<Vector2> topPoints = {
-            Vector2(std::min(points[0].x, points[1].x), topLeft.y),
-            Vector2(std::max(points[0].x, points[1].x), topLeft.y),
-            Vector2(std::max(points[0].x, points[1].x), points[0].y),
-            Vector2(std::min(points[0].x, points[1].x), points[0].y)
-        };
-
-        std::vector<Vector2> bottomPoints = {
-            Vector2(std::min(points[0].x, points[1].x), points[0].y),
-            Vector2(std::max(points[0].x, points[1].x), points[0].y),
-            Vector2(std::max(points[0].x, points[1].x), bottomRight.y),
-            Vector2(std::min(points[0].x, points[1].x), bottomRight.y)
-        };
-
-        if (direction.x > 0) {
-            leftAreas.push_back(Rect(topPoints));
-            rightAreas.push_back(Rect(bottomPoints));
-        }
-        else {
-            rightAreas.push_back(Rect(topPoints));
-            leftAreas.push_back(Rect(bottomPoints));
-        }
-    }
-    // For vertical line
-    else if (direction.x == 0 && direction.y != 0) {
-        // Create left and right regions
-        std::vector<Vector2> leftPoints = {
-            Vector2(topLeft.x, std::min(points[0].y, points[1].y)),
-            Vector2(points[0].x, std::min(points[0].y, points[1].y)),
-            Vector2(points[0].x, std::max(points[0].y, points[1].y)),
-            Vector2(topLeft.x, std::max(points[0].y, points[1].y))
-        };
-
-        std::vector<Vector2> rightPoints = {
-            Vector2(points[0].x, std::min(points[0].y, points[1].y)),
-            Vector2(bottomRight.x, std::min(points[0].y, points[1].y)),
-            Vector2(bottomRight.x, std::max(points[0].y, points[1].y)),
-            Vector2(points[0].x, std::max(points[0].y, points[1].y))
-        };
-
-        if (direction.y > 0) {
-            rightAreas.push_back(Rect(leftPoints));
-            leftAreas.push_back(Rect(rightPoints));
-        }
-        else {
-            leftAreas.push_back(Rect(leftPoints));
-            rightAreas.push_back(Rect(rightPoints));
-        }
-    }
-}
-
-void Playfield::CreateLeftRightRegions(const std::vector<Vector2>& points,
-    const Vector2& topLeft,
-    const Vector2& bottomRight,
-    std::vector<Rect>& leftAreas,
-    std::vector<Rect>& rightAreas)
-{
-    // For complex shapes, we'll use a rectangle decomposition approach
-    // First, let's identify all the regions bounded by the path and the playfield boundaries
-
-    // Create grid based on all X and Y coordinates from the points
-    std::set<float> xCoords;
-    std::set<float> yCoords;
-
-    // Add all point coordinates and playfield boundaries
-    xCoords.insert(topLeft.x);
-    xCoords.insert(bottomRight.x);
-    yCoords.insert(topLeft.y);
-    yCoords.insert(bottomRight.y);
-
-    for (const auto& point : points) {
-        xCoords.insert(point.x);
-        yCoords.insert(point.y);
-    }
-
-    // Convert to sorted vectors
-    std::vector<float> xValues(xCoords.begin(), xCoords.end());
-    std::vector<float> yValues(yCoords.begin(), yCoords.end());
-
-    // Create all possible rectangles from grid
-    std::vector<Rect> allRects;
-    for (size_t x = 0; x < xValues.size() - 1; x++) {
-        for (size_t y = 0; y < yValues.size() - 1; y++) {
-            Vector2 min(xValues[x], yValues[y]);
-            Vector2 max(xValues[x + 1], yValues[y + 1]);
-            allRects.push_back(Rect(min, max));
-        }
-    }
-
-    // For each rectangle, determine if it's on the left or right side of the path
-    for (const auto& rect : allRects) {
-        // Get center point of rectangle
-        Vector2 center = (rect.min + rect.max) * 0.5f;
-
-        // Skip if the center is on the path
-        bool onPath = false;
-        for (size_t i = 0; i < points.size() - 1; i++) {
-            if (IsPointOnLine(center, points[i], points[i + 1])) {
-                onPath = true;
-                break;
-            }
-        }
-        if (onPath) continue;
-
-        // Determine if the center is left or right of path
-        if (IsPointLeftOfPath(center, points)) {
-            leftAreas.push_back(rect);
-        }
-        else {
-            rightAreas.push_back(rect);
-        }
-    }
-
-    // Optimize rectangles - merge adjacent ones
-    OptimizeRectangles(leftAreas);
-    OptimizeRectangles(rightAreas);
-}
-
-// Helper to check if a point is on a line segment
-bool Playfield::IsPointOnLine(const Vector2& point, const Vector2& lineStart, const Vector2& lineEnd)
-{
-    // For axis-aligned lines only
-    if (lineStart.x == lineEnd.x) {
-        // Vertical line
-        return (point.x == lineStart.x &&
-            point.y >= std::min(lineStart.y, lineEnd.y) &&
-            point.y <= std::max(lineStart.y, lineEnd.y));
-    }
-    else if (lineStart.y == lineEnd.y) {
-        // Horizontal line
-        return (point.y == lineStart.y &&
-            point.x >= std::min(lineStart.x, lineEnd.x) &&
-            point.x <= std::max(lineStart.x, lineEnd.x));
-    }
-    return false;
-}
-
-// Determine if a point is on the left side of a path using ray casting
-bool Playfield::IsPointLeftOfPath(const Vector2& point, const std::vector<Vector2>& path)
-{
-    // Ray-casting algorithm
-    int crossings = 0;
-
-    for (size_t i = 0; i < path.size() - 1; i++) {
-        Vector2 p1 = path[i];
-        Vector2 p2 = path[i + 1];
-
-        // Skip horizontal lines, they don't affect crossing count
-        if (p1.y == p2.y) continue;
-
-        // Ensure p1.y < p2.y for simplicity
-        if (p1.y > p2.y) {
-            std::swap(p1, p2);
-        }
-
-        // Check if the ray from point to the right crosses this segment
-        if (point.y >= p1.y && point.y < p2.y) {
-            // Calculate x-coordinate of intersection
-            float t = (point.y - p1.y) / (p2.y - p1.y);
-            float x = p1.x + t * (p2.x - p1.x);
-
-            // If intersection is to the right of the point, count a crossing
-            if (x > point.x) {
-                crossings++;
-            }
-        }
-    }
-
-    // Even number of crossings means outside, odd means inside
-    // For left/right determination, we need to know the orientation of the path
-    // For a clockwise path, outside is right and inside is left
-    bool isClockwise = IsPathClockwise(path);
-
-    // If the path is clockwise, odd crossings mean left side
-    // If the path is counter-clockwise, even crossings mean left side
-    return (crossings % 2 == 1) == isClockwise;
-}
-
-// Determine if a polygon path is clockwise or counter-clockwise
-bool Playfield::IsPathClockwise(const std::vector<Vector2>& path)
-{
-    // Calculate signed area
-    float area = 0.0f;
-    for (size_t i = 0; i < path.size() - 1; i++) {
-        area += (path[i + 1].x - path[i].x) * (path[i + 1].y + path[i].y);
-    }
-
-    // Close the loop
-    size_t lastIdx = path.size() - 1;
-    area += (path[0].x - path[lastIdx].x) * (path[0].y + path[lastIdx].y);
-
-    // If area is positive, path is clockwise
-    return area > 0;
-}
-
-// Merge adjacent rectangles where possible to minimize the number
-void Playfield::OptimizeRectangles(std::vector<Rect>& rects)
-{
-    bool mergeOccurred;
-    do {
-        mergeOccurred = false;
-
-        for (size_t i = 0; i < rects.size(); i++) {
-            for (size_t j = i + 1; j < rects.size(); j++) {
-                // Try to merge rectangles i and j
-                bool merged = false;
-                Rect mergedRect = MergeRectanglesIfPossible(rects[i], rects[j], merged);
-
-                if (merged) {
-                    // Replace rect i with merged rect and remove rect j
-                    rects[i] = mergedRect;
-                    rects.erase(rects.begin() + j);
-                    mergeOccurred = true;
-                    break;
-                }
-            }
-            if (mergeOccurred) break;
-        }
-    } while (mergeOccurred);
-}
-
-// Try to merge two rectangles if they share an edge
-Rect Playfield::MergeRectanglesIfPossible(const Rect& a, const Rect& b, bool& merged)
-{
-    merged = false;
-
-    // Check if rectangles can be merged horizontally
-    if (a.min.y == b.min.y && a.max.y == b.max.y) {
-        // Check if they share a vertical edge
-        if (a.max.x == b.min.x || a.min.x == b.max.x) {
-            merged = true;
-            return Rect(
-                Vector2(std::min(a.min.x, b.min.x), a.min.y),
-                Vector2(std::max(a.max.x, b.max.x), a.max.y)
-            );
-        }
-    }
-
-    // Check if rectangles can be merged vertically
-    if (a.min.x == b.min.x && a.max.x == b.max.x) {
-        // Check if they share a horizontal edge
-        if (a.max.y == b.min.y || a.min.y == b.max.y) {
-            merged = true;
-            return Rect(
-                Vector2(a.min.x, std::min(a.min.y, b.min.y)),
-                Vector2(a.max.x, std::max(a.max.y, b.max.y))
-            );
-        }
-    }
-
-    return a; // Return unchanged if no merge possible
-}
-
-// New method to detect isolated areas that should be filled
-std::vector<Rect> Playfield::DetectIsolatedAreas(const Vector2& topLeft, const Vector2& bottomRight,
-    const Vector2& bossPos, const std::vector<Rect>& filledAreas)
-{
-    // Create a grid representation of the playfield
-    const int gridSize = 1; // The resolution of our grid - adjust as needed
-    const int gridWidth = static_cast<int>((bottomRight.x - topLeft.x) / gridSize) + 1;
-    const int gridHeight = static_cast<int>((bottomRight.y - topLeft.y) / gridSize) + 1;
-
-    // Grid cells: 0 = empty, 1 = filled by walls, 2 = already checked
-    std::vector<std::vector<int>> grid(gridWidth, std::vector<int>(gridHeight, 0));
-
-    // Mark existing wall areas in the grid
-    for (const auto& rect : wallArea) {
-        int startX = static_cast<int>((rect.min.x - topLeft.x) / gridSize);
-        int startY = static_cast<int>((rect.min.y - topLeft.y) / gridSize);
-        int endX = static_cast<int>((rect.max.x - topLeft.x) / gridSize) + 1;
-        int endY = static_cast<int>((rect.max.y - topLeft.y) / gridSize) + 1;
-
-        startX = std::max(0, std::min(startX, gridWidth - 1));
-        startY = std::max(0, std::min(startY, gridHeight - 1));
-        endX = std::max(0, std::min(endX, gridWidth));
-        endY = std::max(0, std::min(endY, gridHeight));
-
-        for (int x = startX; x < endX; x++) {
-            for (int y = startY; y < endY; y++) {
-                grid[x][y] = 1;
-            }
-        }
-    }
-
-    // Mark new wall areas to be filled
-    for (const auto& rect : filledAreas) {
-        int startX = static_cast<int>((rect.min.x - topLeft.x) / gridSize);
-        int startY = static_cast<int>((rect.min.y - topLeft.y) / gridSize);
-        int endX = static_cast<int>((rect.max.x - topLeft.x) / gridSize) + 1;
-        int endY = static_cast<int>((rect.max.y - topLeft.y) / gridSize) + 1;
-
-        startX = std::max(0, std::min(startX, gridWidth - 1));
-        startY = std::max(0, std::min(startY, gridHeight - 1));
-        endX = std::max(0, std::min(endX, gridWidth));
-        endY = std::max(0, std::min(endY, gridHeight));
-
-        for (int x = startX; x < endX; x++) {
-            for (int y = startY; y < endY; y++) {
-                grid[x][y] = 1;
-            }
-        }
-    }
-
-    // Mark the boss position as checked (so we don't fill it)
-    int bossX = static_cast<int>((bossPos.x - topLeft.x) / gridSize);
-    int bossY = static_cast<int>((bossPos.y - topLeft.y) / gridSize);
-    if (bossX >= 0 && bossX < gridWidth && bossY >= 0 && bossY < gridHeight) {
-        grid[bossX][bossY] = 2; // Mark as checked
-    }
-
-    // Flood fill from boss position to mark all accessible areas
-    std::queue<std::pair<int, int>> floodQueue;
-    floodQueue.push({ bossX, bossY });
-
-    while (!floodQueue.empty()) {
-        auto [x, y] = floodQueue.front();
-        floodQueue.pop();
-
-        // Check and mark neighbors
-        const std::vector<std::pair<int, int>> directions = {
-            {1, 0}, {-1, 0}, {0, 1}, {0, -1}
-        };
-
-        for (const auto& [dx, dy] : directions) {
-            int nx = x + dx;
-            int ny = y + dy;
-
-            if (nx >= 0 && nx < gridWidth && ny >= 0 && ny < gridHeight && grid[nx][ny] == 0) {
-                grid[nx][ny] = 2; // Mark as checked
-                floodQueue.push({ nx, ny });
-            }
-        }
-    }
-
-    // All remaining empty cells (0) are unreachable - convert to rects
-    std::vector<Rect> isolatedAreas;
-    std::vector<std::vector<bool>> visited(gridWidth, std::vector<bool>(gridHeight, false));
-
-    for (int x = 0; x < gridWidth; x++) {
-        for (int y = 0; y < gridHeight; y++) {
-            if (grid[x][y] == 0 && !visited[x][y]) {
-                // Start a new isolated area
-                int startX = x;
-                int endX = x;
-                int startY = y;
-                int endY = y;
-
-                // Expand in X direction as far as possible
-                while (endX + 1 < gridWidth && grid[endX + 1][y] == 0) {
-                    endX++;
-                }
-
-                // Expand in Y direction as far as possible
-                bool canExpand = true;
-                while (canExpand && endY + 1 < gridHeight) {
-                    for (int i = startX; i <= endX; i++) {
-                        if (grid[i][endY + 1] != 0) {
-                            canExpand = false;
-                            break;
-                        }
-                    }
-                    if (canExpand) endY++;
-                }
-
-                // Mark this area as visited
-                for (int i = startX; i <= endX; i++) {
-                    for (int j = startY; j <= endY; j++) {
-                        visited[i][j] = true;
-                    }
-                }
-
-                // Convert grid coordinates to world coordinates
-                Vector2 min(topLeft.x + (startX - 1) * gridSize, topLeft.y + (startY - 1) * gridSize);
-                Vector2 max(topLeft.x + (endX + 1) * gridSize, topLeft.y + (endY + 1) * gridSize);
-
-                // Add to isolated areas
-                isolatedAreas.push_back(Rect(min, max));
-            }
-        }
-    }
-
-    // Optimize by merging adjacent isolated areas
-    OptimizeRectangles(isolatedAreas);
-
-    return isolatedAreas;
-}
-
-void Playfield::AddWalls(std::vector<Rect> newAreas)
-{
 	// Add the new areas to the wall area
-	wallArea.insert(wallArea.end(), newAreas.begin(), newAreas.end());
-
-	std::vector<Rect> removedAreas;
-	// Check for areas completely inside other areas and remove them
-	for (size_t i = 0; i < wallArea.size(); i++) {
-		for (size_t j = 0; j < wallArea.size(); j++) {
-			if (i == j) continue;
-			if (wallArea[i].ContainsAll({ wallArea[j].min, wallArea[j].max, wallArea[j].GetOtherMin(), wallArea[j].GetOtherMax() }))
-				removedAreas.push_back(wallArea[j]);
-		}
-	}
-
-	// Remove the areas that are completely inside other areas
-	for (auto& area : removedAreas) {
-		auto it = std::remove(wallArea.begin(), wallArea.end(), area);
-		wallArea.erase(it, wallArea.end());
-	}
-
-	// Check for areas that intersect with other areas and change them to not intersect
-	bool nonIntersect = false;
-	while (!nonIntersect) {
-		nonIntersect = true;
-		std::vector<Rect> newWallArea;
-		for (size_t i = 0; i < wallArea.size(); i++) {
-			bool intersected = false;
-			for (size_t j = i; j < wallArea.size(); j++) {
-				if (i == j) continue;
-
-				Rect& a = wallArea[i];
-				Rect& b = wallArea[j];
-
-				if (a.Intersects(b)) {
-					nonIntersect = false;
-					intersected = true;
-
-					// Remove a and replace it with a sliced by b
-					std::vector<Rect> split = a.Slice(b);
-					newWallArea.insert(newWallArea.end(), split.begin(), split.end());
-					break; // break inner loop and move to next rect
-				}
-			}
-
-			if (!intersected) {
-				newWallArea.push_back(wallArea[i]);
-			}
-		}
-		wallArea = newWallArea;
-	}
+	wallArea = rects;
 
 	// Calculate the percent cleared
 	Rect fieldRect(position, position);
@@ -828,6 +263,81 @@ void Playfield::AddWalls(std::vector<Rect> newAreas)
 		Game::GetInstance()->SetPaused(true);
 		inactive = false;
 	}
+}
+
+void Playfield::FloodFill(std::vector<Vector2> points, Vector2 startPoint)
+{
+	std::vector<std::vector<bool>> visited = filledArea;
+	std::vector<std::vector<bool>> inverse = filledArea;
+	std::vector<Line> lines = Line::CreateLineList(points);
+
+	points = GetExtentPoints();
+
+	// mark the points and the points on the line between them as visited
+	for (auto& line : Line::CreateLineList(points)) {
+		Vector2 gridStart = WorldToGrid(line.start);
+		Vector2 gridEnd = WorldToGrid(line.end);
+		visited[gridStart.x][gridStart.y] = true;
+		visited[gridEnd.x][gridEnd.y] = true;
+		Vector2 dir = line.Direction();
+		Vector2 point = gridStart + dir;
+		while (point != gridEnd) {
+			visited[point.x][point.y] = true;
+			point = point + dir;
+		}
+	}
+
+	// Flood fill the area
+	std::queue<Vector2> queue;
+	queue.push(startPoint);
+	while (!queue.empty()) {
+		Vector2 current = queue.front();
+		Vector2 currentGrid = WorldToGrid(current);
+		if (visited[currentGrid.x][currentGrid.y]) {
+			queue.pop();
+			continue;
+		}
+		visited[currentGrid.x][currentGrid.y] = true;
+		queue.pop();
+		if (!Line::IsPointOnLine(current, lines)) {
+			// Check the 4 adjacent points
+			Vector2 right = Vector2(current.x + 1, current.y);
+			Vector2 left = Vector2(current.x - 1, current.y);
+			Vector2 down = Vector2(current.x, current.y + 1);
+			Vector2 up = Vector2(current.x, current.y - 1);
+			if (IsInBounds(right)) queue.push(right);
+			if (IsInBounds(left)) queue.push(left);
+			if (IsInBounds(up)) queue.push(up);
+			if (IsInBounds(down)) queue.push(down);
+		}
+	}
+
+	// Invert the visited array to get the filled area
+	for (int x = 0; x < filledArea.size(); x++) {
+		for (int y = 0; y < filledArea[x].size(); y++) {
+			if (inverse[x][y]) continue;
+			inverse[x][y] = !visited[x][y];
+		}
+	}
+	filledArea = inverse;
+}
+
+// Function to convert points from world coordinates to grid coordinates
+Vector2 Playfield::WorldToGrid(Vector2 point)
+{
+	Vector2 gridPoint = point - position;
+	gridPoint.x = (gridPoint.x + GetExtents().x);
+	gridPoint.y = (gridPoint.y + GetExtents().y);
+	return gridPoint;
+}
+
+// Function to convert points from grid coordinates to world coordinates
+Vector2 Playfield::GridToWorld(Vector2 point)
+{
+	Vector2 worldPoint = point - GetExtents();
+	worldPoint.x = (worldPoint.x + position.x);
+	worldPoint.y = (worldPoint.y + position.y);
+	return worldPoint;
 }
 
 void Playfield::KillEnemiesInWall()

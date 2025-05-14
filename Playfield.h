@@ -85,6 +85,7 @@ public:
 private:
 	Vector2 size;
 	std::vector<Rect> wallArea;
+	std::vector<std::vector<bool>> filledArea;
 	SpriteMask* mask;
 	Animator* animator;
 	float percentCleared = 0.0f;
@@ -92,16 +93,10 @@ private:
 	ui::Text* scoreText;
 	ui::Text* clearedText;
 
-	void HandleSingleLine(const std::vector<Vector2>& points, const Vector2& topLeft, const Vector2& bottomRight, std::vector<Rect>& leftAreas, std::vector<Rect>& rightAreas);
-	void CreateLeftRightRegions(const std::vector<Vector2>& points, const Vector2& topLeft, const Vector2& bottomRight, std::vector<Rect>& leftAreas, std::vector<Rect>& rightAreas);
-	bool IsPointOnLine(const Vector2& point, const Vector2& lineStart, const Vector2& lineEnd);
-	bool IsPointLeftOfPath(const Vector2& point, const std::vector<Vector2>& path);
-	bool IsPathClockwise(const std::vector<Vector2>& path);
-	void OptimizeRectangles(std::vector<Rect>& rects);
-	Rect MergeRectanglesIfPossible(const Rect& a, const Rect& b, bool& merged);
-	std::vector<Rect> DetectIsolatedAreas(const Vector2& topLeft, const Vector2& bottomRight, const Vector2& bossPos, const std::vector<Rect>& filledAreas);
+	void FloodFill(std::vector<Vector2> points, Vector2 startPoint);
+	Vector2 WorldToGrid(Vector2 point);
+	Vector2 GridToWorld(Vector2 point);
 
-	void AddWalls(std::vector<Rect> newAreas);
 	void KillEnemiesInWall();
 	void EndLevel();
 };
