@@ -19,8 +19,23 @@ void Stinger::Update()
 {
 	if (inactive) return;
 
+	// Every 5 seconds, snap out of cunfusion or have a 1 in 3 chance to be confused.
+	confusionTimer -= Time::GetInstance()->GetDeltaTime();
+	if (confusionTimer <= 0) {
+		confusionTimer = confusionTime;
+		if (confused) {
+			confused = false;
+		}
+		else if (RNG::GetRange(0, 3) == 0) {
+			confused = true;
+		}
+	}
+
 	// Get target direction
 	Vector2 targetPos = Player::GetActivePlayer()->position;
+	if (confused)
+		targetPos = targetPos.RotateAround(Playfield::GetInstance()->position, 180);
+
 	Vector2 toTarget = Vector2::Direction(position, targetPos);
 	float newAngle = Vector2::Degrees(toTarget);
 	

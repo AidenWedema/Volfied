@@ -81,6 +81,10 @@ private:
     Vector2 rotationSpeedRange = Vector2(1.5f, 3);
     float turnAroundTimer = 0;
 	bool counterClockwise = false;
+    float coilTimer;
+    float coilCooldown;
+    Vector2 coilTimerRange = Vector2(3, 5);
+    Vector2 coilCooldownRange = Vector2(10, 20);
 
     int length;
     int segmentOffset = 5;

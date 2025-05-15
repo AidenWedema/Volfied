@@ -40,4 +40,7 @@ private:
 	float acceleration = 0.02f;
 	float decceleration = 0.05f;
 	float maxRotation = 3;
+	bool confused = false;
+	float confusionTimer;
+	float confusionTime = 5;
 };

@@ -28,11 +28,74 @@ void Snake::Start()
 	}
 	for (int i = 0; i < length * segmentOffset; i++)
 		path.push_back(position);
+
+	counterClockwise = RNG::GetRange(0, 1) == 0;
+	coilCooldown = RNG::GetRange(coilCooldownRange.x, coilCooldownRange.y);
 }
 
 void Snake::Update()
 {
 	if (inactive) return;
+
+	coilCooldown -= Time::GetInstance()->GetDeltaTime();
+	if (coilCooldown <= 0 && coilTimer <= 0) {
+		coilTimer = RNG::GetRange(coilTimerRange.x, coilTimerRange.y);
+	}
+	else if (coilTimer > 1) {
+		coilTimer -= Time::GetInstance()->GetDeltaTime();
+		if (coilTimer <= 1)
+			coilTimer = 1;
+		// Rotate towards the player
+		Player* player = Player::GetActivePlayer();
+		Vector2 playerPos = player->position;
+		Vector2 dir = Vector2::Normalize(playerPos - position);
+		float angleToPlayer = Vector2::Degrees(Vector2::Direction(position, playerPos));
+		float angleDiff = angleToPlayer - angle;
+		if (angleDiff < -180) angleDiff += 360;
+		if (angleDiff > 180) angleDiff -= 360;
+		if (angleDiff > 0) angle += rotationSpeed;
+		else angle -= rotationSpeed;
+
+		path.push_back(position);
+		if (path.size() > length * segmentOffset + 1) {
+			path.erase(path.begin());
+		}
+		Vector2 pos = position - Vector2::FromDegrees(angle);
+		for (auto& segment : segments) {
+			if (Vector2::Distance(path[segment.index], position) > 1)
+				segment.Update();
+			else {
+				segment.position = pos;
+				pos = pos - Vector2::FromDegrees(angle);
+			}
+		}
+		return;
+	}
+	else if (coilTimer > 0) {
+		coilTimer -= Time::GetInstance()->GetDeltaTime();
+
+		position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
+		path.push_back(position);
+		position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
+		Vector2 pos = position;
+		if (!Playfield::GetInstance()->IsInBounds(position, true)) {
+			Vector2 a = Vector2::FromDegrees(angle);
+			Vector2 normal = Vector2::Normalize(pos - position);
+			angle = Vector2::Degrees(Vector2::Reflect(a, normal));
+			coilTimer = 0;
+		}
+		path.push_back(position);
+		while (path.size() > length * segmentOffset + 1) {
+			path.erase(path.begin());
+		}
+		for (auto& segment : segments) {
+			segment.Update();
+		}
+
+		if (coilTimer <= 0)
+			coilCooldown = RNG::GetRange(coilCooldownRange.x, coilCooldownRange.y);
+		return;
+	}
 
 	turnAroundTimer -= Time::GetInstance()->GetDeltaTime();
 	if (turnAroundTimer <= 0) {
@@ -52,20 +115,13 @@ void Snake::Update()
 	angle += counterClockwise ? -rotationSpeed : rotationSpeed;
 	angle = angle % 360;
 	if (angle < 0) angle += 360;
+
 	Vector2 lastPos = position;
 	position = position + Vector2::Rotate(Vector2::Up() * speed, angle);
 
 	// Keep the enemy in bounds
-	Player* player = Player::GetActivePlayer();
-	std::vector<Vector2>* p = player->GetPath();
 	Vector2 point = Vector2();
 	int index;
-	if (Line::Intersects(Line(lastPos, position), Line::CreateLineList(*p), point, index, true)) {
-		Vector2 a = Vector2::FromDegrees(angle);
-		Vector2 dir = Vector2::Normalize(p->at(index + 1) - p->at(index));
-		angle = Vector2::Degrees(Vector2::Reflect(a, dir)) + 180;
-		position = point + Vector2::Rotate(Vector2::Up() * speed, angle);
-	}
 	Vector2 pos = position;
 	if (!Playfield::GetInstance()->IsInBounds(position, true)) {
 		Vector2 a = Vector2::FromDegrees(angle);
