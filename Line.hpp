@@ -117,7 +117,6 @@ namespace shape
 		/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the lineList.
 		/// </summary>
 		inline static bool Intersects(const Line& line, const std::vector<Line>& lineList, Vector2& point, int& pointIndex, bool strict = false) {
-			if (lineList.size() < 2) return false;
 			for (size_t i = 0; i < lineList.size(); i++) {
 				if (Intersects(line, lineList[i], point, strict)) {
 					pointIndex = i;
@@ -132,7 +131,6 @@ namespace shape
 		/// Only checks for intersections. Set strict to true to also check if the start or end of the line is on the lineList.
 		/// </summary>
 		inline static bool Intersects(const Line& line, const std::vector<Line>& lineList, bool strict = false) {
-			if (lineList.size() < 2) return false;
 			for (size_t i = 0; i < lineList.size(); i++) {
 				if (Intersects(line, lineList[i], strict))
 					return true;

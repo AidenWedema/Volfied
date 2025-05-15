@@ -1,0 +1,79 @@
+{
+    "name": "Level-6",
+    "music": "assets/audio/music/placeholder.ogg",
+    "objects": [
+        {
+            "name": "Playfield",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "size": [ 500, 400 ],
+            "type": "Playfield"
+        },
+        {
+            "name": "Player",
+            "tag": 0,
+            "subTags": [],
+            "position": [ 400, 500 ],
+            "type": "Player"
+        },
+        {
+            "name": "Flail",
+            "tag": 1,
+            "subTags": [ 2 ],
+            "position": [ 400, 300 ],
+            "speed": 1,
+            "radius": 150,
+            "type": "Flail"
+        },
+        {
+            "name": "Flail",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "speed": 2,
+            "radius": 125,
+            "counterClockwise": true,
+            "type": "Flail"
+        },
+        {
+            "name": "Flail",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "speed": 3,
+            "radius": 100,
+            "type": "Flail"
+        },
+        {
+            "name": "Flail",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "speed": 4,
+            "radius": 75,
+            "counterClockwise": true,
+            "type": "Flail"
+        },
+        {
+            "name": "Flail",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "speed": 5,
+            "radius": 50,
+            "type": "Flail"
+        },
+        {
+            "name": "Flail",
+            "tag": 1,
+            "subTags": [],
+            "position": [ 400, 300 ],
+            "speed": 6,
+            "radius": 25,
+            "counterClockwise": true,
+            "type": "Flail"
+        }
+    ],
+    "type": "Scene"
+}

@@ -18,6 +18,8 @@
 #include "Turret.h"
 #include "Mimic.h"
 #include "LevelEditor.h"
+#include "GunShip.h"
+#include "Flail.h"
 
 class ObjectFactory {
 public:
@@ -112,6 +114,16 @@ public:
 		else if (type == "LevelEditor") {
 			LevelEditor* levelEditor = new LevelEditor();
 			return levelEditor;
+		}
+		else if (type == "GunShip") {
+			GunShip* gunShip = new GunShip();
+			gunShip->FromJson(json);
+			return gunShip;
+		}
+		else if (type == "Flail") {
+			Flail* flail = new Flail();
+			flail->FromJson(json);
+			return flail;
 		}
 
         return nullptr;

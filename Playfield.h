@@ -81,6 +81,7 @@ public:
 		points.push_back(Vector2(position.x - extents.x, position.y + extents.y));
 		return points;
 	}
+	inline float GetPercentCleared() const { return percentCleared; }
 
 private:
 	Vector2 size;
