@@ -43,6 +43,7 @@ void Mimic::Update()
 		}
 	}
 
+	sprite.setRotation(Vector2::Degrees(player->GetLastDirection() * Vector2(-1, -1)));
 	playerLastPosition = player->position;
 }
 
