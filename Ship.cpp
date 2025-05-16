@@ -3,13 +3,15 @@
 
 void Ship::Awake()
 {
-	score = 25;
+	score = 25;/*
 	if (!texture.loadFromFile("assets/sprites/ship.png")) {
 		std::cerr << "Error loading ship texture\n";
 		return;
 	}
 	sprite.setTexture(texture);
-	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);*/
+	animator.AddAnimation("Fly", "assets/sprites/ship.png");
+	animator.SetAnimation(0);
 }
 
 void Ship::Start()
@@ -41,3 +43,12 @@ void Ship::Update()
 		direction = Vector2::Degrees(Vector2::Reflect(a, normal));
 	}
 }
+
+void Ship::Draw(sf::RenderTarget& target)
+{
+	if (clipped) return;
+
+	animator.position = position;
+	animator.Draw(target);
+}
+

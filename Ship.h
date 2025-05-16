@@ -17,6 +17,7 @@ public:
 	void Awake() override;
 	void Start() override;
 	void Update() override;
+	void Draw(sf::RenderTarget& target) override;
 
 	nlohmann::json ToJson() const override {
 		return {
@@ -38,5 +39,6 @@ private:
 	int speed = 1;
 	float direction;
 	float bounceTimer;
+	Animator animator;
 };
 
