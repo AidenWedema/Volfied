@@ -3,6 +3,17 @@
     "music": "assets/audio/music/Space.wav",
     "objects": [
         {
+            "name": "background",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                0,
+                0
+            ],
+            "sprite": "assets/sprites/backgrounds/space.png",
+            "type": "Object"
+        },
+        {
             "name": "text",
             "tag": -1,
             "subTags": [],

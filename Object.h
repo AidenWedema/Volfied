@@ -67,6 +67,11 @@ public:
 		tag = json["tag"];
 		subTags = json["subTags"].get<std::vector<int>>();
 		position = Vector2(json["position"][0], json["position"][1]);
+		if (json.contains("sprite")) {
+			std::string texturePath = json["sprite"];
+			if (texture.loadFromFile(texturePath))
+				sprite.setTexture(texture);
+		}
 	}
 
 	inline virtual bool IsTouching(const Object& other) const {
