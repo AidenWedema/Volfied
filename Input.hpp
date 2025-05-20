@@ -137,8 +137,11 @@ private:
 		keyMap["B"] = { sf::Keyboard::LShift, sf::Keyboard::Z };
 		keyMap["Start"] = { sf::Keyboard::Enter };
 		keyMap["Select"] = { sf::Keyboard::LControl };
+
+#ifdef _DEBUG
 		keyMap["Speedup"] = { sf::Keyboard::Tab };
 		keyMap["Reset"] = { sf::Keyboard::BackSpace };
+#endif // _DEBUG
 
 		mouseMap["LeftMouse"] = { sf::Mouse::Left };
 		mouseMap["RightMouse"] = { sf::Mouse::Right };

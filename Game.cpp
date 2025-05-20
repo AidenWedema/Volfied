@@ -73,12 +73,14 @@ void Game::Run()
 		// Poll input
 		Input::GetInstance()->Update();
 
+#ifdef _DEBUG
         // Check for Reset input
         if (Input::GetInstance()->GetKey("Reset"))
         {
             std::string currentSceneName = sceneManager->GetActiveScene()->name;
             sceneManager->LoadScene(currentSceneName);
         }
+#endif // _DEBUG
 
 
 
