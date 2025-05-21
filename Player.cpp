@@ -26,6 +26,8 @@ void Player::Update()
 
 	if (respawnTimer > 0) {
 		respawnTimer -= Time::GetInstance()->GetDeltaTime();
+		Game::GetInstance()->SetPaused(true);
+		inactive = false;
 		if (respawnTimer < 1) {
 			if (lives <= 0) {
 				SceneManager::GetInstance()->LoadScene("GameOver");

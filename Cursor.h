@@ -37,10 +37,10 @@ namespace ui {
 		{
 			if (inactive) return;
 
-			if (Input::GetInstance()->GetKey("Left")) Move(Vector2::Left());
-			if (Input::GetInstance()->GetKey("Right")) Move(Vector2::Right());
-			if (Input::GetInstance()->GetKey("Up")) Move(Vector2::Up());
-			if (Input::GetInstance()->GetKey("Down")) Move(Vector2::Down());
+			if (Input::GetInstance()->GetKeyUp("Left")) Move(Vector2::Left());
+			if (Input::GetInstance()->GetKeyUp("Right")) Move(Vector2::Right());
+			if (Input::GetInstance()->GetKeyUp("Up")) Move(Vector2::Up());
+			if (Input::GetInstance()->GetKeyUp("Down")) Move(Vector2::Down());
 			if (Input::GetInstance()->GetKeyUp("Start")) {
 				if (selected != nullptr || selected->select != nullptr)
 					selected->select->Select();

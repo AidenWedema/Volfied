@@ -36,6 +36,7 @@ public:
 	inline sf::RenderWindow* GetWindow() { return &window; }
 
 	inline void SetPaused(bool pause) { 
+		paused = pause;
 		for (auto& obj : *SceneManager::GetInstance()->GetActiveScene()->GetAllObjects()) {
 			obj->inactive = pause;
 		}
@@ -47,5 +48,6 @@ private:
 	sf::RenderWindow window;
 	GameState gameState = GAME;
 	bool running;
+	bool paused = false;
 	int level;
 };

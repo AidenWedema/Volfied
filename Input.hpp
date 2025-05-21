@@ -137,6 +137,7 @@ private:
 		keyMap["B"] = { sf::Keyboard::LShift, sf::Keyboard::Z };
 		keyMap["Start"] = { sf::Keyboard::Enter };
 		keyMap["Select"] = { sf::Keyboard::LControl };
+		keyMap["Pause"] = { sf::Keyboard::Escape };
 
 #ifdef _DEBUG
 		keyMap["Speedup"] = { sf::Keyboard::Tab };

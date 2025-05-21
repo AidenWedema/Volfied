@@ -3,7 +3,7 @@
 
 void SpriteMask::CreateImage(Vector2 size)
 {
-    sf::Vector2u screenSize = Game::GetInstance()->GetWindow()->getSize();
+    sf::Vector2f screenSize = Game::GetInstance()->GetWindow()->getView().getSize();
     sf::Vector2f spriteSize = sprite->getLocalBounds().getSize();
     Vector2 offset;
 	if (screenSize.x < spriteSize.x) offset.x = (spriteSize.x - screenSize.x) / 2;

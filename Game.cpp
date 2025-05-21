@@ -64,11 +64,19 @@ void Game::Run()
             }
             if (event.type == sf::Event::Resized)
                 window.setView(sf::View(sf::FloatRect(0, 0, event.size.width, event.size.height)));
+			if (event.type == sf::Event::LostFocus)
+				SetPaused(true);
         }
         auto start = std::chrono::high_resolution_clock::now();
         window.clear();
 
         sceneManager->SwapSceneIfAvailable();
+
+		if (Input::GetInstance()->GetKeyUp("Pause"))
+		{
+			paused = !paused;
+			SetPaused(paused);
+		}
 
 		// Poll input
 		Input::GetInstance()->Update();

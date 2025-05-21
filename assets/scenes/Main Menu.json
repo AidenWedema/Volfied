@@ -45,7 +45,7 @@
                     "type": "Selection"
                 },
                 {
-                    "name": "quit",
+                    "name": "fullscreen",
                     "tag": -1,
                     "subTags": [],
                     "position": [
@@ -53,8 +53,27 @@
                         450
                     ],
                     "cursorPosition": [
-                        350,
+                        310,
                         450
+                    ],
+                    "text": "Fullscreen",
+                    "font": "assets/fonts/Emulogic.ttf",
+                    "size": 14,
+                    "color": [ 255, 255, 255, 255 ],
+                    "actions": [ 4 ],
+                    "type": "Selection"
+                },
+                {
+                    "name": "quit",
+                    "tag": -1,
+                    "subTags": [],
+                    "position": [
+                        400,
+                        500
+                    ],
+                    "cursorPosition": [
+                        355,
+                        500
                     ],
                     "text": "Quit",
                     "font": "assets/fonts/Emulogic.ttf",

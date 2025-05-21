@@ -12,6 +12,7 @@ void Ship::Awake()
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);*/
 	animator.AddAnimation("Fly", "assets/sprites/ship.png");
 	animator.SetAnimation(0);
+	animator.autoUpdate = false;
 }
 
 void Ship::Start()
@@ -22,6 +23,8 @@ void Ship::Start()
 void Ship::Update()
 {
 	if (inactive) return;
+
+	animator.current->Update();
 
 	bounceTimer -= Time::GetInstance()->GetDeltaTime();
 	if (bounceTimer <= 0) {
