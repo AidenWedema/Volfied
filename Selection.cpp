@@ -48,7 +48,7 @@ void ui::Selection::Select()
 			}
 			break;
 		}
-			
+
 			// Load main menu
 		default:
 			break;

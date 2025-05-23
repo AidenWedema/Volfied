@@ -20,6 +20,7 @@
 #include "LevelEditor.h"
 #include "GunShip.h"
 #include "Flail.h"
+#include "TextInput.h"
 
 class ObjectFactory {
 public:
@@ -124,6 +125,11 @@ public:
 			Flail* flail = new Flail();
 			flail->FromJson(json);
 			return flail;
+		}
+		else if (type == "TextInput") {
+			ui::TextInput* textInput = new ui::TextInput();
+			textInput->FromJson(json);
+			return textInput;
 		}
 
         return nullptr;

@@ -1,6 +1,6 @@
 {
-    "name": "Scoreboard",
-    "music": "assets/audio/music/placeholder.ogg",
+    "name": "GameOver",
+    "music": "",
     "objects": [
         {
             "name": "Text",
@@ -8,7 +8,7 @@
             "subTags": [],
             "position": [
                 200,
-                200
+                50
             ],
             "text": "Game Over",
             "font": "assets/fonts/Emulogic.ttf",
@@ -17,35 +17,60 @@
             "type": "Text"
         },
         {
-            "name": "cursor",
+            "name": "Text",
             "tag": -1,
             "subTags": [],
             "position": [
-                400,
+                300,
                 100
             ],
-            "options": [
-                {
-                    "name": "restart",
-                    "tag": -1,
-                    "subTags": [],
-                    "position": [
-                        400,
-                        400
-                    ],
-                    "cursorPosition": [
-                        -100,
-                        400
-                    ],
-                    "text": "Insert coin",
-                    "font": "assets/fonts/Emulogic.ttf",
-                    "size": 24,
-                    "color": [ 255, 255, 255, 255 ],
-                    "actions": [ 2 ],
-                    "type": "Selection"
-                }
+            "text": "<scoreboard>",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 18,
+            "color": [ 255, 255, 255, 255 ],
+            "type": "Text"
+        },
+        {
+            "name": "textinput",
+            "length": 3,
+            "position": [
+                150,
+                400
             ],
-            "type": "Cursor"
+            "option": {
+                "name": "confirm",
+                "tag": -1,
+                "subTags": [],
+                "position": [
+                    -1000,
+                    -1000
+                ],
+                "cursorPosition": [
+                    -1000,
+                    -1000
+                ],
+                "text": "",
+                "font": "assets/fonts/Emulogic.ttf",
+                "size": 24,
+                "color": [ 255, 255, 255, 255 ],
+                "actions": [ 2 ],
+                "type": "Selection"
+            },
+            "type": "TextInput"
+        },
+        {
+            "name": "Text",
+            "tag": -1,
+            "subTags": [],
+            "position": [
+                300,
+                400
+            ],
+            "text": ": <score>",
+            "font": "assets/fonts/Emulogic.ttf",
+            "size": 50,
+            "color": [ 255, 0, 0, 255 ],
+            "type": "Text"
         }
     ],
     "type": "Scene"

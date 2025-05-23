@@ -158,6 +158,7 @@
     <ClCompile Include="SpriteMask.cpp" />
     <ClCompile Include="Stinger.cpp" />
     <ClCompile Include="Text.cpp" />
+    <ClCompile Include="TextInput.cpp" />
     <ClCompile Include="TimeFreeze.cpp" />
     <ClCompile Include="Turret.cpp" />
     <ClCompile Include="Volfied.cpp" />
@@ -199,6 +200,7 @@
     <ClInclude Include="SpriteMask.h" />
     <ClInclude Include="Stinger.h" />
     <ClInclude Include="Text.h" />
+    <ClInclude Include="TextInput.h" />
     <ClInclude Include="Time.hpp" />
     <ClInclude Include="TimeFreeze.h" />
     <ClInclude Include="Turret.h" />
