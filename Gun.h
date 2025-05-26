@@ -4,6 +4,7 @@
 #include "Time.h"
 #include "Laser.h"
 #include "SceneManager.hpp"
+#include "DoomRay.h"
 
 class Gun : public Powerup
 {
@@ -21,6 +22,11 @@ public:
 		cooldown -= Time::GetInstance()->GetDeltaTime();
 		if (cooldown > 0) return;
 		if (Input::GetInstance()->GetKey("B")) Fire();
+	}
+
+	void Upgrade() override {
+		user->AddPower(new DoomRay());
+		timer = 0;
 	}
 
 	void Fire() {

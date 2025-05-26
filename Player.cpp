@@ -2,6 +2,7 @@
 #include "Game.h"
 #include "Debug.hpp"
 #include "AudioManager.hpp"
+#include "DoomRay.h"
 
 Player* Player::activePlayer = nullptr;
 
@@ -79,6 +80,11 @@ void Player::Draw(sf::RenderTarget& target)
 	}
 	line[path.size()] = sf::Vertex(sf::Vector2f(position.x, position.y), sf::Color::White);
 	target.draw(line);
+
+	// Draw the powerups
+	for (auto& power : powers) {
+		power->Draw(target);
+	}
 }
 
 void Player::Die()

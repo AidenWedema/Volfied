@@ -53,7 +53,7 @@ public:
            return p->name == power->name;
        });
        if (it != powers.end()) {
-           (*it)->Start();
+           (*it)->Upgrade();
            return;
        }
        power->user = this;

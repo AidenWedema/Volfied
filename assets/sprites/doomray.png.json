@@ -1,0 +1,6 @@
+{
+    "frameSize": [ 32, 4 ],
+    "frameTime": 1,
+    "loopmode": 1,
+    "useDeltatime": false
+}

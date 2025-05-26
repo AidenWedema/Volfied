@@ -96,6 +96,9 @@
     <ClCompile Include="TextInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DoomRay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Game.h">
@@ -219,6 +222,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="TextInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DoomRay.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

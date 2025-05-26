@@ -139,6 +139,7 @@
     <ClCompile Include="Box.cpp" />
     <ClCompile Include="Bullet.cpp" />
     <ClCompile Include="Cursor.cpp" />
+    <ClCompile Include="DoomRay.cpp" />
     <ClCompile Include="Enemy.cpp" />
     <ClCompile Include="Flail.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -172,6 +173,7 @@
     <ClInclude Include="Cursor.h" />
     <ClInclude Include="CutsceneObject.hpp" />
     <ClInclude Include="Debug.hpp" />
+    <ClInclude Include="DoomRay.h" />
     <ClInclude Include="Enemy.h" />
     <ClInclude Include="Flail.h" />
     <ClInclude Include="Game.h" />

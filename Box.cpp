@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "TimeFreeze.h"
 #include "Gun.h"
+#include "DoomRay.h"
 
 void Box::Awake()
 {
@@ -65,5 +66,6 @@ Powerup* Box::GetPower(std::string name)
 {
 	if (name == "TimeFreeze") return new TimeFreeze();
 	else if (name == "Gun") return new Gun();
+	else if (name == "DoomRay") return new DoomRay();
 	else return nullptr;
 }
