@@ -6,6 +6,7 @@
 #include "RNG.hpp"
 #include "Line.hpp"
 #include "Score.hpp"
+#include "Animator.hpp"
 
 class Enemy : public Object
 {
@@ -47,5 +48,6 @@ private:
 	Vector2 rotationSpeedRange = Vector2(2.5f, 3.5f);
 	float turnAroundTimer = 0;
 	bool counterClockwise = false;
+	Animator animator;
 };
 

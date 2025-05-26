@@ -5,12 +5,15 @@
 void Enemy::Awake()
 {
 	score = 20;
-	if (!texture.loadFromFile("assets/sprites/enemy.png")) {
-		std::cerr << "Error loading enemy texture\n";
-		return;
-	}
-	sprite.setTexture(texture);
-	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+	//if (!texture.loadFromFile("assets/sprites/enemy.png")) {
+	//	std::cerr << "Error loading enemy texture\n";
+	//	return;
+	//}
+	//sprite.setTexture(texture);
+	//sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+	animator.AddAnimation("Swim", "assets/sprites/enemy.png");
+	animator.SetAnimation(0);
+	animator.autoUpdate = false;
 }
 
 void Enemy::Start()
@@ -20,6 +23,8 @@ void Enemy::Start()
 void Enemy::Update()
 {
 	if (inactive) return;
+
+	animator.current->Update();
 
 	turnAroundTimer -= Time::GetInstance()->GetDeltaTime();
 	if (turnAroundTimer <= 0) {
@@ -66,6 +71,7 @@ void Enemy::Draw(sf::RenderTarget& target)
 {
 	if (clipped) return;
 
+	sprite = animator.current->sprite;
 	sprite.setPosition(position.x, position.y);
 	sprite.setRotation(angle);
 	target.draw(sprite);

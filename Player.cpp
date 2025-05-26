@@ -217,7 +217,12 @@ void Player::Dig()
 		path.push_back(position);
 	}
 
-	position = position + direction * speed;
+	Vector2 newPosition = position + direction * speed;
+	bool isOOB = false;
+	if (!Playfield::GetInstance()->IsInBounds(newPosition, true))
+		isOOB = true;
+
+	position = newPosition;
 	path[path.size() - 1] = position;
 	if (path.size() > 1)
 	{
@@ -227,14 +232,18 @@ void Player::Dig()
 	}
 
 	// Keep the player in bounds
-	if (!Playfield::GetInstance()->IsInBounds(position, true)) {
+	if (isOOB) {
+		direction = Vector2();
 		lastDirection = Vector2();
+		isDigging = false;
+		if (path.size() == 2 && path[0] == path[path.size() - 1]) {
+			path.clear();
+			return;
+		}
 		if (path.size() > 1) {
 			path[path.size() - 1] = position;
-			direction = Vector2();
 			Playfield::GetInstance()->AreaFill(path);
 			path.clear();
-			isDigging = false;
 		}
 	}
 }
