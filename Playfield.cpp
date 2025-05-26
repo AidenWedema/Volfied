@@ -69,7 +69,7 @@ void Playfield::Draw(sf::RenderTarget& target)
 	// Update the text
 	clearedText->SetOrigin(Vector2(clearedText->text.getLocalBounds().width / 2, clearedText->text.getLocalBounds().height / 2));
 	scoreText->SetOrigin(Vector2(scoreText->text.getLocalBounds().width / 2, scoreText->text.getLocalBounds().height / 2));
-	clearedText->SetText("Cleared: " + std::to_string(percentCleared * 100) + "%");
+	clearedText->SetText("Cleared: " + std::to_string(percentCleared * 100).substr(0, 4) + "%");
 	scoreText->SetText("Score: " + std::to_string(Score::score * 1000));
 
 	// Draw the edges of the playfield
@@ -253,6 +253,8 @@ void Playfield::AreaFill(std::vector<Vector2> points)
 	}
 	percentCleared = areaCleared / totalArea;
 	if (percentCleared > 1) percentCleared = 1;
+	// Round the percent cleared to 1 decimal place
+	percentCleared = static_cast<int>(percentCleared * 1000) / 1000.0f;
 
 	// Update the mask
 	mask->setRects(wallArea);
@@ -364,6 +366,15 @@ void Playfield::EndLevel()
 		for (auto& obj : *activeScene->GetAllObjects()) {
 			obj->clipped = true;
 		}
+		// Calculate bonus score based on cleared percentage
+		int bonusScore = static_cast<int>(percentCleared * 100) - 80;
+		bonusScore *= 5;
+		Score::Add(bonusScore);
+		ui::Text* scoreText = dynamic_cast<ui::Text*>(Object::Instantiate("prefabs/Text"));
+		scoreText->SetText(std::to_string(percentCleared * 100).substr(0, 4) + "% cleared! bonus: " + std::to_string(bonusScore * 1000));
+		scoreText->SetOrigin(Vector2(scoreText->text.getLocalBounds().width / 2, scoreText->text.getLocalBounds().height / 2));
+		scoreText->SetPosition(Vector2(position.x, position.y + 150));
+
 		Score::LoadHighscores();
 		Score::AddHighscore("You");
 		int y = 100;
@@ -373,7 +384,7 @@ void Playfield::EndLevel()
 			if (score == 0) continue;
 			initials = initials.substr(0, 3);
 
-			ui::Text* scoreText = dynamic_cast<ui::Text*>(Object::Instantiate("prefabs/Text"));
+			scoreText = dynamic_cast<ui::Text*>(Object::Instantiate("prefabs/Text"));
 			scoreText->SetText(initials + ": " + std::to_string(score * 1000));
 			scoreText->SetOrigin(Vector2(0, scoreText->text.getLocalBounds().height / 2));
 			scoreText->SetPosition(Vector2(position.x - 150, y));
