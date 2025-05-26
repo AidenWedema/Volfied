@@ -3,12 +3,15 @@
 
 void Stinger::Awake()
 {
-	if (!texture.loadFromFile("assets/sprites/stinger.png")) {
-		std::cerr << "Error loading stinger texture\n";
-		return;
-	}
-	sprite.setTexture(texture);
-	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+	//if (!texture.loadFromFile("assets/sprites/stinger.png")) {
+	//	std::cerr << "Error loading stinger texture\n";
+	//	return;
+	//}
+	//sprite.setTexture(texture);
+	//sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+	animator.AddAnimation("Fly", "assets/sprites/stinger.png");
+	animator.SetAnimation("Fly");
+	animator.autoUpdate = false;
 }
 
 void Stinger::Start()
@@ -18,6 +21,8 @@ void Stinger::Start()
 void Stinger::Update()
 {
 	if (inactive) return;
+
+	animator.current->Update();
 
 	// Every 5 seconds, snap out of cunfusion or have a 1 in 3 chance to be confused.
 	confusionTimer -= Time::GetInstance()->GetDeltaTime();
@@ -88,6 +93,8 @@ void Stinger::Update()
 void Stinger::Draw(sf::RenderTarget& target)
 {
 	if (clipped) return;
+
+	sprite = animator.current->sprite;
 	sprite.setPosition(position.x, position.y);
 	sprite.setRotation(angle);
 	target.draw(sprite);

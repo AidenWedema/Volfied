@@ -3,6 +3,7 @@
 #include "Score.hpp"
 #include "RNG.hpp"
 #include "Line.hpp"
+#include "Animator.hpp"
 
 using namespace shape;
 class Stinger : public Object
@@ -43,4 +44,5 @@ private:
 	bool confused = false;
 	float confusionTimer;
 	float confusionTime = 5;
+	Animator animator;
 };
