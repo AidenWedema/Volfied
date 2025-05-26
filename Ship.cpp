@@ -51,7 +51,8 @@ void Ship::Draw(sf::RenderTarget& target)
 {
 	if (clipped) return;
 
-	animator.position = position;
-	animator.Draw(target);
+	sprite = animator.current->sprite;
+	sprite.setPosition(position.x, position.y);
+	target.draw(sprite);
 }
 
