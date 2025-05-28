@@ -24,6 +24,12 @@ void Box::Update()
 {
 	if (inactive) return;
 
+	if (timer != 0) {
+		timer--;
+		if (timer == 0) Destroy(this);
+		return;
+	}
+
 	Vector2 extents = Vector2(sprite.getLocalBounds().width, sprite.getLocalBounds().height) / 2;
 	std::vector<Vector2> points = {
 		Vector2(position.x - extents.x, position.y - extents.y),
@@ -44,11 +50,14 @@ void Box::Update()
 		if (!inWall) break;
 	}
 	if (inWall) {
-		Destroy(this);
+		timer--;
 		Score::Add(1);
 		// Get a random powerup from the box
 		int randomIndex = RNG::GetRange(0, powers.size() - 1);
 		std::string powerName = powers[randomIndex];
+		if (powerName != "")
+			texture.loadFromFile("assets/sprites/powerup icons/" + powerName + ".png");
+		else Destroy(this);
 		Powerup* power = GetPower(powerName);
 		if (power == nullptr) return;
 		Player::GetActivePlayer()->AddPower(power);
@@ -67,5 +76,9 @@ Powerup* Box::GetPower(std::string name)
 	if (name == "TimeFreeze") return new TimeFreeze();
 	else if (name == "Gun") return new Gun();
 	else if (name == "DoomRay") return new DoomRay();
+	else if (name == "Speed") {
+		Player::GetActivePlayer()->SetSpeed(Player::GetActivePlayer()->GetSpeed() + 3);
+		return nullptr;
+	}
 	else return nullptr;
 }

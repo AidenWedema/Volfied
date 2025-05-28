@@ -42,9 +42,10 @@ public:
 		position = Vector2(json["position"][0], json["position"][1]);
     }
 
-	std::vector<Vector2>* GetPath() { return &path; }
-	Vector2 GetLastDirection() const { return lastDirection; }
-	int GetSpeed() const { return speed; }
+	inline std::vector<Vector2>* GetPath() { return &path; }
+	inline Vector2 GetLastDirection() const { return lastDirection; }
+	inline int GetSpeed() const { return speed; }
+	inline void SetSpeed(int newSpeed) { speed = newSpeed; }
 
     inline void AddPower(Powerup* power)
     {

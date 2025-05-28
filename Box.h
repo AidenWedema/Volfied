@@ -37,5 +37,8 @@ public:
 	};
 
 	Powerup* GetPower(std::string name);
+
+private:
+	uint8_t timer = 0;
 };
 
