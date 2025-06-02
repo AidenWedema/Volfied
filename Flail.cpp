@@ -11,12 +11,20 @@ void Flail::Awake()
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+
 	if (!poleTexture.loadFromFile("assets/sprites/flail_pole.png")) {
 		std::cerr << "Error loading flail pole texture\n";
 		return;
 	}
 	poleSprite.setTexture(poleTexture);
 	poleSprite.setOrigin(poleSprite.getLocalBounds().width / 2, poleSprite.getLocalBounds().height / 2);
+
+	bounds = poleSprite.getGlobalBounds();
+	Rect poleRect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+
+	hitbox = new Hitbox(position, { rect, poleRect }, 0);
 }
 
 void Flail::Start()
@@ -32,6 +40,12 @@ void Flail::Update()
 		position = position + Vector2::FromDegrees(angle) * 3;
 		if (Vector2::Distance(position, center) >= radius - 1)
 			angle = -90;
+
+		sf::FloatRect bounds = sprite.getGlobalBounds();
+		Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+		bounds = poleSprite.getGlobalBounds();
+		Rect poleRect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+		hitbox = new Hitbox(position, { rect, poleRect }, 0, 3);
 		return;
 	}
 
@@ -65,6 +79,9 @@ void Flail::Update()
 		angle += counterClockwise ? -speed : speed;
 		position = (center + Vector2(1, 0) * radius).RotateAround(center, angle);
 	}
+
+	hitbox->SetCenter(center);
+	hitbox->CalculateHitbox(angle - 90);
 }
 
 void Flail::Draw(sf::RenderTarget& target)

@@ -11,6 +11,10 @@ void Snake::Awake()
 	}
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
+	Rect rect(Vector2(-18, -32), Vector2(18, 32));
+	hitbox = new Hitbox(position, { rect }, 0);
+
 	if (!segmentTexture.loadFromFile("assets/sprites/snake_segment.png")) {
 		std::cerr << "Error loading snake segment texture\n";
 		return;
@@ -24,6 +28,8 @@ void Snake::Start()
 	for (int i = 0; i < length; i++)
 	{
 		SnakeSegment segment(this, segmentOffset * i, position, &path, &segmentSprite);
+		Rect rect(Vector2(-18, -32), Vector2(18, 32));
+		segment.hitbox = new Hitbox(position, { rect }, 0);
 		segments.push_back(segment);
 	}
 	for (int i = 0; i < length * segmentOffset; i++)
@@ -36,6 +42,9 @@ void Snake::Start()
 void Snake::Update()
 {
 	if (inactive) return;
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox(angle);
 
 	coilCooldown -= Time::GetInstance()->GetDeltaTime();
 	if (coilCooldown <= 0 && coilTimer <= 0) {

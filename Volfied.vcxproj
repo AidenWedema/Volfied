@@ -144,6 +144,7 @@
     <ClCompile Include="Flail.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="GunShip.cpp" />
+    <ClCompile Include="Hitbox.cpp" />
     <ClCompile Include="Laser.cpp" />
     <ClCompile Include="LevelEditor.cpp" />
     <ClCompile Include="LineFollower.cpp" />
@@ -178,6 +179,7 @@
     <ClInclude Include="Flail.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GunShip.h" />
+    <ClInclude Include="Hitbox.h" />
     <ClInclude Include="include\json.hpp" />
     <ClInclude Include="Input.hpp" />
     <ClInclude Include="Gun.h" />

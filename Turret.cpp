@@ -10,6 +10,10 @@ void Turret::Awake()
 	}
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+	hitbox = new Hitbox(position, {rect}, 0, 1);
 }
 
 void Turret::Start()
@@ -40,4 +44,7 @@ void Turret::Update()
 			direction += 90;
 		}
 	}
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox();
 }

@@ -10,6 +10,10 @@ void GunShip::Awake()
 	}
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+	hitbox = new Hitbox(position, { rect }, 0, 1);
 }
 
 void GunShip::Start()
@@ -60,4 +64,7 @@ void GunShip::Update()
 		Vector2 normal = Vector2::Normalize(pos - position);
 		direction = Vector2::Degrees(Vector2::Reflect(a, normal));
 	}
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox();
 }

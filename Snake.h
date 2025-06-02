@@ -23,16 +23,22 @@ public:
 	Vector2 position;
 	std::vector<Vector2>* path;
     int index;
+    float angle;
     sf::Sprite* sprite;
+	Hitbox* hitbox;
 
     inline void Update() {
         if (path->size() > index)
             position = path->at(index);
+        angle = Vector2::Degrees(Vector2::Direction(position, path->at(index + 1)));
+
+        hitbox->SetCenter(position);
+        hitbox->CalculateHitbox(angle);
     };
 
     inline void Draw(sf::RenderTarget& target) {
         sprite->setPosition(position.x, position.y);
-        sprite->setRotation(Vector2::Degrees(Vector2::Direction(position, path->at(index + 1))));
+        sprite->setRotation(angle);
         target.draw(*sprite);
     };
 };

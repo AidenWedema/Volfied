@@ -3,15 +3,15 @@
 
 void Stinger::Awake()
 {
-	//if (!texture.loadFromFile("assets/sprites/stinger.png")) {
-	//	std::cerr << "Error loading stinger texture\n";
-	//	return;
-	//}
-	//sprite.setTexture(texture);
-	//sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+	score = 35;
+
 	animator.AddAnimation("Fly", "assets/sprites/stinger.png");
 	animator.SetAnimation("Fly");
 	animator.autoUpdate = false;
+
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(-16, -16), Vector2(16, 16));
+	hitbox = new Hitbox(position, { rect }, 0, 1);
 }
 
 void Stinger::Start()
@@ -88,6 +88,9 @@ void Stinger::Update()
 		Vector2 normal = Vector2::Normalize(pos - position);
 		angle = Vector2::Degrees(Vector2::Reflect(a, normal));
 	}
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox();
 }
 
 void Stinger::Draw(sf::RenderTarget& target)

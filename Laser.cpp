@@ -11,6 +11,10 @@ void Laser::Awake()
 	}
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+	hitbox = new Hitbox(position, { rect }, 0, 1);
 }
 
 void Laser::Start()
@@ -39,6 +43,9 @@ void Laser::Update()
 	if (!Playfield::GetInstance()->IsInBounds(position, false)) {
 		Destroy(this);
 	}
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox();
 }
 
 void Laser::Draw(sf::RenderTarget& target)

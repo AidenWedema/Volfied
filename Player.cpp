@@ -15,6 +15,10 @@ void Player::Awake()
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 	activePlayer = this;
+
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+	hitbox = new Hitbox(position, { rect }, 0, 1);
 }
 
 void Player::Start()
@@ -63,6 +67,9 @@ void Player::Update()
 			break;
 		}
 	}
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox();
 }
 
 void Player::Draw(sf::RenderTarget& target)

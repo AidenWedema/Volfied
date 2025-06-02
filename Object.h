@@ -4,6 +4,7 @@
 #include <fstream>
 #include "json.hpp"
 #include "Vector2.hpp"
+#include "Hitbox.h"
 
 class Object
 {
@@ -22,6 +23,7 @@ public:
 	bool shouldDie;					// If the object should be destroyed
 	bool clipped;					// If the object is clipped it is not being drawn
 	bool inactive;					// If the object is inactive it is not being updated
+	Hitbox* hitbox;					// The hitbox of the object
 
 	sf::Texture texture;
 	sf::Sprite sprite;
@@ -75,7 +77,8 @@ public:
 	}
 
 	inline virtual bool IsTouching(const Object& other) const {
-		return sprite.getGlobalBounds().intersects(other.sprite.getGlobalBounds()) || sprite.getGlobalBounds().contains(other.position.x, other.position.y);
+		if (hitbox == nullptr) return false;
+		return hitbox->IsTouching(other.hitbox);
 	}
 
 

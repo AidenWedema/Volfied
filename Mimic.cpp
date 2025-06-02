@@ -12,6 +12,10 @@ void Mimic::Awake()
 	}
 	sprite.setTexture(texture);
 	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
+	sf::FloatRect bounds = sprite.getGlobalBounds();
+	Rect rect(Vector2(bounds.left, bounds.top), Vector2(bounds.left + bounds.width, bounds.top + bounds.height));
+	hitbox = new Hitbox(position, { rect }, 0, 1);
 }
 
 void Mimic::Start()
@@ -45,6 +49,9 @@ void Mimic::Update()
 
 	sprite.setRotation(Vector2::Degrees(player->GetLastDirection() * Vector2(-1, -1)));
 	playerLastPosition = player->position;
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox();
 }
 
 void Mimic::Draw(sf::RenderTarget& target)

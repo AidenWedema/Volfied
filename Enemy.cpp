@@ -5,15 +5,13 @@
 void Enemy::Awake()
 {
 	score = 20;
-	//if (!texture.loadFromFile("assets/sprites/enemy.png")) {
-	//	std::cerr << "Error loading enemy texture\n";
-	//	return;
-	//}
-	//sprite.setTexture(texture);
-	//sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
+
 	animator.AddAnimation("Swim", "assets/sprites/enemy.png");
 	animator.SetAnimation(0);
 	animator.autoUpdate = false;
+
+	Rect rect(Vector2(-12, -16), Vector2(12, 16));
+	hitbox = new Hitbox(position, { rect }, 0, 5);
 }
 
 void Enemy::Start()
@@ -65,6 +63,9 @@ void Enemy::Update()
 		Vector2 normal = Vector2::Normalize(pos - position);
 		angle = Vector2::Degrees(Vector2::Reflect(a, normal));
 	}
+
+	hitbox->SetCenter(position);
+	hitbox->CalculateHitbox(angle);
 }
 
 void Enemy::Draw(sf::RenderTarget& target)
