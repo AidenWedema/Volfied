@@ -92,6 +92,17 @@ void Player::Draw(sf::RenderTarget& target)
 	for (auto& power : powers) {
 		power->Draw(target);
 	}
+
+	// Draw life counter
+	int x = 750;
+	sprite.setRotation(0);
+	sprite.setScale(3, 3);
+	for (int i = 0; i < lives; i++) {
+		sprite.setPosition(x, 550);
+		target.draw(sprite);
+		x -= 25;
+	}
+	sprite.setScale(1, 1);
 }
 
 void Player::Die()

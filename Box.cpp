@@ -77,7 +77,7 @@ Powerup* Box::GetPower(std::string name)
 	else if (name == "Gun") return new Gun();
 	else if (name == "DoomRay") return new DoomRay();
 	else if (name == "Speed") {
-		Player::GetActivePlayer()->SetSpeed(Player::GetActivePlayer()->GetSpeed() + 3);
+		Player::GetActivePlayer()->SetSpeed(Player::GetActivePlayer()->GetSpeed() + 2);
 		return nullptr;
 	}
 	else return nullptr;

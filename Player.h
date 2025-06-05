@@ -64,7 +64,7 @@ public:
 	void Die();
 
 private:
-	int speed = 3;
+	int speed = 2;
 	float respawnTimer;
 	Vector2 direction;
 	Vector2 lastDirection;

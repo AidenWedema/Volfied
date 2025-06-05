@@ -10,7 +10,7 @@ void Stinger::Awake()
 	animator.autoUpdate = false;
 
 	sf::FloatRect bounds = sprite.getGlobalBounds();
-	Rect rect(Vector2(-16, -16), Vector2(16, 16));
+	Rect rect(Vector2(-14, -14), Vector2(14, 14));
 	hitbox = new Hitbox(position, { rect }, 0, 1);
 }
 
