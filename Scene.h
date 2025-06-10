@@ -54,6 +54,7 @@ public:
 		// Remove objects that should die
 		for (auto it = objects.begin(); it != objects.end();) {
 			if ((*it)->shouldDie) {
+				(*it)->OnDestroy();
 				delete* it;
 				it = objects.erase(it);
 			}

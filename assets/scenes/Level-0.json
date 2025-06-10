@@ -34,7 +34,7 @@
                 400,
                 300
             ],
-            "type": "Enemy"
+            "type": "MotherShip"
         },
         {
             "name": "Snake",
@@ -46,7 +46,7 @@
                 600,
                 400
             ],
-            "type": "Snake"
+            "type": "Canon"
         },
         {
             "name": "Ship",

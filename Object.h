@@ -54,6 +54,11 @@ public:
 		target.draw(sprite);
 	}
 
+	/// <summary>
+	/// OnDestroy is called when the object is destroyed.
+	/// </summary>
+	inline virtual void OnDestroy() {};
+
 	inline virtual nlohmann::json ToJson() const {
 		return {
 			{"type", "Object"},

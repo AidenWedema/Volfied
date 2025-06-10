@@ -21,6 +21,8 @@
 #include "GunShip.h"
 #include "Flail.h"
 #include "TextInput.h"
+#include "Canon.h"
+#include "MotherShip.h"
 
 class ObjectFactory {
 public:
@@ -130,6 +132,21 @@ public:
 			ui::TextInput* textInput = new ui::TextInput();
 			textInput->FromJson(json);
 			return textInput;
+		}
+		else if (type == "Canon") {
+			Canon* canon = new Canon();
+			canon->FromJson(json);
+			return canon;
+		}
+		else if (type == "MotherShip") {
+			MotherShip* mothership = new MotherShip();
+			mothership->FromJson(json);
+			return mothership;
+		}
+		else if (type == "BabyShip") {
+			BabyShip* babyShip = new BabyShip();
+			babyShip->FromJson(json);
+			return babyShip;
 		}
 
         return nullptr;
