@@ -52,6 +52,7 @@ public:
    void Awake() override;
    void Start() override;
    void Update() override;
+   void OnDestroy() override;
 
    nlohmann::json ToJson() const override {
        return {

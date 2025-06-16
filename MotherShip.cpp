@@ -94,7 +94,7 @@ void MotherShip::Awake()
 void MotherShip::Start()
 {
 	angle = RNG::GetRange(0.0f, 11.25f) * 31;
-	timer = 10;
+	timer = 5;
 
 	for (int i = 0; i < babies.size(); i++) {
 		BabyShip* baby = new BabyShip();
@@ -191,4 +191,13 @@ void MotherShip::Update()
 
 	hitbox->SetCenter(position);
 	hitbox->CalculateHitbox();
+}
+
+void MotherShip::OnDestroy()
+{
+	for (auto& baby : babies) {
+		if (baby != nullptr)
+			Destroy(baby);
+	}
+	babies.fill(nullptr);
 }
