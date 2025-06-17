@@ -70,6 +70,8 @@ public:
        position = Vector2(json["position"][0], json["position"][1]);
    }
 
+   void CalculateTargetPosition();
+
    inline void RemoveBaby(BabyShip* baby) {
 	   auto it = std::find(babies.begin(), babies.end(), baby);
 	   if (it != babies.end()) *it = nullptr;
@@ -77,8 +79,10 @@ public:
 
 private:
    std::array<BabyShip*, 8> babies;
-   int speed = 1;
-   int angle;
+   float t;
+   Vector2 startPosition;
+   Vector2 targetPosition;
+   Vector2 curvePosition;
    float timer = 0.0f;
    int mode;
 };
