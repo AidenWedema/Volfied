@@ -54,6 +54,7 @@ public:
 	inline Vector2 GetSize() const { return size; }
 	inline Vector2 GetExtents() const { return Vector2(size.x * 0.5f, size.y * 0.5f); }
 	inline std::vector<Rect>* GetWallArea() { return &wallArea; }
+	inline std::vector<std::vector<bool>>* GetFilledArea() { return &filledArea; }
 	inline Vector2 GetClosestWallPoint(Vector2& pos) {
 		Vector2 closestPoint = Vector2(-100000, -100000);
 		for (auto& area : wallArea) {
