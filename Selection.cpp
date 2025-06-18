@@ -11,10 +11,13 @@ void ui::Selection::Select()
 		switch (action)
 		{
 			// Load next level
-		case 0:
-			Game::GetInstance()->SetLevel(Game::GetInstance()->GetLevel() + 1);
-			SceneManager::GetInstance()->LoadScene("Level-" + std::to_string(Game::GetInstance()->GetLevel()));
+		case 0: {
+			int level = Game::GetInstance()->GetLevel() + 1;
+			Game::GetInstance()->SetLevel(level);
+			if (level >= 16) SceneManager::GetInstance()->LoadScene("Win");
+			else SceneManager::GetInstance()->LoadScene("Level-" + std::to_string(Game::GetInstance()->GetLevel()));
 			break;
+		}
 
 			// Quit game
 		case 1:
