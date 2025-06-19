@@ -130,6 +130,11 @@ void Player::Walk()
 	else if (Input::GetInstance()->GetKey("Down")) direction = Vector2::Down();
 	else return;
 
+	if (Vector2::Distance(position, Playfield::GetInstance()->GetClosestEdgePoint(position)) > 1.0f)
+		position = Playfield::GetInstance()->GetClosestWallPoint(position);
+	else
+		position = Playfield::GetInstance()->GetClosestEdgePoint(position);
+
 	Vector2 oldPosition = position;
 	Vector2 newPosition = position + direction * speed;
 	Vector2 simPosition = position;
@@ -159,10 +164,15 @@ void Player::Walk()
 	position = simPosition;
 
 	if (Input::GetInstance()->GetKey("A")) {
+		float edgeDist = Vector2::Distance(position, Playfield::GetInstance()->GetClosestEdgePoint(position));
+		float wallDist = Vector2::Distance(position, Playfield::GetInstance()->GetClosestWallPoint(position));
+		if (edgeDist < 1.0f || wallDist < 1.0f)
+			return;
+
 		isDigging = true;
 		path.clear();
-		path.push_back(oldPosition + Vector2(-xStep, -yStep));
-		path.push_back(oldPosition + Vector2(-xStep, -yStep));
+		path.push_back(oldPosition);
+		path.push_back(oldPosition);
 	}
 }
 
