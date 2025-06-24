@@ -44,31 +44,58 @@ void Canon::Update()
 		shootTimer = RNG::GetRange(shootTime.x, shootTime.y);
 	}
 
+	// Get closest wall and edge points
+	Vector2 closestWallPoint = Playfield::GetInstance()->GetClosestWallPoint(position);
+	Vector2 closestEdgePoint = Playfield::GetInstance()->GetClosestEdgePoint(position);
+
+	// Calculate distances
+	float wallDistance = Vector2::Distance(position, closestWallPoint);
+	float edgeDistance = Vector2::Distance(position, closestEdgePoint);
+	float currentAngle = Vector2::Degrees(direction);
+
+	// If we're right on a wall or edgeinstantly turn 45 degrees right
+	if (wallDistance < 0.1f || edgeDistance < 0.1f) {
+		direction = Vector2::FromDegrees(currentAngle + 45);
+		turnTimer = RNG::GetRange(turnTime.x, turnTime.y) * 0.5f;
+	}
 	if (turnTimer <= 0) {
-		Vector2 directionToCenter = Vector2::Direction(position, Playfield::GetInstance()->position);
-		float distanceToCenter = Vector2::Distance(position, Playfield::GetInstance()->position);
+		// Direction vectors away from obstacles
+		Vector2 directionFromWall = Vector2::Direction(closestWallPoint, position);
+		Vector2 directionFromEdge = Vector2::Direction(closestEdgePoint, position);
 
-        float currentAngle = Vector2::Degrees(direction);
-        float targetAngle = Vector2::Degrees(directionToCenter);
+		const float avoidanceDistance = 100.0f;
+		bool avoidingObstacle = false;
 
-        float angleDiff = targetAngle - currentAngle;
-        if (angleDiff > 180) angleDiff -= 360;
-        if (angleDiff < -180) angleDiff += 360;
+		if (wallDistance < avoidanceDistance || edgeDistance < avoidanceDistance) {
+			// Determine which obstacle is closer
+			Vector2 avoidDirection;
 
-		if (distanceToCenter > 150) {
-			if (std::abs(angleDiff) > 10) {
-				if (angleDiff > 0) direction = Vector2::FromDegrees(currentAngle + 45);
-				else direction = Vector2::FromDegrees(currentAngle - 45);
-			}
-			else {
-				if (RNG::GetRange(0, 1) == 0) direction = Vector2::FromDegrees(currentAngle + 45);
-				else direction = Vector2::FromDegrees(currentAngle - 45);
-			}
+			if (wallDistance < edgeDistance)
+				avoidDirection = directionFromWall;
+			else
+				avoidDirection = directionFromEdge;
+
+			float targetAngle = Vector2::Degrees(avoidDirection);
+			float angleDiff = targetAngle - currentAngle;
+			if (angleDiff > 180) angleDiff -= 360;
+			if (angleDiff < -180) angleDiff += 360;
+
+			// Turn in 45-degree increments toward the avoidance direction
+			if (angleDiff > 0)
+				direction = Vector2::FromDegrees(currentAngle + 45);
+			else
+				direction = Vector2::FromDegrees(currentAngle - 45);
+			avoidingObstacle = true;
 		}
-		else {
-			if (RNG::GetRange(0, 1) == 0) direction = Vector2::FromDegrees(currentAngle + 45);
-			else direction = Vector2::FromDegrees(currentAngle - 45);
+
+		// If not avoiding obstacles, use original wandering behavior
+		if (!avoidingObstacle) {
+			if (RNG::GetRange(0, 1) == 0)
+				direction = Vector2::FromDegrees(currentAngle + 45);
+			else
+				direction = Vector2::FromDegrees(currentAngle - 45);
 		}
+
 		turnTimer = RNG::GetRange(turnTime.x, turnTime.y);
 	}
 
@@ -78,6 +105,7 @@ void Canon::Update()
 	hitbox->SetCenter(position);
 	hitbox->CalculateHitbox(Vector2::Degrees(direction));
 }
+
 
 void Canon::Draw(sf::RenderTarget& target)
 {
