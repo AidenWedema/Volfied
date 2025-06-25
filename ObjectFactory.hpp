@@ -23,6 +23,7 @@
 #include "TextInput.h"
 #include "Canon.h"
 #include "MotherShip.h"
+#include "Splitter.h"
 
 class ObjectFactory {
 public:
@@ -147,6 +148,11 @@ public:
 			BabyShip* babyShip = new BabyShip();
 			babyShip->FromJson(json);
 			return babyShip;
+		}
+		else if (type == "Splitter") {
+			Splitter* splitter = new Splitter();
+			splitter->FromJson(json);
+			return splitter;
 		}
 
         return nullptr;

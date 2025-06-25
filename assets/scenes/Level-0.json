@@ -49,14 +49,14 @@
             "type": "Canon"
         },
         {
-            "name": "Ship",
+            "name": "Splitter",
             "tag": 1,
             "subTags": [ 2 ],
             "position": [
-                200,
-                400
+                400,
+                300
             ],
-            "type": "Ship"
+            "type": "Splitter"
         },
         {
             "name": "Box",
